@@ -1,0 +1,41 @@
+{% extends "obligarcy/base.html" %}
+
+{% block content %}
+
+
+{% if user.is_authenticated %}
+
+<h1>{{ user.username }}!</h1>
+
+<h2>Contracts</h2>
+{% if contracts %}
+    <ul>
+    {% for contract in contracts %}
+        <li><a href="/contract/{{ contract.id }}/">{{ contract.body }}</a></li>
+        {{ contract.end_date}}
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>This User has no (active) contracts</p>
+{% endif %}
+
+<h2>Submissions</h2>
+{% if posts %}
+    <ul>
+    {% for post in posts %}
+        <li><a href="/submission/{{ post.id }}/">{{ post.body }}</a></li>
+        {{ post.user }} & {{ post.pub_date}}
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>This User has no submissions</p>
+{% endif %}
+
+
+
+
+{% else %}
+<h1>hello world!</h1>
+{% endif %}
+
+{% endblock content %}

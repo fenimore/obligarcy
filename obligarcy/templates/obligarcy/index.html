@@ -1,0 +1,11 @@
+{% extends "obligarcy/base.html" %}
+
+{% block content %}
+
+
+{% if user.is_authenticated %}
+
+<h3>{{ user.username }}!</h3>
+{% endif %}
+<p>Welcome to code name watermelon sugar.</p>
+{% endblock content %}
