@@ -25,9 +25,11 @@ class SubForm(forms.ModelForm):
 
 
 class ContractForm(forms.ModelForm):
-    body = forms.CharField(max_length=128)
+    body = forms.CharField(max_length=128,
+        widget=forms.Textarea(attrs={'class': 'form-control'}))
     #end_date = forms.DateField()
-    first_signee = forms.ModelChoiceField(queryset=User.objects.all())
+    first_signee = forms.ModelChoiceField(queryset=User.objects.all(),
+        widget=forms.Select(attrs={'class': 'form-control'}))
     second_signee = forms.ModelChoiceField(queryset=User.objects.all())
     third_signee = forms.ModelChoiceField(queryset=User.objects.all(),
          required=False)

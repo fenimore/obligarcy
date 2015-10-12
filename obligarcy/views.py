@@ -37,7 +37,7 @@ def register(request):
                 profile.picture = request.FILES['picture']
             profile.save()
             registered = True
-            return HttpResponseRedirect('/obligarcy/login/')
+            return HttpResponseRedirect('/login/')
         else:
             print((user_form.errors, profile_form.errors))
     user_form = UserForm()
@@ -68,7 +68,7 @@ def user_login(request):
                 login(request, user)
                 request.session['username'] = user.username
                 request.session['id'] = user.id
-                return HttpResponseRedirect('/obligarcy/')
+                return HttpResponseRedirect('/profile/')
             else:
                 # An inactive account was used - no logging in!
                 return HttpResponse("Account no longer active.")
@@ -89,7 +89,7 @@ def user_logout(request):
     logout(request)
     request.session['username'] = None
     request.session['id'] = None
-    return HttpResponseRedirect('/obligarcy')
+    return HttpResponseRedirect('/')
 
 
 def profile(request):
