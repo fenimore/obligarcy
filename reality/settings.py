@@ -51,7 +51,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.security.SecurityMiddleware',
 )
 
-ROOT_URLCONF = 'reality.urls'
+ROOT_URLCONF = 'obligarcy.urls'
 
 TEMPLATES = [
     {

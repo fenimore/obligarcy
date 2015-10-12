@@ -25,22 +25,19 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="/obligarcy/">Obligarcy</a>
+          <a class="navbar-brand" href="/">Obligarcy</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li><a href="/obligarcy">Home</a></li>
-            <li><a href="obligarcy/about">About</a></li>
+            <li><a href="/">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/profile/">Profile</a></li>
+            <li><a href="/firehose">Firehose</a></li>
             {% if user.is_authenticated %}
-            {{ user.username }} | "
-            <li><a href="profile/">Profile</a></li>
-            <li><a href="/users">People</a></li>
-            <li><a href="/contracts">My Contracts</a></li> |
-            <li><a href="/submissions">My Submissions</a></li>
-            <li><a href="">Logout</a></li>
+            <li><a href="/logout/">Logout</a></li>
             {% else %}
-            <li><a href="register/">Register Here</a></li>
-            <li><a href="login/">Login</a></li>
+            <li><a href="/register/">Register Here</a></li>
+            <li><a href="/login/">Login</a></li>
             {% endif %}
           </ul>
         </div><!--/.nav-collapse -->
@@ -54,14 +51,18 @@
             {% if user.is_authenticated %}
             {{ user.username }}
           <ul>
-            <li><a href="profile/">Profile</a></li>
+            <li><a href="/profile/">Profile</a></li>
             <li><a href="/users">People</a></li>
+            <hr>
+            <li><a href="/challenge">New Contract</a></li>
             <li><a href="/contracts">My Contracts</a></li>
+            <hr>
             <li><a href="/submissions">My Submissions</a></li>
-            <li><a href="">Logout</a></li>
+            <hr>
+            <li><a href="/logout">Logout</a></li>
             {% else %}
-            <li><a href="register/">Register Here</a></li>
-            <li><a href="login/">Login</a></li>
+            <li><a href="/register/">Register Here</a></li>
+            <li><a href="/login/">Login</a></li>
             {% endif %}
           </ul>
                 {% block side_block %}{% endblock %}

@@ -1,17 +1,18 @@
 {% extends "obligarcy/base.html" %}
 
 {% block content %}
-        <form id="contract_form" method="post" action="/obligarcy/challenge/"
-                enctype="multipart/form-data">
+        <form id="contract_form" method="POST" action="/challenge/">
 
             {% csrf_token %}
 
-            <!-- Display each form. The as_p method wraps each element in a paragraph
-                 (<p>) element. This ensures each element appears on a new line,
-                 making everything look neater.            {{ contract_signee_form }}
- -->
-            {% contract_form %}
-            <!-- Provide a button to click to submit the form. -->
-            <input type="submit" name="submit" value="Issue Challenge" />
+            {{ contract_form }}
+                         <!-- Text: <textarea rows="4" cols="50" type="text" name="body" value="" size="500">
+            </textarea>
+            <input type='date' name='end_date'>
+           Provide a button to click to submit the form. -->
+        <input type="submit" name="submit" value="Issue Challenge" />
         </form>
+
+
+
 {% endblock content %}

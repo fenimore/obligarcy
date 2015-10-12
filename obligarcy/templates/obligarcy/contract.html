@@ -3,5 +3,14 @@
 {% block content %}
 
 {{ contract.body }}
+<br>
 
+{% for signee in signees %}
+
+{{signee.username}}
+
+{% endfor %}
+{% if user.is_authenticated %}
+<a class='btn btn-default' href=/submit/{{ user.id }}>Submit</a>
+{% endif %}
 {% endblock content %}

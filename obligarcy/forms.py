@@ -21,12 +21,18 @@ class UserProfileForm(forms.ModelForm):
 class SubForm(forms.ModelForm):
     class Meta:
         model = Submission
-        fields = ('body', )
+        fields = ['body', ]
 
 
 class ContractForm(forms.ModelForm):
     body = forms.CharField(max_length=128)
-    end_date = forms.DateField()
+    #end_date = forms.DateField()
+    first_signee = forms.ModelChoiceField(queryset=User.objects.all())
+    second_signee = forms.ModelChoiceField(queryset=User.objects.all())
+    third_signee = forms.ModelChoiceField(queryset=User.objects.all(),
+         required=False)
+    fourth_signee = forms.ModelChoiceField(queryset=User.objects.all(),
+         required=False)
 
     class Meta:
         model = Contract

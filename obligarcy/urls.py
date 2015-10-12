@@ -6,6 +6,8 @@ from . import views
 urlpatterns = [
     # ex: /oblicarcy/
     url(r'^$', views.index, name='index'),
+    url(r'^firehose/$', views.firehose, name='firehose'),
+
 
     url(r'^profile/$', views.profile),
     # ex: /obligarcy/user/5/
@@ -15,7 +17,7 @@ urlpatterns = [
 
     # ex: /oblicarcy/submissions/5/
     url(r'^submission/([0-9]+)/$', views.show_sub, name='submission'),
-    url(r'^submit/$', views.submit, name='submit'),
+    url(r'^submit/([0-9]+)/$', views.submit, name='submit'),
 
     # ex: /oblicarcy/contracts/5/
     url(r'^contract/([0-9]+)/$', views.show_con, name='contract'),

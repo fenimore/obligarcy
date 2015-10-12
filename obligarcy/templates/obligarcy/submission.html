@@ -2,9 +2,12 @@
 
 {% block content %}
 
-
-{{ submission.body }}<br>
-{{ submission.pub_date }}<br>
-{{ submission.user.username }}
+Author: {{ author }} <br>
+Text : {{ submission.body }}<br>
+Word Count <br>
+Submission Date : {{ submission.pub_date }}<br>
+Author : {{ submission.user.username }}<br>
+Contract Body : {{ contract.body }}<br>
+Contract id : {{ contract.id }}
 
 {% endblock content %}

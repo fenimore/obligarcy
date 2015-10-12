@@ -1,6 +1,8 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Submission, Contract
 from django.contrib.auth.models import User
+from django.contrib.sessions.models import Session
+
 from .forms import UserForm, UserProfileForm
 from .forms import SubForm, ContractForm, ContractSigneeForm
 from django.utils import timezone
@@ -33,7 +35,6 @@ def register(request):
             profile.user = user
             if 'picture' in request.FILES:
                 profile.picture = request.FILES['picture']
-
             profile.save()
             registered = True
             return HttpResponseRedirect('/obligarcy/login/')
@@ -65,6 +66,8 @@ def user_login(request):
                 # If the account is valid and active, we can log the user in.
                 # We'll send the user back to the homepage.
                 login(request, user)
+                request.session['username'] = user.username
+                request.session['id'] = user.id
                 return HttpResponseRedirect('/obligarcy/')
             else:
                 # An inactive account was used - no logging in!
@@ -84,37 +87,50 @@ def user_login(request):
 
 def user_logout(request):
     logout(request)
+    request.session['username'] = None
+    request.session['id'] = None
     return HttpResponseRedirect('/obligarcy')
 
 
 def profile(request):
-    #user_id GET FROM SESSION
-    #user = get_object_or_404(User, id=user_id)
-    #posts = user.submission_set.all()
-    #contracts = user.contract_set.all()
-    return render(request, 'obligarcy/profile.html')
+    user_id = request.session['id']
+    user = get_object_or_404(User, id=user_id)
+    posts = user.submission_set.all()
+    contracts = user.contract_set.all()
+    return render(request, 'obligarcy/profile.html',
+        {'contracts':contracts, 'posts':posts})
      # {'user': user, 'posts': posts}
 
 
 def show_sub(request, submission_id):
     template = 'obligarcy/submission.html'
     submission = get_object_or_404(Submission, id=submission_id)
-    return render(request, template, {'submission': submission})
+    author = submission.user
+    contracts = submission.contract_set.all()
+    for c in contracts:
+        contract = c
+    return render(request, template, {'submission': submission, 'author':author, 'contract':contract})
 
 
-def submit(request):
+def submit(request, contract_id):
     if request.method == 'POST':
         form = SubForm(request.POST)
         if form.is_valid():
-            author = User.objects.get(id=request.POST['user'])
+            author = User.objects.get(id=request.session['id'])
+            contract = Contract.objects.get(id=contract_id)
             new_sub = Submission(body=form.cleaned_data['body'],
                 pub_date=timezone.now(), user=author)  # required
             new_sub.save()
+            new_sub.contract_set.add(contract)
+            new_sub.save()
+            c = new_sub.contract_set.all().first()
+            print((c))
             return render(request, 'obligarcy/submission.html',
-                {'submission': new_sub})
+                {'submission': new_sub, 'contract': c})
     else:
         form = SubForm()
-    return render(request, 'obligarcy/submit.html', {'form': form})
+        contract_id = contract_id
+    return render(request, 'obligarcy/submit.html', {'form': form, 'contract_id':contract_id})
 
 
 # ALL submissions by profile
@@ -123,27 +139,43 @@ def submit(request):
 
 def show_con(request, contract_id):
     contract = get_object_or_404(Contract, id=contract_id)
-    return render(request, 'obligarcy/contract.html', {'contract': contract})
+    signees = contract.users.all()
+    return render(request, 'obligarcy/contract.html', {'contract': contract, 'signees':signees})
 
 
 def challenge(request):
     if request.method == 'POST':
-        contract_form = ContractForm(request.POST)
-        contract_signee_form = ContractSigneeForm(request.POST)
-        if contract_form.is_valid() and contract_signee_form:
+        print('is post')
+        contract_form = ContractForm(data=request.POST)
+        # print((request.POST['first_signee'])) #Prints user.id
+        #contract_signee_form = ContractSigneeForm(data=request.POST)
+        if contract_form.is_valid():
+            print('Valid Form')
             contract = contract_form.save()
+            contract.save()
+            u1 = User.objects.get(id=request.POST['first_signee'])
+            u2 = User.objects.get(id=request.POST['second_signee'])
+            u1.contract_set.add(contract)
+            u2.contract_set.add(contract)
+            contract.save()
+            signees = contract.users.all()
+            #print((signees[0].username))
             return render(request, 'obligarcy/contract.html',
-                {'contract': contract})
-    else:
-        contract_form = ContractForm()
-        contract_signee_form = ContractSigneeForm()
-    return render(request, 'obligarcy/submit.html',
-             {'contract_form': contract_form})
-            # {'contract_signee_form': contract_signee_form}
-# ALL contracts
-# ALL contracts by profile
+                {'contract': contract, 'signees':signees})
+        else:
+            print((contract_form.errors))
+    contract_form = ContractForm()
+    #contract_signee_form = ContractSigneeForm()
+    return render(request, 'obligarcy/challenge.html',
+            {'contract_form': contract_form})
 
 # Create User
 # Create Submission
 # Create Contract
+
+def firehose(request):
+    contracts = Contract.objects.all()
+    users = User.objects.all()
+    submissions = User.objects.all()
+    return render(request, 'obligarcy/firehose.html', {'contracts': contracts, 'users':users ,'submissions':submissions})
 

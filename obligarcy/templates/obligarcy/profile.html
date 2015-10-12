@@ -24,7 +24,7 @@
     <ul>
     {% for post in posts %}
         <li><a href="/submission/{{ post.id }}/">{{ post.body }}</a></li>
-        {{ post.user }} & {{ post.pub_date}}
+        {{ post.contract }} @ {{ post.pub_date}}
     {% endfor %}
     </ul>
 {% else %}
