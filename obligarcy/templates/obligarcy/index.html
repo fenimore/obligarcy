@@ -2,10 +2,20 @@
 
 {% block content %}
 
-
+<h3>Motivation by Obligation</h3>
 {% if user.is_authenticated %}
 
-<h3>{{ user.username }}!</h3>
+<div class="media">
+  <div class="media-left">
+    <a href="/profile/">
+      <img class="media-object" src="..." alt="...">
+    </a>
+  </div>
+  <div class="media-body">
+    <h4 class="media-heading">{{ user.username }}</h4>
+  </div>
+</div>
+,
 {% endif %}
-<p>Welcome to code name watermelon sugar.</p>
+<p>Welcome to code name real mess</p>
 {% endblock content %}

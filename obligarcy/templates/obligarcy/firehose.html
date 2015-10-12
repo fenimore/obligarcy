@@ -31,9 +31,9 @@
 <h2>Submissions</h2>
 {% if submissions %}
     <ul>
-    {% for post in submissions %}
-        <li><a href="/submission/{{ post.id }}/">{{ post.body }}</a></li>
-        {{ post.contract }} @ {{ post.pub_date}}
+    {% for submission in submissions %}
+        <li><a href="/submission/{{ submission.id }}/">{{ submission.body }}</a></li>
+        {{ post.contract }} @ {{ submission.pub_date}}
     {% endfor %}
     </ul>
 {% else %}

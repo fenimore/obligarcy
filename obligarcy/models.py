@@ -7,7 +7,7 @@ class Submission(models.Model):
     body = models.CharField(max_length=200)
     pub_date = models.DateTimeField('submitted')
     user = models.ForeignKey(User)
-
+    # Word Count
     def __str__(self):
         return self.body
 

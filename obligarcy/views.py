@@ -4,10 +4,11 @@ from django.contrib.auth.models import User
 from django.contrib.sessions.models import Session
 
 from .forms import UserForm, UserProfileForm
-from .forms import SubForm, ContractForm, ContractSigneeForm
+from .forms import SubForm, ContractForm
 from django.utils import timezone
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth import authenticate, login, logout
+
 
 def index(request):
     return render(request, 'obligarcy/index.html')
@@ -95,6 +96,7 @@ def user_logout(request):
 def profile(request):
     user_id = request.session['id']
     user = get_object_or_404(User, id=user_id)
+    print((user.userprofile.picture.path))
     posts = user.submission_set.all()
     contracts = user.contract_set.all()
     return render(request, 'obligarcy/profile.html',
@@ -107,9 +109,10 @@ def show_sub(request, submission_id):
     submission = get_object_or_404(Submission, id=submission_id)
     author = submission.user
     contracts = submission.contract_set.all()
+    word_count = len(submission.body.split())
     for c in contracts:
         contract = c
-    return render(request, template, {'submission': submission, 'author':author, 'contract':contract})
+    return render(request, template, {'submission': submission, 'author':author, 'contract':contract, 'word_count':word_count})
 
 
 def submit(request, contract_id):
@@ -176,6 +179,6 @@ def challenge(request):
 def firehose(request):
     contracts = Contract.objects.all()
     users = User.objects.all()
-    submissions = User.objects.all()
+    submissions = Submission.objects.all()
     return render(request, 'obligarcy/firehose.html', {'contracts': contracts, 'users':users ,'submissions':submissions})
 

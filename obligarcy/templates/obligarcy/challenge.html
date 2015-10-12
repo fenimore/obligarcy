@@ -1,18 +1,20 @@
 {% extends "obligarcy/base.html" %}
 
 {% block content %}
-        <form id="contract_form" method="POST" action="/challenge/">
+    <div class='row'>
+      <div class='col-md-6'>
+              <form id="contract_form" method="POST" action="/challenge/">
 
             {% csrf_token %}
 
-            {{ contract_form }}
+            {{ contract_form.as_p }}
                          <!-- Text: <textarea rows="4" cols="50" type="text" name="body" value="" size="500">
             </textarea>
             <input type='date' name='end_date'>
            Provide a button to click to submit the form. -->
-        <input type="submit" name="submit" value="Issue Challenge" />
+        <input class='btn btn-default' type="submit" name="submit" value="Issue Challenge" />
         </form>
-
-
+      </div>
+    </div>
 
 {% endblock content %}
