@@ -13,11 +13,12 @@ from django.contrib.auth import authenticate, login, logout
 def index(request):
     return render(request, 'obligarcy/index.html')
 
-#def show_prof(request, user_id):
-#    user = get_object_or_404(User, id=user_id)
-#    posts = user.submission_set.all()
-    #contracts = user.contract_set.all()
-#    return render(request, 'obligarcy/profile.html', {'user': user, 'posts': posts})
+def show_prof(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    posts = user.submission_set.all()
+    contracts = user.contract_set.all()
+    return render(request, 'obligarcy/profile.html',
+        {'contracts':contracts, 'posts':posts, 'user':user})
 
 
 # ALL profiles
@@ -96,7 +97,7 @@ def user_logout(request):
 def profile(request):
     user_id = request.session['id']
     user = get_object_or_404(User, id=user_id)
-    print((user.userprofile.picture.path))
+    #print((user.userprofile.picture.path))
     posts = user.submission_set.all()
     contracts = user.contract_set.all()
     return render(request, 'obligarcy/profile.html',
@@ -127,9 +128,11 @@ def submit(request, contract_id):
             new_sub.contract_set.add(contract)
             new_sub.save()
             c = new_sub.contract_set.all().first()
+            word_count = len(new_sub.body.split())
+            # Add line_count
             print((c))
             return render(request, 'obligarcy/submission.html',
-                {'submission': new_sub, 'contract': c})
+                {'submission': new_sub, 'contract': c, 'word_count':word_count})
     else:
         form = SubForm()
         contract_id = contract_id
@@ -143,7 +146,8 @@ def submit(request, contract_id):
 def show_con(request, contract_id):
     contract = get_object_or_404(Contract, id=contract_id)
     signees = contract.users.all()
-    return render(request, 'obligarcy/contract.html', {'contract': contract, 'signees':signees})
+    submissions = contract.submissions.all()
+    return render(request, 'obligarcy/contract.html', {'contract': contract, 'signees':signees, 'submissions':submissions})
 
 
 def challenge(request):

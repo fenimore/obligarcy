@@ -8,8 +8,11 @@
     <div class="media">
       <div class="media-left">
         <a href="/profile/">
-          <img class="media-object"  
-            src="{{ user.userprofile.picture.path }}" alt="..."/>
+                  {% if user.userprofile.picture %}
+
+          <img class="media-object"
+               src="{{ user.userprofile.picture.path }}" alt="..."/>
+          {% endif %}
         </a>
       </div>
       <div class="media-body">
