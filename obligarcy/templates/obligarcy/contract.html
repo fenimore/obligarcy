@@ -5,6 +5,8 @@
 {{ contract.body }}
 <br><br>
 Deadline: {{ contract.end_date }}<br>
+Frequency: {{ contract.frequency }}<br>
+Deadline List: {{ contract.deadline_list }}
 {% for signee in signees %}
 
 Signee: <a href="/user/{{ signee.id }}/">{{signee.username}}</a><br>

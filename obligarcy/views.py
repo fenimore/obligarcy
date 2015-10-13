@@ -9,21 +9,17 @@ from django.utils import timezone
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth import authenticate, login, logout
 
+import pandas as pd
+from datetime import datetime
+import pickle
 
 def index(request):
     return render(request, 'obligarcy/index.html')
 
-def show_prof(request, user_id):
-    user = get_object_or_404(User, id=user_id)
-    posts = user.submission_set.all()
-    contracts = user.contract_set.all()
-    return render(request, 'obligarcy/profile.html',
-        {'contracts':contracts, 'posts':posts, 'user':user})
 
-
-# ALL profiles
-
-
+##########################
+# User Views
+##########################
 def register(request):
     registered = False
     if request.method == 'POST':
@@ -101,10 +97,21 @@ def profile(request):
     posts = user.submission_set.all()
     contracts = user.contract_set.all()
     return render(request, 'obligarcy/profile.html',
-        {'contracts':contracts, 'posts':posts})
+        {'contracts': contracts, 'posts': posts})
      # {'user': user, 'posts': posts}
 
 
+def show_prof(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    posts = user.submission_set.all()
+    contracts = user.contract_set.all()
+    return render(request, 'obligarcy/profile.html',
+        {'contracts': contracts, 'posts': posts, 'user': user})
+
+
+##########################
+# Submission Views
+##########################
 def show_sub(request, submission_id):
     template = 'obligarcy/submission.html'
     submission = get_object_or_404(Submission, id=submission_id)
@@ -113,7 +120,8 @@ def show_sub(request, submission_id):
     word_count = len(submission.body.split())
     for c in contracts:
         contract = c
-    return render(request, template, {'submission': submission, 'author':author, 'contract':contract, 'word_count':word_count})
+    return render(request, template, {'submission': submission,
+         'author':author, 'contract':contract, 'word_count':word_count})
 
 
 def submit(request, contract_id):
@@ -132,30 +140,33 @@ def submit(request, contract_id):
             # Add line_count
             print((c))
             return render(request, 'obligarcy/submission.html',
-                {'submission': new_sub, 'contract': c, 'word_count':word_count})
+                {'submission': new_sub, 'contract': c,
+                     'word_count': word_count})
     else:
         form = SubForm()
         contract_id = contract_id
-    return render(request, 'obligarcy/submit.html', {'form': form, 'contract_id':contract_id})
+    return render(request, 'obligarcy/submit.html', {'form': form,
+         'contract_id':contract_id})
 
 
-# ALL submissions by profile
-# ALL submissions by contract
-
-
+##########################
+# Contract Views
+##########################
 def show_con(request, contract_id):
     contract = get_object_or_404(Contract, id=contract_id)
     signees = contract.users.all()
     submissions = contract.submissions.all()
-    return render(request, 'obligarcy/contract.html', {'contract': contract, 'signees':signees, 'submissions':submissions})
+    #deadline_list = pickle.load(contract.deadline_list)
+    #print((type(deadline_list)))
+    print((contract.deadline_list))
+    return render(request, 'obligarcy/contract.html', {'contract': contract,
+    'signees': signees, 'submissions': submissions})
 
 
 def challenge(request):
     if request.method == 'POST':
         print('is post')
         contract_form = ContractForm(data=request.POST)
-        # print((request.POST['first_signee'])) #Prints user.id
-        #contract_signee_form = ContractSigneeForm(data=request.POST)
         if contract_form.is_valid():
             print('Valid Form')
             contract = contract_form.save()
@@ -164,11 +175,16 @@ def challenge(request):
             u2 = User.objects.get(id=request.POST['second_signee'])
             u1.contract_set.add(contract)
             u2.contract_set.add(contract)
+            deadline_list = pd.date_range(contract.start_date,
+                 contract.end_date, freq=contract.frequency)
+            deadline_list = deadline_list.to_pydatetime()
+            #deadline_pickle = pickle.dump(deadline_list)
+            contract.deadline_list = deadline_list
             contract.save()
             signees = contract.users.all()
-            #print((signees[0].username))
+            print((contract.deadline_list))
             return render(request, 'obligarcy/contract.html',
-                {'contract': contract, 'signees':signees})
+                {'contract': contract, 'signees': signees})
         else:
             print((contract_form.errors))
     contract_form = ContractForm()
@@ -176,13 +192,14 @@ def challenge(request):
     return render(request, 'obligarcy/challenge.html',
             {'contract_form': contract_form})
 
-# Create User
-# Create Submission
-# Create Contract
+##########################
+# Combo Views
+##########################
 
 def firehose(request):
     contracts = Contract.objects.all()
     users = User.objects.all()
     submissions = Submission.objects.all()
-    return render(request, 'obligarcy/firehose.html', {'contracts': contracts, 'users':users ,'submissions':submissions})
+    return render(request, 'obligarcy/firehose.html', {'contracts': contracts,
+         'users':users ,'submissions':submissions})
 

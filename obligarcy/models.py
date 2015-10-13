@@ -16,6 +16,10 @@ class Contract(models.Model):
     body = models.CharField(max_length=200)
     start_date = models.DateTimeField('start date')
     end_date = models.DateTimeField('end date')
+    frequency = models.CharField(max_length=2, default='O')
+    deadline_list = models.CharField(max_length=3000, default='')
+    deadline_has_past = models.BooleanField(default=False)
+
     users = models.ManyToManyField(User)
     submissions = models.ManyToManyField(Submission)
     #deadline_has_past = models.BooleanField(False)
