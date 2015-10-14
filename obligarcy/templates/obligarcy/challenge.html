@@ -1,20 +1,91 @@
 {% extends "obligarcy/base.html" %}
-
 {% block content %}
+
+
+        <form id="contract_form" method="POST" class='form-inline' action="/challenge/">
+        {% csrf_token %}
     <div class='row'>
       <div class='col-md-6'>
-              <form id="contract_form" method="POST" action="/challenge/">
+    {{ contract_form.non_field_errors }}
+    
+    
+    <div class="form-group">
+        {{ contract_form.body.errors }}
+        <label for="{{ contract_form.body.id_for_label }}">Contract text:</label>
+        {{ contract_form.body }}
+    </div>
 
-            {% csrf_token %}
 
-            {{ contract_form.as_p }}
+      </div><!-- Col-->
+      <div class='col-md-3'>                  
+      <label for="{{ contract_form.start_date.id_for_label }}">Contract starts:</label>
+        <div class="input-group">
+                  {{ contract_form.start_date.errors }}
+                  {{ contract_form.start_date }}
+          <span class="input-group-addon" >
+            <span class="glyphicon glyphicon-calendar"></span>
+          </span>
+        </div> 
+        <label for="{{ contract_form.end_date.id_for_label }}">Contract ends:</label>
+        <div class="input-group">
+            {{ contract_form.end_date.errors }}
+            {{ contract_form.end_date }}
+          <span class="input-group-addon">
+            <span class="glyphicon glyphicon-calendar"></span>
+          </span>
+
+        </div> 
+        <div class="fieldWrapper">
+            {{ contract_form.frequency.errors }}
+            <label for="{{ contract_form.frequency.id_for_label }}">Frequency:</label>
+            {{ contract_form.frequency }}
+        </div>       
+      </div> <!-- Col-->
+    </div><!-- Row-->
+    <hr>
+    <div class='row'>
+      <div class='col-md-6'>
+    <div class="form-group">
+        {{ contract_form.first_signee.errors }}
+        <label style='display:none' for="{{ contract_form.first_signee.id_for_label }}">Signee:</label>
+        {{ contract_form.first_signee }}
+    </div>
+    <div class="form-group">
+        {{ contract_form.second_signee.errors }}
+        <label style='display:none' for="{{ contract_form.second_signee.id_for_label }}">Signee:</label>
+        {{ contract_form.second_signee }}
+    </div>
+    <div class="form-group">
+        {{ contract_form.third_signee.errors }}
+        <label style='display:none' for="{{ contract_form.third_signee.id_for_label }}">Signee:</label>
+        {{ contract_form.third_signee }}
+    </div>
+    <div class="form-group">
+        {{ contract_form.fourth_signee.errors }}
+        <label style='display:none' for="{{ contract_form.fourth_signee.id_for_label }}">Signee:</label>
+        {{ contract_form.fourth_signee }}
+    </div>
+    <br><br>
+        <input class='btn btn-default' type="submit" name="submit" value="Sign" />      
+      </div> <!-- Col-->
+    </div>
+        </form>
+
+
+
                          <!-- Text: <textarea rows="4" cols="50" type="text" name="body" value="" size="500">
             </textarea>
+            {{ contract_form.as_p }}
             <input type='date' name='end_date'>
            Provide a button to click to submit the form. -->
-        <input class='btn btn-default' type="submit" name="submit" value="Issue Challenge" />
-        </form>
-      </div>
-    </div>
+
+
+<script>
+
+$(document).ready(function() {
+    document.getElementById("id_end_date").className += " form-control"
+    document.getElementById("id_start_date").className += " form-control"
+});
+</script>
 
 {% endblock content %}

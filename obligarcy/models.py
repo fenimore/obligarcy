@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 #from django.utils import timezone
-
+from picklefield.fields import PickledObjectField
 
 class Submission(models.Model):
     body = models.CharField(max_length=200)
@@ -19,7 +19,6 @@ class Contract(models.Model):
     frequency = models.CharField(max_length=2, default='O')
     deadline_list = models.CharField(max_length=3000, default='')
     deadline_has_past = models.BooleanField(default=False)
-
     users = models.ManyToManyField(User)
     submissions = models.ManyToManyField(Submission)
     #deadline_has_past = models.BooleanField(False)
@@ -27,6 +26,11 @@ class Contract(models.Model):
     def __str__(self):              # __unicode__ or str
         return self.body
 
+class Deadline(models.Model):
+    deadline = models.DateTimeField('deadline')
+    contract = models.ForeignKey(Contract)
+    def __str__(self):              # __unicode__ or str
+        return self.deadline
 
 class UserProfile(models.Model):
     # This line is required. Links UserProfile to a User model instance.

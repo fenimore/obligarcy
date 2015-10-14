@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Submission, Contract
+from .models import Submission, Contract, Deadline
 from django.contrib.auth.models import User
 from django.contrib.sessions.models import Session
 
@@ -12,6 +12,10 @@ from django.contrib.auth import authenticate, login, logout
 import pandas as pd
 from datetime import datetime
 import pickle
+import json
+
+#from pytagcloud import create_tag_image, make_tags
+#from pytagcloud.lang.counter import get_tag_counts
 
 def index(request):
     return render(request, 'obligarcy/index.html')
@@ -156,9 +160,9 @@ def show_con(request, contract_id):
     contract = get_object_or_404(Contract, id=contract_id)
     signees = contract.users.all()
     submissions = contract.submissions.all()
-    #deadline_list = pickle.load(contract.deadline_list)
+    deadline_list = json.loads(contract.deadline_list)
     #print((type(deadline_list)))
-    print((contract.deadline_list))
+    print((deadline_list))
     return render(request, 'obligarcy/contract.html', {'contract': contract,
     'signees': signees, 'submissions': submissions})
 
@@ -172,17 +176,25 @@ def challenge(request):
             contract = contract_form.save()
             contract.save()
             u1 = User.objects.get(id=request.POST['first_signee'])
-            u2 = User.objects.get(id=request.POST['second_signee'])
+            if request.POST['second_signee']:
+                u2 = User.objects.get(id=request.POST['second_signee'])
+                u2.contract_set.add(contract)
             u1.contract_set.add(contract)
-            u2.contract_set.add(contract)
             deadline_list = pd.date_range(contract.start_date,
                  contract.end_date, freq=contract.frequency)
             deadline_list = deadline_list.to_pydatetime()
+            for deadline in deadline_list:
+                #deadline = str(deadline)
+                d = Deadline(deadline)
+                #contract.deadline_set.add(d)
+                print((d.deadline))
+                #print((d.contract))
+                d.save()
             #deadline_pickle = pickle.dump(deadline_list)
+            #deadline_json = json.dumps(deadline_list)
             contract.deadline_list = deadline_list
             contract.save()
             signees = contract.users.all()
-            print((contract.deadline_list))
             return render(request, 'obligarcy/contract.html',
                 {'contract': contract, 'signees': signees})
         else:
