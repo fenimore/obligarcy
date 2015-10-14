@@ -176,27 +176,28 @@ def challenge(request):
             contract = contract_form.save()
             contract.save()
             u1 = User.objects.get(id=request.POST['first_signee'])
+            u1.contract_set.add(contract)
             if request.POST['second_signee']:
                 u2 = User.objects.get(id=request.POST['second_signee'])
                 u2.contract_set.add(contract)
-            u1.contract_set.add(contract)
+            if request.POST['third_signee']:
+                u3 = User.objects.get(id=request.POST['third_signee'])
+                u3.contract_set.add(contract)
             deadline_list = pd.date_range(contract.start_date,
                  contract.end_date, freq=contract.frequency)
             deadline_list = deadline_list.to_pydatetime()
             for deadline in deadline_list:
-                #deadline = str(deadline)
-                d = Deadline(deadline)
-                #contract.deadline_set.add(d)
-                print((d.deadline))
-                #print((d.contract))
+                deadline = str(deadline)
+                d = Deadline(deadline=deadline, contract_id=contract.id)
                 d.save()
             #deadline_pickle = pickle.dump(deadline_list)
             #deadline_json = json.dumps(deadline_list)
             contract.deadline_list = deadline_list
             contract.save()
             signees = contract.users.all()
+            deadlines = contract.deadline_set.all()
             return render(request, 'obligarcy/contract.html',
-                {'contract': contract, 'signees': signees})
+                {'contract': contract, 'signees': signees, 'deadlines':deadlines})
         else:
             print((contract_form.errors))
     contract_form = ContractForm()

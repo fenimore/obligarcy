@@ -1,13 +1,26 @@
 from django.db import models
 from django.contrib.auth.models import User
 #from django.utils import timezone
-from picklefield.fields import PickledObjectField
+
+
+class UserProfile(models.Model):
+    # This line is required. Links UserProfile to a User model instance.
+    user = models.OneToOneField(User)
+
+    # The additional attributes we wish to include.
+    website = models.URLField(blank=True)
+    picture = models.ImageField(upload_to='profile_images', blank=True)
+
+    def str(self):
+        return self.user.username
+
 
 class Submission(models.Model):
     body = models.CharField(max_length=200)
     pub_date = models.DateTimeField('submitted')
     user = models.ForeignKey(User)
     # Word Count
+
     def __str__(self):
         return self.body
 
@@ -26,19 +39,12 @@ class Contract(models.Model):
     def __str__(self):              # __unicode__ or str
         return self.body
 
+
 class Deadline(models.Model):
     deadline = models.DateTimeField('deadline')
+    submission = models.ForeignKey(Submission)
     contract = models.ForeignKey(Contract)
+
     def __str__(self):              # __unicode__ or str
         return self.deadline
 
-class UserProfile(models.Model):
-    # This line is required. Links UserProfile to a User model instance.
-    user = models.OneToOneField(User)
-
-    # The additional attributes we wish to include.
-    website = models.URLField(blank=True)
-    picture = models.ImageField(upload_to='profile_images', blank=True)
-
-    def str(self):
-        return self.user.username
