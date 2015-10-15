@@ -24,7 +24,9 @@ Text
 <br>
 Submit for deadline:
 {{ form.deadline }}
-
+{% for deadline in deadlines %}
+{{ deadline.deadline }}
+{% endfor %}
 <input type="submit" value="submit" class='btn btn-default'/>
 </form>
 </div></div>

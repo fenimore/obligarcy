@@ -6,8 +6,9 @@
 {% if contracts %}
     <ul>
     {% for contract in contracts %}
-        <li><a href="/contract/{{ contract.id }}/">{{ contract.body }}</a></li>
+        <li><a href="/contract/{{ contract.id }}/">{{ contract.preamble }}</a></li>
         {{ contract.end_date}}
+        <br>
     {% endfor %}
     </ul>
 {% else %}
@@ -33,7 +34,8 @@
     <ul>
     {% for submission in submissions %}
         <li><a href="/submission/{{ submission.id }}/">{{ submission.body }}</a></li>
-        {{ post.contract }} @ {{ submission.pub_date}}
+        {{ submission.contract.preamble }} @ {{ submission.pub_date}} for {{submission.deadline.deadline }}
+<br>
     {% endfor %}
     </ul>
 {% else %}

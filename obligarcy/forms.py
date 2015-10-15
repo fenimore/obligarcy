@@ -15,19 +15,24 @@ class UserForm(forms.ModelForm):
         {'class': 'form-control'}))
     username = forms.CharField(widget=forms.TextInput(attrs=
         {'class': 'form-control'}))
+    email = forms.CharField(widget=forms.TextInput(attrs=
+            {'class': 'form-control'}))
 
     class Meta:
         model = User
-        fields = ['username', 'password']
+        fields = ['username', 'password', 'email']
 
 
 class UserProfileForm(forms.ModelForm):
     picture = forms.FileInput(attrs=
         {'class': 'form-control'})
-
+    location = forms.CharField(widget=forms.TextInput(attrs=
+        {'class': 'form-control'}))
+    bio = forms.CharField(widget=forms.TextInput(attrs=
+            {'class': 'form-control'}))
     class Meta:
         model = UserProfile
-        fields = ['picture']
+        fields = ['picture', 'location', 'bio']
 
 
 class SubForm(forms.Form):

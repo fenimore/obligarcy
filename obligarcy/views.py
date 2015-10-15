@@ -27,20 +27,24 @@ def register(request):
     registered = False
     if request.method == 'POST':
         user_form = UserForm(data=request.POST)
-        profile_form = UserProfileForm(data=request.POST)
-        if user_form.is_valid() and profile_form.is_valid():
+        #profile_form = UserProfileForm(data=request.POST)
+        if user_form.is_valid():
+            print(('yup'))
+        if user_form.is_valid():# and profile_form.is_valid()
             user = user_form.save()
             user.set_password(user.password)
             user.save()
-            profile = profile_form.save(commit=False)
-            profile.user = user
-            if 'picture' in request.FILES:
-                profile.picture = request.FILES['picture']
-            profile.save()
+            #profile = profile_form.save(commit=False)
+            #profile.user = user
+            #profile.email = request.POST['email']
+            #profile.location = request.POST['location']
+            #if 'picture' in request.FILES:
+            #    profile.picture = request.FILES['picture']
+            #profile.save()
             registered = True
             return HttpResponseRedirect('/login/')
         else:
-            print((user_form.errors, profile_form.errors))
+            print((user_form.errors))#, profile_form.errors
     user_form = UserForm()
     profile_form = UserProfileForm()
     return render(request, 'obligarcy/register.html',
@@ -121,10 +125,12 @@ def show_sub(request, submission_id):
     author = submission.user
     contracts = submission.contract_set.all()
     word_count = len(submission.body.split())
+    deadline = submission.deadline_set.all().first()
     for c in contracts:
         contract = c
     return render(request, template, {'submission': submission,
-         'author':author, 'contract':contract, 'word_count':word_count})
+         'author':author, 'contract':contract, 'word_count':word_count,
+          'deadline':deadline})
 
 
 def submit(request, contract_id):
@@ -150,7 +156,7 @@ def submit(request, contract_id):
         word_count = len(new_sub.body.split())
         return render(request, 'obligarcy/submission.html',
                     {'submission': new_sub, 'contract': c,
-                         'word_count': word_count, 'deadlines': d})
+                         'word_count': word_count, 'deadline': d})
         #else:
         #    print(('form not valid?'))
         #    return render(request, 'obligarcy/submit.html', {'error_message':'something went wrong'})
@@ -162,12 +168,14 @@ def submit(request, contract_id):
         dls = c.deadline_set.all()
         deadlines = []
         for deadline in dls:
-            if deadline.submission == None:
-                deadlines.append(deadline)
+            if not deadline.submission:
+                deadlines.append(deadline) # This won't work until I can get the form to work
         return render(request, 'obligarcy/submit.html', {'form': form,
          'contract_id': contract_id, 'deadlines': deadlines})
          #'form': form,
-
+#TODO: get form to work with deadlines so that I can prune the completed deadlines
+#TODO: and so that I can store the data as DateField, so it displays better
+#TODO: Change DateTimeField to DateField
 
 ##########################
 # Contract Views
@@ -197,16 +205,22 @@ def challenge(request):
             if request.POST['third_signee']:
                 u3 = User.objects.get(id=request.POST['third_signee'])
                 u3.contract_set.add(contract)
-            deadline_list = pd.date_range(contract.start_date,
-                 contract.end_date, freq=contract.frequency)
-            deadline_list = deadline_list.to_pydatetime()
-            for deadline in deadline_list:
-                deadline = str(deadline)
+            if request.POST['fourth_signee']:
+                u4 = User.objects.get(id=request.POST['fourth_signee'])
+                u4.contract_set.add(contract)
+            if contract.frequency == 'O':
+                deadline_list = []
+                deadline = str(request.POST['end_date'])
                 d = Deadline(deadline=deadline, contract_id=contract.id)
                 d.save()
-            #deadline_pickle = pickle.dump(deadline_list)
-            #deadline_json = json.dumps(deadline_list)
-            #contract.deadline_list = deadline_list
+            else:
+                deadline_list = pd.date_range(contract.start_date,
+                 contract.end_date, freq=contract.frequency)
+                deadline_list = deadline_list.to_pydatetime()
+                for deadline in deadline_list:
+                    deadline = str(deadline) # I have to string it, else it won't work with forms?
+                    d = Deadline(deadline=deadline, contract_id=contract.id)
+                    d.save()
             contract.save()
             signees = contract.users.all()
             deadlines = contract.deadline_set.all()

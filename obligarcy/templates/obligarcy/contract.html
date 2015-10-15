@@ -17,11 +17,13 @@
     <div class="panel panel-default">
       <div class="panel-body">
         Frequency: {{ contract.frequency }}<br>
+        <div id='deadline_list'>
         {% for deadline in deadlines %}
 
         {{deadline.deadline}}<br>
 
         {% endfor %}<br>
+        </div>
         {% if user.is_authenticated %}<br>
         <a class='btn btn-default' href=/submit/{{ contract.id }}>Submit a text</a>
         {% endif %}<br>
