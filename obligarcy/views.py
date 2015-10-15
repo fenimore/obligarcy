@@ -156,7 +156,7 @@ def submit(request, contract_id):
         word_count = len(new_sub.body.split())
         return render(request, 'obligarcy/submission.html',
                     {'submission': new_sub, 'contract': c,
-                         'word_count': word_count, 'deadline': d})
+                         'word_count': word_count})
         #else:
         #    print(('form not valid?'))
         #    return render(request, 'obligarcy/submit.html', {'error_message':'something went wrong'})
@@ -197,9 +197,9 @@ def challenge(request):
             print('Valid Form')
             contract = contract_form.save()
             contract.save()
-            u1 = User.objects.get(id=request.POST['first_signee'])
-            u1.contract_set.add(contract)
-            if request.POST['second_signee']:
+            u1 = User.objects.get(id=request.POST['first_signee']) # Set the
+            u1.contract_set.add(contract)   # default to sessions.users
+            if request.POST['second_signee']:# and maybe make it unchangeable?
                 u2 = User.objects.get(id=request.POST['second_signee'])
                 u2.contract_set.add(contract)
             if request.POST['third_signee']:
@@ -208,7 +208,7 @@ def challenge(request):
             if request.POST['fourth_signee']:
                 u4 = User.objects.get(id=request.POST['fourth_signee'])
                 u4.contract_set.add(contract)
-            if contract.frequency == 'O':
+            if contract.frequency == 'O': # Once off
                 deadline_list = []
                 deadline = str(request.POST['end_date'])
                 d = Deadline(deadline=deadline, contract_id=contract.id)
@@ -218,7 +218,7 @@ def challenge(request):
                  contract.end_date, freq=contract.frequency)
                 deadline_list = deadline_list.to_pydatetime()
                 for deadline in deadline_list:
-                    deadline = str(deadline) # I have to string it, else it won't work with forms?
+                    deadline = deadline # Should I str this? If i must..?
                     d = Deadline(deadline=deadline, contract_id=contract.id)
                     d.save()
             contract.save()

@@ -51,7 +51,7 @@ class Contract(models.Model):
 
 
 class Deadline(models.Model):
-    deadline = models.CharField('deadline', max_length=30) #DateTimeField makes the sub form not accept
+    deadline = models.DateTimeField('deadline') #DateTimeField makes the sub form not accept
     submission = models.ForeignKey(Submission, null=True)
     contract = models.ForeignKey(Contract)
 

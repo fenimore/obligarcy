@@ -40,12 +40,21 @@ class SubForm(forms.Form):
     # requires some queryset
     body = forms.CharField(widget=forms.Textarea(attrs=
         {'class': 'form-control','rows':'18'}))
-    deadline = forms.ModelChoiceField(queryset=Deadline.objects.none())
+    deadline = forms.ChoiceField(choices='[(m,m)]')
 
     def __init__(self, contract_id):
         super(SubForm, self).__init__()
-        self.fields['deadline'].queryset = Deadline.objects.filter(contract=contract_id) # Somehow this works
-
+        dls = Deadline.objects.filter(contract=contract_id)
+        deadlines = []
+        for deadline in dls:
+            if not deadline.submission:
+                deadlines.append(deadline)
+        deadline_tups = []
+        for deadline in deadlines:
+            tup = (deadline.id, deadline.deadline.date()) # On the date is relevant,
+            deadline_tups.append(tup)                     # but its still good to keep things
+        self.fields['deadline'].choices = deadline_tups  # in DateTime, stay consistent.
+        #can believe that worked
 
 class ContractForm(forms.ModelForm):
 # https://docs.djangoproject.com/en/dev/topics/forms/#looping-over-the-form-s-fields
@@ -75,9 +84,9 @@ class ContractForm(forms.ModelForm):
     frequency = forms.CharField(max_length=20, widget=forms.Select(
         attrs={'class': 'form-control'}, choices=FREQ))
     #http://getbootstrap.com/css/#forms-control-readonly
-    #<input class="form-control" type="text" placeholder="…" readonly>
-    first_signee = forms.ModelChoiceField(queryset=User.objects.all(),
-        widget=forms.Select(attrs={'class': 'form-control'}))
+    #<input class="form-control" type="text" placeholder="…" readonly> 
+    first_signee = forms.ModelChoiceField(queryset=User.objects.all(), # in __init__ pass user_id, and set that to default
+        widget=forms.Select(attrs={'class': 'form-control'}))           # then close off the form
     second_signee = forms.ModelChoiceField(queryset=User.objects.all(),
         required=False, widget=forms.Select(attrs={'class': 'form-control'}))
     third_signee = forms.ModelChoiceField(queryset=User.objects.all(),
@@ -90,3 +99,13 @@ class ContractForm(forms.ModelForm):
     class Meta:
         model = Contract
         fields = ['preamble','conditions','penalties', 'end_date', 'start_date', 'frequency']
+
+
+
+"""
+    deadline = forms.ModelChoiceField(queryset=Deadline.objects.none())
+
+    def __init__(self, contract_id):
+        super(SubForm, self).__init__()
+        self.fields['deadline'].queryset = Deadline.objects.filter(contract=contract_id) # Somehow this works
+"""

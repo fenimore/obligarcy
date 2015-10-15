@@ -85,16 +85,20 @@ $(document).ready(function() {
     <div class="container">
       <div class="row" style="padding-top:60px">
         <div class="col-sm-3 col-md-2 well" style='margin-left:10px;margin-right:5px'>
-            {% if user.is_authenticated %}
-            <h4>{{ user.username }}<h4>
           <ul>
-            <li><a href="/profile/">Profile</a></li>
-            <li><a href="/challenge">New Contract</a></li>
+            {% if user.is_authenticated %}
+            <li><a href="/profile/"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{ user.username }} Profile</a></li>
+            <li><a href="/challenge"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> New Contract</a></li>
             <hr>
             <li><a href="/logout">Logout</a></li>
             {% else %}
             <li><a href="/register/">Register Here</a></li>
             <li><a href="/login/">Login</a></li>
+              {% for contract in user.contract_set.all%}
+                {% for deadline in contract.deadline_set.all %}
+              deadline.deadline
+                {% endfor %}
+              {% endfor  %}
             {% endif %}
           </ul>
                 {% block side_block %}{% endblock %}

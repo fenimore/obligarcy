@@ -4,7 +4,7 @@
 {% load staticfiles %}
 {% if user.is_authenticated %}
 <div class='row'>
-  <div class='col-md-4'>
+  <div>
     <div class="media">
       <div class="media-left">
         <a href="/profile/">
@@ -19,7 +19,11 @@
         <h4 class="media-heading">{{ user.username }}</h4>
       </div>
     </div>
-    <hr>
+  </div>
+</div>
+<hr>
+<div class='row'>
+  <div class='col-md-5'>
 
     <h3>Submissions</h3>
     {% if posts %}
