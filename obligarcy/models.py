@@ -24,6 +24,7 @@ class UserProfile(models.Model):
 
 
 class Submission(models.Model):
+    id = models.CharField(max_length=6, primary_key=True, default=pkgen, unique=True)
     body = models.CharField(max_length=200)
     pub_date = models.DateTimeField('submitted')
     user = models.ForeignKey(User)
