@@ -1,37 +1,52 @@
 {% extends "obligarcy/base.html" %}
 
 {% block content %}
+<div class='row'>
+  <div class='col-md-6'>
+    {{ contract.preamble }}<br>
+    {{ contract.conditions }}<br>
+    {{ contract.penalties }}<br><br>
+    {% for signee in signees %}
 
-{{ contract.body }}
+    Signee: <a href="/user/{{ signee.id }}/">{{signee.username}}</a><br>
+
+    {% endfor %}
+<br>    Contract ends: {{ contract.end_date }}<br>
+  </div>
+  <div class='col-md-3'>
+    <div class="panel panel-default">
+      <div class="panel-body">
+        Frequency: {{ contract.frequency }}<br>
+        {% for deadline in deadlines %}
+
+        {{deadline.deadline}}<br>
+
+        {% endfor %}<br>
+        {% if user.is_authenticated %}<br>
+        <a class='btn btn-default' href=/submit/{{ contract.id }}>Submit a text</a>
+        {% endif %}<br>
+        <hr>
+
+            <h4>Submissions</h4>
+            {% if submissions %}
+                <ul>
+                {% for submission in submissions %}
+                    <li><a href="/submission/{{ submission.id }}">{{ submission.body }}</a></li>
+                    {{ submission.user }} @ {{ submission.pub_date}}
+                {% endfor %}
+                </ul>
+            {% else %}
+                <p>This Contract has no submissions</p>
+            {% endif %}
+
+        {% endblock content %}
+      </div>
+    </div>
+
+
+  </div>
+</div>
+
+
+
 <br><br>
-Deadline: {{ contract.end_date }}<br>
-Frequency: {{ contract.frequency }}<br>
-Deadlines:<br>
-{% for deadline in deadlines %}
-
-{{deadline.deadline}}<br>
-
-{% endfor %}
-{% for signee in signees %}
-
-Signee: <a href="/user/{{ signee.id }}/">{{signee.username}}</a><br>
-
-{% endfor %}
-{% if user.is_authenticated %}<br>
-<a class='btn btn-default' href=/submit/{{ contract.id }}>Submit</a>
-{% endif %}
-
-<hr>
-
-    <h3>Submissions</h3>
-    {% if submissions %}
-        <ul>
-        {% for submission in submissions %}
-            <li><a href="/submission/{{ submission.id }}">{{ submission.body }}</a></li>
-            {{ submission.user }} @ {{ submission.pub_date}}
-        {% endfor %}
-        </ul>
-    {% else %}
-        <p>This Contract has no submissions</p>
-    {% endif %}
-{% endblock content %}

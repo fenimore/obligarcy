@@ -4,14 +4,13 @@ from django.contrib.auth.models import User
 from django.contrib.sessions.models import Session
 
 from .forms import UserForm, UserProfileForm
-from .forms import SubForm, ContractForm
+from .forms import ContractForm, SubForm
 from django.utils import timezone
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth import authenticate, login, logout
 
 import pandas as pd
 from datetime import datetime
-import pickle
 import json
 
 #from pytagcloud import create_tag_image, make_tags
@@ -131,26 +130,43 @@ def show_sub(request, submission_id):
 def submit(request, contract_id):
     if request.method == 'POST':
         form = SubForm(request.POST)
-        if form.is_valid():
-            author = User.objects.get(id=request.session['id'])
-            contract = Contract.objects.get(id=contract_id)
-            new_sub = Submission(body=form.cleaned_data['body'],
-                pub_date=timezone.now(), user=author)  # required
-            new_sub.save()
-            new_sub.contract_set.add(contract)
-            new_sub.save()
-            c = new_sub.contract_set.all().first()
-            word_count = len(new_sub.body.split())
-            # Add line_count
-            print((c))
-            return render(request, 'obligarcy/submission.html',
-                {'submission': new_sub, 'contract': c,
-                     'word_count': word_count})
+        #print((form['deadline']))
+        #if form.is_valid():
+        author = User.objects.get(id=request.session['id'])
+        print((author))
+        contract = Contract.objects.get(id=contract_id)
+        print((contract))
+        body = request.POST['body']
+        print((body))
+        new_sub = Submission(body=body, pub_date=timezone.now(), user=author)
+        new_sub.save()
+        new_sub.contract_set.add(contract)
+        new_sub.save()
+        c = new_sub.contract_set.all().first()
+        deadline_id = request.POST['deadline']
+        d = Deadline.objects.get(id=deadline_id)
+        new_sub.deadline_set.add(d)
+        new_sub.save()
+        word_count = len(new_sub.body.split())
+        return render(request, 'obligarcy/submission.html',
+                    {'submission': new_sub, 'contract': c,
+                         'word_count': word_count, 'deadlines': d})
+        #else:
+        #    print(('form not valid?'))
+        #    return render(request, 'obligarcy/submit.html', {'error_message':'something went wrong'})
     else:
-        form = SubForm()
         contract_id = contract_id
-    return render(request, 'obligarcy/submit.html', {'form': form,
-         'contract_id':contract_id})
+        form = SubForm(contract_id)
+        #contract_id = contract_id
+        c = Contract.objects.get(id=contract_id)
+        dls = c.deadline_set.all()
+        deadlines = []
+        for deadline in dls:
+            if deadline.submission == None:
+                deadlines.append(deadline)
+        return render(request, 'obligarcy/submit.html', {'form': form,
+         'contract_id': contract_id, 'deadlines': deadlines})
+         #'form': form,
 
 
 ##########################
@@ -160,11 +176,9 @@ def show_con(request, contract_id):
     contract = get_object_or_404(Contract, id=contract_id)
     signees = contract.users.all()
     submissions = contract.submissions.all()
-    deadline_list = json.loads(contract.deadline_list)
-    #print((type(deadline_list)))
-    print((deadline_list))
+    deadlines = contract.deadline_set.all()
     return render(request, 'obligarcy/contract.html', {'contract': contract,
-    'signees': signees, 'submissions': submissions})
+    'signees': signees, 'submissions': submissions,  'deadlines':deadlines})
 
 
 def challenge(request):
@@ -192,7 +206,7 @@ def challenge(request):
                 d.save()
             #deadline_pickle = pickle.dump(deadline_list)
             #deadline_json = json.dumps(deadline_list)
-            contract.deadline_list = deadline_list
+            #contract.deadline_list = deadline_list
             contract.save()
             signees = contract.users.all()
             deadlines = contract.deadline_set.all()
@@ -215,4 +229,3 @@ def firehose(request):
     submissions = Submission.objects.all()
     return render(request, 'obligarcy/firehose.html', {'contracts': contracts,
          'users':users ,'submissions':submissions})
-

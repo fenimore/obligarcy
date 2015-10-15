@@ -38,7 +38,7 @@
     {% if contracts %}
         <ul>
         {% for contract in contracts %}
-            <li><a href="/contract/{{ contract.id }}/">{{ contract.body }}</a></li>
+            <li><a href="/contract/{{ contract.id }}/">{{ contract.preamble }}</a></li>
             Deadline: {{ contract.end_date}}
         {% endfor %}
         </ul>

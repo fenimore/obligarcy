@@ -16,11 +16,11 @@ urlpatterns = [
     #url(r'^user/$', views.profile, name='profile'),
 
     # ex: /oblicarcy/submissions/5/
-    url(r'^submission/([0-9]+)/$', views.show_sub, name='submission'),
-    url(r'^submit/([0-9]+)/$', views.submit, name='submit'),
+    url(r'^submission/([0-9a-z]+)/$', views.show_sub, name='submission'),
+    url(r'^submit/([0-9a-z]+)/$', views.submit, name='submit'),
 
     # ex: /oblicarcy/contracts/5/
-    url(r'^contract/([0-9]+)/$', views.show_con, name='contract'),
+    url(r'^contract/([0-9a-z]+)/$', views.show_con, name='contract'),
     url(r'^challenge/$', views.challenge, name='challenge'),
 
     # ex: /oblicarcy/login/

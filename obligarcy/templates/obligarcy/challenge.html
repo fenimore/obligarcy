@@ -7,17 +7,33 @@
     <div class='row'>
       <div class='col-md-6'>
     {{ contract_form.non_field_errors }}
-    
-    
+
+
     <div class="form-group">
-        {{ contract_form.body.errors }}
-        <label for="{{ contract_form.body.id_for_label }}">Contract text:</label>
-        {{ contract_form.body }}
+        {{ contract_form.preamble.errors }}
+        <label style='display:none'  for="{{ contract_form.preamble.id_for_label }}">Contract text:</label>
+        {{ contract_form.preamble }}
+    </div>
+    <div class="form-group">
+        {{ contract_form.conditions.errors }}
+        <label style='display:none'  for="{{ contract_form.conditions.id_for_label }}">Contract text:</label>
+        {{ contract_form.conditions }}
+    </div>
+    <div class="form-group">
+        {{ contract_form.penalties.errors }}
+        <label style='display:none'  for="{{ contract_form.penalties.id_for_label }}">Contract text:</label>
+        {{ contract_form.penalties }}
     </div>
 
 
+
+    {{ contract.preamble }}
+    {{ contract.conditions }}
+    {{ contract.penalties }}
+
+
       </div><!-- Col-->
-      <div class='col-md-3'>                  
+      <div class='col-md-3'>
       <label for="{{ contract_form.start_date.id_for_label }}">Contract starts:</label>
         <div class="input-group">
                   {{ contract_form.start_date.errors }}
@@ -25,7 +41,7 @@
           <span class="input-group-addon" >
             <span class="glyphicon glyphicon-calendar"></span>
           </span>
-        </div> 
+        </div>
         <label for="{{ contract_form.end_date.id_for_label }}">Contract ends:</label>
         <div class="input-group">
             {{ contract_form.end_date.errors }}
@@ -34,12 +50,12 @@
             <span class="glyphicon glyphicon-calendar"></span>
           </span>
 
-        </div> 
+        </div>
         <div class="fieldWrapper">
             {{ contract_form.frequency.errors }}
             <label for="{{ contract_form.frequency.id_for_label }}">Frequency:</label>
             {{ contract_form.frequency }}
-        </div>       
+        </div>
       </div> <!-- Col-->
     </div><!-- Row-->
     <hr>
@@ -66,7 +82,7 @@
         {{ contract_form.fourth_signee }}
     </div>
     <br><br>
-        <input class='btn btn-default' type="submit" name="submit" value="Sign" />      
+        <input class='btn btn-default' type="submit" name="submit" value="Sign" />
       </div> <!-- Col-->
     </div>
         </form>

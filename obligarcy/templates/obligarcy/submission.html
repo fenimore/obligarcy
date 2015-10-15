@@ -1,13 +1,21 @@
 {% extends "obligarcy/base.html" %}
 
 {% block content %}
-
-Author: <a href="/user/{{ author.id }}/">{{ author }}</a> <br>
-Text : {{ submission.body }}<br>
-Word Count: {{ word_count }} <br>
-Submission Date : {{ submission.pub_date }}<br>
-Author : {{ submission.user.username }}<br>
-Contract Body : {{ contract.body }}<br>
-Contract id : {{ contract.id }}
+<div class='row'>
+  <div class='col-md-6'>
+    Text : {{ submission.body }}<br><br>
+    Word Count: {{ word_count }} <br>
+    Author: <a href="/user/{{ submission.user.id }}/">{{ submission.user.username }}</a> <br>
+    Submission Date : {{ submission.pub_date }}<br>
+  </div>
+  <div class='col-md-3'>
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <a href='/contract/{{contract.id}}' >Conditions of production:</a> {{ contract.conditions }}<br><br>
+        Submitted for {{ deadline.deadline }} deadline.<br>
+      </div>
+    </div>
+  </div>
+</div>
 
 {% endblock content %}

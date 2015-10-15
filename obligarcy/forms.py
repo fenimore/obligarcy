@@ -2,7 +2,7 @@
 from functools import partial
 from django import forms
 from django.forms.extras.widgets import SelectDateWidget
-from .models import Submission, Contract, UserProfile
+from .models import Submission, Contract, UserProfile, Deadline
 from django.contrib.auth.models import User
 
 # http://stackoverflow.com/questions/20700185/how-to-use-datepicker-in-django
@@ -30,13 +30,16 @@ class UserProfileForm(forms.ModelForm):
         fields = ['picture']
 
 
-class SubForm(forms.ModelForm):
+class SubForm(forms.Form):
+    # here we use a dummy `queryset`, because ModelChoiceField
+    # requires some queryset
     body = forms.CharField(widget=forms.Textarea(attrs=
-        {'class': 'form-control'}))
+        {'class': 'form-control','rows':'18'}))
+    deadline = forms.ModelChoiceField(queryset=Deadline.objects.none())
 
-    class Meta:
-        model = Submission
-        fields = ['body']
+    def __init__(self, contract_id):
+        super(SubForm, self).__init__()
+        self.fields['deadline'].queryset = Deadline.objects.filter(contract=contract_id) # Somehow this works
 
 
 class ContractForm(forms.ModelForm):
@@ -50,15 +53,24 @@ class ContractForm(forms.ModelForm):
         ('Y', 'Yearly'),
     )
 
-    body = forms.CharField(max_length=2000,
+    preamble = forms.CharField(max_length=150,
         widget=forms.Textarea(attrs={'class': 'form-control',
-            'placeholder':'The undersigned agree to the following terms on pain of ...', 'rows':'18'}))
+'placeholder': 'We the undersigned agree to this contract ...',
+         'rows': '3'}))
+    conditions = forms.CharField(max_length=400,
+        widget=forms.Textarea(attrs={'class': 'form-control',
+'placeholder': 'I must submit a movie review no less than 200 words every ...',
+         'rows': '7'}))
+    penalties = forms.CharField(max_length=200,
+        widget=forms.Textarea(attrs={'class': 'form-control',
+'placeholder': 'I agree to the aforementioned conditions on pain of ...',
+         'rows': '5'}))
     end_date = forms.DateField(widget=DateInput())
     start_date = forms.DateField(widget=DateInput())
     frequency = forms.CharField(max_length=20, widget=forms.Select(
         attrs={'class': 'form-control'}, choices=FREQ))
     #http://getbootstrap.com/css/#forms-control-readonly
-    #<input class="form-control" type="text" placeholder="Readonly input here…" readonly>
+    #<input class="form-control" type="text" placeholder="…" readonly>
     first_signee = forms.ModelChoiceField(queryset=User.objects.all(),
         widget=forms.Select(attrs={'class': 'form-control'}))
     second_signee = forms.ModelChoiceField(queryset=User.objects.all(),
@@ -72,4 +84,4 @@ class ContractForm(forms.ModelForm):
 
     class Meta:
         model = Contract
-        fields = ['body', 'end_date', 'start_date', 'frequency']
+        fields = ['preamble','conditions','penalties', 'end_date', 'start_date', 'frequency']
