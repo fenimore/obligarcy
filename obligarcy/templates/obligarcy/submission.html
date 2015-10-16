@@ -3,16 +3,16 @@
 {% block content %}
 <div class='row'>
   <div class='col-md-6'>
-    Text : {{ submission.body }}<br><br>
-    Word Count: {{ word_count }} <br>
-    Author: <a href="/user/{{ submission.user.id }}/">{{ submission.user.username }}</a> <br>
-    Submission Date : {{ submission.pub_date }}<br>
+    {{ submission.body }}<br><br>
   </div>
   <div class='col-md-3'>
     <div class="panel panel-default">
       <div class="panel-body">
         <a href='/contract/{{contract.id}}' >Conditions of production:</a> {{ contract.conditions }}<br><br>
         Submitted for {{ deadline.deadline }} deadline.<br>
+        Word Count: {{ word_count }} <br>
+        Author: <a href="/user/{{ submission.user.id }}/">{{ submission.user.username }}</a> <br>
+        Submission Date : {{ submission.pub_date }}<br>
       </div>
     </div>
   </div>

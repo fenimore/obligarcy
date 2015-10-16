@@ -6,6 +6,7 @@ from django.contrib.sessions.models import Session
 from .forms import UserForm, UserProfileForm
 from .forms import ContractForm, SubForm
 from django.utils import timezone
+from datetime import datetime, timedelta
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth import authenticate, login, logout
 
@@ -167,9 +168,13 @@ def submit(request, contract_id):
         c = Contract.objects.get(id=contract_id)
         dls = c.deadline_set.all()
         deadlines = []
+        author = User.objects.get(id=request.session['id'])
         for deadline in dls:
             if not deadline.submission:
                 deadlines.append(deadline) # This won't work until I can get the form to work
+            else:
+                if deadline.submission.user != author:
+                    deadlines.append(deadline)
         return render(request, 'obligarcy/submit.html', {'form': form,
          'contract_id': contract_id, 'deadlines': deadlines})
          #'form': form,
@@ -182,11 +187,13 @@ def submit(request, contract_id):
 ##########################
 def show_con(request, contract_id):
     contract = get_object_or_404(Contract, id=contract_id)
-    signees = contract.users.all()
-    submissions = contract.submissions.all()
-    deadlines = contract.deadline_set.all()
-    return render(request, 'obligarcy/contract.html', {'contract': contract,
-    'signees': signees, 'submissions': submissions,  'deadlines':deadlines})
+    allow_signing = False
+    print(('yup', contract.submissions.all()[0].deadline_set.all().first()))
+    if (timezone.now() - contract.start_date) < timedelta(1):
+        # less than 24 hours passed
+        print(('less than 24 hours has past'))
+        allow_signing = True
+    return render(request, 'obligarcy/contract.html', {'contract': contract, 'allow_signing':allow_signing})
 
 
 def challenge(request):
@@ -224,7 +231,7 @@ def challenge(request):
             contract.save()
             signees = contract.users.all()
             deadlines = contract.deadline_set.all()
-            return render(request, 'obligarcy/contract.html',
+            return render(request, 'obligarcy/contract.html', # HTTP REDIRECT!!
                 {'contract': contract, 'signees': signees, 'deadlines':deadlines})
         else:
             print((contract_form.errors))
@@ -232,6 +239,19 @@ def challenge(request):
     #contract_signee_form = ContractSigneeForm()
     return render(request, 'obligarcy/challenge.html',
             {'contract_form': contract_form})
+
+
+def sign_con(request, contract_id):
+    if request.method == 'POST':
+        contract = Contract.objects.get(id=contract_id)
+        user = User.objects.get(username=request.POST['signee'])
+        contract.users.add(user)
+        contract.save()
+        return render(request, 'obligarcy/contract.html', # REDIRECT
+                {'contract': contract})
+    else:
+        contract = Contract.objects.get(id=contract_id)
+        return render(request, 'obligarcy/sign.html', {'contract': contract})
 
 ##########################
 # Combo Views

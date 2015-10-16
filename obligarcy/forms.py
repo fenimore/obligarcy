@@ -84,7 +84,7 @@ class ContractForm(forms.ModelForm):
     frequency = forms.CharField(max_length=20, widget=forms.Select(
         attrs={'class': 'form-control'}, choices=FREQ))
     #http://getbootstrap.com/css/#forms-control-readonly
-    #<input class="form-control" type="text" placeholder="…" readonly> 
+    #<input class="form-control" type="text" placeholder="…" readonly>
     first_signee = forms.ModelChoiceField(queryset=User.objects.all(), # in __init__ pass user_id, and set that to default
         widget=forms.Select(attrs={'class': 'form-control'}))           # then close off the form
     second_signee = forms.ModelChoiceField(queryset=User.objects.all(),

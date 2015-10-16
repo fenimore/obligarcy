@@ -1,0 +1,20 @@
+{% extends "obligarcy/base.html" %}
+{% block content %}
+    <div class='row'>
+      <div class='col-md-6'>
+    {{ contract.preamble }}<br>
+    {{ contract.conditions }}<br>
+    {{ contract.penalties }}<br>
+      </div><!-- Col-->
+      <div class='col-md-3'>
+        {% if user.is_authenticated %}
+        <form id="sign_form" method="post" action="/sign/{{contract.id}}/">
+            {% csrf_token %}
+            I, <input class="form-control" type="text" name="signee" value={{user.username}} readonly> agree to these terms and conditions and submit myself to the penalties if I fail to complete them.
+            <br><input class='btn btn-default' type="submit" value="Sign" />
+        </form>
+        {% endif %}
+      </div> <!-- Col-->
+    </div>
+
+{% endblock content %}

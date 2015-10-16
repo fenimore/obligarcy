@@ -6,35 +6,44 @@
     {{ contract.preamble }}<br>
     {{ contract.conditions }}<br>
     {{ contract.penalties }}<br><br>
-    {% for signee in signees %}
+    {% for signee in contract.users.all %}
 
     Signee: <a href="/user/{{ signee.id }}/">{{signee.username}}</a><br>
 
     {% endfor %}
 <br>    Contract ends: {{ contract.end_date }}<br>
   </div>
-  <div class='col-md-3'>
+  <div class='col-md-4'>
     <div class="panel panel-default">
       <div class="panel-body">
         Frequency: {{ contract.frequency }}<br>
         <div id='deadline_list'>
-        {% for deadline in deadlines %}
+        {% for deadline in contract.deadline_set.all %}
 
         {{deadline.deadline}}<br>
 
         {% endfor %}<br>
         </div>
+
         {% if user.is_authenticated %}<br>
-        <a class='btn btn-default' href=/submit/{{ contract.id }}>Submit a text</a>
+          {% if user in contract.users.all %}<br>
+            <a class='btn btn-default' href=/submit/{{ contract.id }}>Submit a text</a>
+          {% else %}
+            {% if allow_signing %}
+              <a class='btn btn-info' href=/sign/{{ contract.id }}>Sign Contract</a>
+            {% endif %}<br>
+          {% endif %}<br>
         {% endif %}<br>
+
         <hr>
 
             <h4>Submissions</h4>
-            {% if submissions %}
+            {% if contract.submissions.all %}
                 <ul>
-                {% for submission in submissions %}
-                    <li><a href="/submission/{{ submission.id }}">{{ submission.body }}</a></li>
-                    {{ submission.user }} @ {{ submission.pub_date}}
+                {% for submission in contract.submissions.all %}
+                    <li><a href="/user/{{ submission.user.id }}/">{{ submission.user }}</a> <a href="/submission/{{ submission.id }}">@ {{ submission.pub_date }}</a></li>
+                    <b>for</b> {{ submission.deadline_set.all.first }}
+                    <hr>
                 {% endfor %}
                 </ul>
             {% else %}

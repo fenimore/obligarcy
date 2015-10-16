@@ -46,6 +46,7 @@ class Contract(models.Model):
     deadline_has_past = models.BooleanField(default=False)
     users = models.ManyToManyField(User)
     submissions = models.ManyToManyField(Submission)
+    # signing_deadline = models.DateTimeField('signing_deadline')
 
     def __str__(self):              # __unicode__ or str
         return self.preamble
@@ -53,8 +54,9 @@ class Contract(models.Model):
 
 class Deadline(models.Model):
     deadline = models.DateTimeField('deadline') #DateTimeField makes the sub form not accept
-    submission = models.ForeignKey(Submission, null=True)
+    submission = models.ForeignKey(Submission, null=True) # This has got to be many and many
     contract = models.ForeignKey(Contract)
 
     def __str__(self):              # __unicode__ or str
-        return self.deadline
+        string_deadline = self.deadline.strftime("%A %-d %b %Y")
+        return string_deadline

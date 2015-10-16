@@ -22,6 +22,7 @@ urlpatterns = [
     # ex: /oblicarcy/contracts/5/
     url(r'^contract/([0-9a-z]+)/$', views.show_con, name='contract'),
     url(r'^challenge/$', views.challenge, name='challenge'),
+    url(r'^sign/([0-9a-z]+)/$', views.sign_con, name='sign'),
 
     # ex: /oblicarcy/login/
     url(r'^login/$', views.user_login, name='login'),
