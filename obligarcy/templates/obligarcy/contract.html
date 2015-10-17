@@ -27,7 +27,7 @@
 
         {% if user.is_authenticated %}<br>
           {% if user in contract.users.all %}<br>
-            <a class='btn btn-default' href=/submit/{{ contract.id }}>Submit a text</a>
+            <a class='btn btn-default' href=/submit/{{ contract.id }}/{{user.id}}>Submit a text</a>
           {% else %}
             {% if allow_signing %}
               <a class='btn btn-info' href=/sign/{{ contract.id }}>Sign Contract</a>

@@ -54,7 +54,7 @@ class Contract(models.Model):
 
 class Deadline(models.Model):
     deadline = models.DateTimeField('deadline') #DateTimeField makes the sub form not accept
-    submission = models.ForeignKey(Submission, null=True) # This has got to be many and many
+    submission = models.ManyToManyField(Submission) # This has got to be many and many
     contract = models.ForeignKey(Contract)
 
     def __str__(self):              # __unicode__ or str

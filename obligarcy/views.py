@@ -134,17 +134,17 @@ def show_sub(request, submission_id):
           'deadline':deadline})
 
 
-def submit(request, contract_id):
+def submit(request, contract_id, user_id):
     if request.method == 'POST':
-        form = SubForm(request.POST)
+        form = SubForm(request.POST, user_id)
         #print((form['deadline']))
         #if form.is_valid():
         author = User.objects.get(id=request.session['id'])
-        print((author))
+        print(('author', author))
         contract = Contract.objects.get(id=contract_id)
-        print((contract))
+        print(('contract', contract))
         body = request.POST['body']
-        print((body))
+        print(('body', body))
         new_sub = Submission(body=body, pub_date=timezone.now(), user=author)
         new_sub.save()
         new_sub.contract_set.add(contract)
@@ -152,6 +152,7 @@ def submit(request, contract_id):
         c = new_sub.contract_set.all().first()
         deadline_id = request.POST['deadline']
         d = Deadline.objects.get(id=deadline_id)
+        #print(('deadline', deadline))
         new_sub.deadline_set.add(d)
         new_sub.save()
         word_count = len(new_sub.body.split())
@@ -163,20 +164,13 @@ def submit(request, contract_id):
         #    return render(request, 'obligarcy/submit.html', {'error_message':'something went wrong'})
     else:
         contract_id = contract_id
-        form = SubForm(contract_id)
+        print(request.session['id'])
+        author = User.objects.get(id=request.session['id'])
+        form = SubForm(contract_id, request.session['id'])
         #contract_id = contract_id
         c = Contract.objects.get(id=contract_id)
-        dls = c.deadline_set.all()
-        deadlines = []
-        author = User.objects.get(id=request.session['id'])
-        for deadline in dls:
-            if not deadline.submission:
-                deadlines.append(deadline) # This won't work until I can get the form to work
-            else:
-                if deadline.submission.user != author:
-                    deadlines.append(deadline)
         return render(request, 'obligarcy/submit.html', {'form': form,
-         'contract_id': contract_id, 'deadlines': deadlines})
+         'contract_id': contract_id, 'user_id':request.session['id']})
          #'form': form,
 #TODO: get form to work with deadlines so that I can prune the completed deadlines
 #TODO: and so that I can store the data as DateField, so it displays better
@@ -188,7 +182,7 @@ def submit(request, contract_id):
 def show_con(request, contract_id):
     contract = get_object_or_404(Contract, id=contract_id)
     allow_signing = False
-    print(('yup', contract.submissions.all()[0].deadline_set.all().first()))
+    #print(('yup', contract.submissions.all()[0].deadline_set.all().first()))
     if (timezone.now() - contract.start_date) < timedelta(1):
         # less than 24 hours passed
         print(('less than 24 hours has past'))

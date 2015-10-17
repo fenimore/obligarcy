@@ -42,13 +42,29 @@ class SubForm(forms.Form):
         {'class': 'form-control','rows':'18'}))
     deadline = forms.ChoiceField(choices='[(m,m)]')
 
-    def __init__(self, contract_id):
+    def __init__(self, contract_id, user_id):
         super(SubForm, self).__init__()
+        print((contract_id))
+        print((user_id))
         dls = Deadline.objects.filter(contract=contract_id)
+        print((dls.first()))
+        submitter = User.objects.get(id=user_id)
+        print((submitter))
         deadlines = []
         for deadline in dls:
-            if not deadline.submission:
-                deadlines.append(deadline)
+            if submitter.submission_set.all():
+                for sub in submitter.submission_set.all():
+                    if deadline in sub.deadline_set.all():
+                        print('user submitted already')
+                        break
+                    else:
+                        if deadline not in deadlines:
+                            deadlines.append(deadline)
+                            print('user has nothing submitted')
+                        else:
+                            print(('deadline already added'))
+            else:
+                deadlines = dls
         deadline_tups = []
         for deadline in deadlines:
             tup = (deadline.id, deadline.deadline.date()) # On the date is relevant,
