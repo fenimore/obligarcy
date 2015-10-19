@@ -181,6 +181,7 @@ def submit(request, contract_id, user_id):
 def show_con(request, contract_id):
     contract = get_object_or_404(Contract, id=contract_id)
     allow_signing = False
+    #deadlines = Deadline.objects.get(contract=contract_id)
     #print(('yup', contract.submissions.all()[0].deadline_set.all().first()))
     if (timezone.now() - contract.start_date) < timedelta(1):
         # less than 24 hours passed

@@ -3,15 +3,31 @@
 {% block content %}
 <div class='row'>
   <div class='col-md-6'>
-    {{ contract.preamble }}<br>
+    <h4>{{ contract.preamble }}</h4><br>
     {{ contract.conditions }}<br>
     {{ contract.penalties }}<br><br>
+
     {% for signee in contract.users.all %}
-
     Signee: <a href="/user/{{ signee.id }}/">{{signee.username}}</a><br>
-
     {% endfor %}
-<br>    Contract ends: {{ contract.end_date }}<br>
+
+<br>Contract ends: {{ contract.end_date }}<br>
+<hr>
+<h4>
+Deadlines and Submission for users:{% for user in contract.users.all %}
+  {{ user.username }} {% endfor %}</h4>
+    <table class="table table-hover">
+      {% for deadline in contract.deadline_set.all %}
+    <tr>
+      <td>{{deadline.deadline}}</td>
+        {% for submission in deadline.submission.all %}
+        <td><a href='/user/{{ submission.user.id }}'>{{ submission.user}}</a>, <a href='/submission/{{ submission.id }}'>{{submission.pub_date}}</a></td>
+        {% endfor %}
+    </tr>
+      {% endfor %}
+    </table>
+
+
   </div>
   <div class='col-md-4'>
     <div class="panel panel-default">
@@ -50,14 +66,10 @@
                 <p>This Contract has no submissions</p>
             {% endif %}
 
-        {% endblock content %}
-      </div>
     </div>
 
 
   </div>
 </div>
-
-
-
 <br><br>
+        {% endblock content %}
