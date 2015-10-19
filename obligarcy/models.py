@@ -11,14 +11,13 @@ def pkgen():
 
 class UserProfile(models.Model):
     # This line is required. Links UserProfile to a User model instance.
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(User, null=True) #   OneToOneField(User)
     # The additional attributes we wish to include.
     website = models.URLField(null=True)
     picture = models.ImageField(upload_to='profile_images', null=True)
-    location = models.CharField(max_length='20', null=True)
-    bio = models.CharField(max_length='144', null=True)
-    # Mlehm/bio
-    # Location
+    location = models.CharField(max_length=20, null=True)
+    bio = models.CharField(max_length=144, null=True)
+
     def str(self):
         return self.user.username
 

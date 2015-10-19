@@ -24,8 +24,7 @@ class UserForm(forms.ModelForm):
 
 
 class UserProfileForm(forms.ModelForm):
-    picture = forms.FileInput(attrs=
-        {'class': 'form-control'})
+    picture = forms.FileInput()#attrs={'class': 'form-control'}
     location = forms.CharField(widget=forms.TextInput(attrs=
         {'class': 'form-control'}))
     bio = forms.CharField(widget=forms.TextInput(attrs=

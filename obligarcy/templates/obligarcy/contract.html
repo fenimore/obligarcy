@@ -16,7 +16,7 @@
   <div class='col-md-4'>
     <div class="panel panel-default">
       <div class="panel-body">
-        Frequency: {{ contract.frequency }}<br>
+        <small>Frequency: {{ contract.frequency }}</small><br>
         <div id='deadline_list'>
         {% for deadline in contract.deadline_set.all %}
 

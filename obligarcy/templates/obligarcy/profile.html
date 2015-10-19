@@ -11,12 +11,14 @@
                   {% if user.userprofile.picture %}
 
           <img class="media-object"
-               src="{{ user.userprofile.picture.path }}" alt="..."/>
+               src="{{ user.userprofile.picture.path }}" alt="Problem serving picture"/>
           {% endif %}
         </a>
       </div>
       <div class="media-body">
         <h4 class="media-heading">{{ user.username }}</h4>
+        {{ user.userprofile.bio}}<br>
+        {{user.userprofile.location}}
       </div>
     </div>
   </div>

@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Submission, Contract, Deadline
+from .models import Submission, Contract, Deadline, UserProfile
 from django.contrib.auth.models import User
 from django.contrib.sessions.models import Session
 
@@ -12,6 +12,7 @@ from django.contrib.auth import authenticate, login, logout
 
 import pandas as pd
 from datetime import datetime
+import time
 import json
 
 #from pytagcloud import create_tag_image, make_tags
@@ -28,22 +29,30 @@ def register(request):
     registered = False
     if request.method == 'POST':
         user_form = UserForm(data=request.POST)
-        #profile_form = UserProfileForm(data=request.POST)
-        if user_form.is_valid():
+        profile_form = UserProfileForm(data=request.POST)
+        print((request.POST['bio']))
+        #print((profile_form.location))
+        #print((profile_form))
+        if profile_form.is_valid():
             print(('yup'))
         if user_form.is_valid():# and profile_form.is_valid()
             user = user_form.save()
+            pswd = user.password # for immediate log in
             user.set_password(user.password)
             user.save()
+            # DO profile attributes, OneToOneField with User
+            # Form somereason saving the form doesnt work. profile form won't validate
+            profile = UserProfile(bio=request.POST['bio'], location=request.POST['location'], user=user)
             #profile = profile_form.save(commit=False)
-            #profile.user = user
-            #profile.email = request.POST['email']
-            #profile.location = request.POST['location']
-            #if 'picture' in request.FILES:
-            #    profile.picture = request.FILES['picture']
-            #profile.save()
+            if 'picture' in request.FILES:
+                profile.picture = request.FILES['picture']
+            profile.save()
             registered = True
-            return HttpResponseRedirect('/login/')
+            u = authenticate(username=user.username, password=pswd)
+            login(request, u)
+            request.session['username'] = user.username
+            request.session['id'] = user.id
+            return HttpResponseRedirect('/profile/')
         else:
             print((user_form.errors))#, profile_form.errors
     user_form = UserForm()
@@ -104,6 +113,7 @@ def profile(request):
     #print((user.userprofile.picture.path))
     posts = user.submission_set.all()
     contracts = user.contract_set.all()
+
     return render(request, 'obligarcy/profile.html',
         {'contracts': contracts, 'posts': posts})
      # {'user': user, 'posts': posts}
@@ -137,7 +147,6 @@ def show_sub(request, submission_id):
 def submit(request, contract_id, user_id):
     if request.method == 'POST':
         form = SubForm(request.POST, user_id)
-        #print((form['deadline']))
         #if form.is_valid():
         author = User.objects.get(id=request.session['id'])
         print(('author', author))
@@ -152,16 +161,9 @@ def submit(request, contract_id, user_id):
         c = new_sub.contract_set.all().first()
         deadline_id = request.POST['deadline']
         d = Deadline.objects.get(id=deadline_id)
-        #print(('deadline', deadline))
         new_sub.deadline_set.add(d)
         new_sub.save()
-        word_count = len(new_sub.body.split())
-        return render(request, 'obligarcy/submission.html',
-                    {'submission': new_sub, 'contract': c,
-                         'word_count': word_count})
-        #else:
-        #    print(('form not valid?'))
-        #    return render(request, 'obligarcy/submit.html', {'error_message':'something went wrong'})
+        return HttpResponseRedirect('/submission/' + new_sub.id) # After POST redirect
     else:
         contract_id = contract_id
         print(request.session['id'])
@@ -171,10 +173,7 @@ def submit(request, contract_id, user_id):
         c = Contract.objects.get(id=contract_id)
         return render(request, 'obligarcy/submit.html', {'form': form,
          'contract_id': contract_id, 'user_id':request.session['id']})
-         #'form': form,
-#TODO: get form to work with deadlines so that I can prune the completed deadlines
-#TODO: and so that I can store the data as DateField, so it displays better
-#TODO: Change DateTimeField to DateField
+
 
 ##########################
 # Contract Views
@@ -186,7 +185,7 @@ def show_con(request, contract_id):
     if (timezone.now() - contract.start_date) < timedelta(1):
         # less than 24 hours passed
         print(('less than 24 hours has past'))
-        allow_signing = True
+        allow_signing = True # This is place holder
     return render(request, 'obligarcy/contract.html', {'contract': contract, 'allow_signing':allow_signing})
 
 
@@ -201,7 +200,7 @@ def challenge(request):
             u1 = User.objects.get(id=request.POST['first_signee']) # Set the
             u1.contract_set.add(contract)   # default to sessions.users
             if request.POST['second_signee']:# and maybe make it unchangeable?
-                u2 = User.objects.get(id=request.POST['second_signee'])
+                u2 = User.objects.get(id=request.POST['second_signee']) # These forms will be deleted
                 u2.contract_set.add(contract)
             if request.POST['third_signee']:
                 u3 = User.objects.get(id=request.POST['third_signee'])
@@ -211,7 +210,7 @@ def challenge(request):
                 u4.contract_set.add(contract)
             if contract.frequency == 'O': # Once off
                 deadline_list = []
-                deadline = str(request.POST['end_date'])
+                deadline = contract.end_date # Duh
                 d = Deadline(deadline=deadline, contract_id=contract.id)
                 d.save()
             else:
@@ -225,24 +224,21 @@ def challenge(request):
             contract.save()
             signees = contract.users.all()
             deadlines = contract.deadline_set.all()
-            return render(request, 'obligarcy/contract.html', # HTTP REDIRECT!!
-                {'contract': contract, 'signees': signees, 'deadlines':deadlines})
+            return HttpResponseRedirect('/contract/'+contract.id)
         else:
             print((contract_form.errors))
     contract_form = ContractForm()
-    #contract_signee_form = ContractSigneeForm()
     return render(request, 'obligarcy/challenge.html',
             {'contract_form': contract_form})
 
 
-def sign_con(request, contract_id):
-    if request.method == 'POST':
-        contract = Contract.objects.get(id=contract_id)
+def sign_con(request, contract_id): # As of now, it will appear (the sign button)
+    if request.method == 'POST':   # only if it has been less than a day after the
+        contract = Contract.objects.get(id=contract_id) # contract start date
         user = User.objects.get(username=request.POST['signee'])
         contract.users.add(user)
         contract.save()
-        return render(request, 'obligarcy/contract.html', # REDIRECT
-                {'contract': contract})
+        return HttpResponseRedirect('/contract/'+contract.id)
     else:
         contract = Contract.objects.get(id=contract_id)
         return render(request, 'obligarcy/sign.html', {'contract': contract})
