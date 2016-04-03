@@ -45,7 +45,8 @@ class SubForm(forms.Form):
         super(SubForm, self).__init__()
         print((contract_id))
         print((user_id))
-        dls = Deadline.objects.filter(contract=contract_id)
+        # deadlines shown only for user
+        dls = Deadline.objects.filter(contract=contract_id, signee=user_id, accomplished=False)
         print((dls.first()))
         submitter = User.objects.get(id=user_id)
         print((submitter))

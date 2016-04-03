@@ -27,14 +27,12 @@
     <p>No Users</p>
 {% endif %}
 
-
-
 <h2>Submissions</h2>
 {% if submissions %}
     <ul>
     {% for submission in submissions %}
         <li><a href="/submission/{{ submission.id }}/">{{ submission.body }}</a></li>
-        {{ submission.contract.preamble }} @ {{ submission.pub_date}} for {{submission.deadline.deadline }}
+
 <br>
     {% endfor %}
     </ul>

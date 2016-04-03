@@ -94,14 +94,9 @@ $(document).ready(function() {
             {% else %}
             <li><a href="/register/">Register Here</a></li>
             <li><a href="/login/">Login</a></li>
-              {% for contract in user.contract_set.all%}
-                {% for deadline in contract.deadline_set.all %}
-              deadline.deadline
-                {% endfor %}
-              {% endfor  %}
             {% endif %}
           </ul>
-                {% block side_block %}{% endblock %}
+          {% block side_block %}{% endblock %}
         </div>
         <div class="col-sm-9 col-md-9 col-md-offset-1" style='margin-left:5px;margin-right:10px;'>
                 {% block content %}{% endblock %}

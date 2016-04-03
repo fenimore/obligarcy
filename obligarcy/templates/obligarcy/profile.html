@@ -31,8 +31,10 @@
     {% if posts %}
         <ul>
         {% for post in posts %}
-            <li><a href="/submission/{{ post.id }}/">{{ post.body }}</a></li>
-            {{ post.contract }} @ {{ post.pub_date}}
+            <li><a href="/submission/{{ post.id }}/">{{ post.body[:50] + '..' }}</a></li>
+            @ {{ post.pub_date.date()}} <br>
+            For deadline: {{ post.deadline_set.all().first()}}
+            <hr>
         {% endfor %}
         </ul>
     {% else %}
@@ -46,6 +48,7 @@
         {% for contract in contracts %}
             <li><a href="/contract/{{ contract.id }}/">{{ contract.preamble }}</a></li>
             Deadline: {{ contract.end_date}}
+            <hr>
         {% endfor %}
         </ul>
     {% else %}

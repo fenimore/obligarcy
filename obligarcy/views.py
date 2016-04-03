@@ -163,6 +163,8 @@ def submit(request, contract_id, user_id):
         d = Deadline.objects.get(id=deadline_id)
         new_sub.deadline_set.add(d)
         new_sub.save()
+        d.accomplished = True
+        d.save()
         return HttpResponseRedirect('/submission/' + new_sub.id) # After POST redirect
     else:
         contract_id = contract_id
@@ -188,7 +190,7 @@ def show_con(request, contract_id):
         print(('less than 24 hours has past'))
         allow_signing = True # This is place holder
     signees = contract.users.all()
-    dls = signees[0].deadline_set.all()
+    dls = signees[0].deadline_set.filter(contract=contract)
     return render(request, 'obligarcy/contract.html', {'contract': contract, 'allow_signing':allow_signing, 'signees': signees, 'deadlines': dls})
 
 
@@ -218,7 +220,7 @@ def challenge(request):
                 deadline_list = []
                 deadline = contract.end_date # Duh
                 d = Deadline(deadline=deadline, contract_id=contract.id,
-                             signee=u1)
+                             signee=u)
                 d.save()
             else:
                 deadline_list = pd.date_range(contract.start_date,
@@ -227,7 +229,7 @@ def challenge(request):
                 for deadline in deadline_list:
                     deadline = deadline # Should I str this? If i must..?
                     d = Deadline(deadline=deadline, contract_id=contract.id,
-                                 signee=u1)
+                                 signee=u)
                     d.save()
             contract.save()
             signees = contract.users.all() # what am I do?
