@@ -13,6 +13,20 @@
 
 <br>Contract ends: {{ contract.end_date }}<br>
 <hr>
+<h4>Deadlines</h4>
+<table class="table table-hover">
+  {% for user in contract.users.all %}
+  <tr>
+    {% for deadline in user.deadline_set.all.filter(contract=contact) %}
+      <td> {{user.username}}</td>
+      <td> {{ deadline.deadline}} </td>
+      <td> {{deadline.accomplished }}</td>
+      <td></td>		
+    {% endfor %}
+  </tr>
+  {% endfor %}
+
+</table>
 <h4>
 Deadlines and Submission for users:{% for user in contract.users.all %}
   {{ user.username }} {% endfor %}</h4>

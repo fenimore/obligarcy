@@ -4,3 +4,6 @@ TODO:
 In view contract, add sign button. Pass a dict including boolean, signing permissions have expired and the css class for deactivated button. 
 Add this field, signing permission expiry date to Contract.models
 - Add ping/send to user - use email from User to send challenge/reminder
+
+
+- Report when form error occured, so that it can be filled in..

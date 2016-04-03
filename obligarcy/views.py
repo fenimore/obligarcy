@@ -187,7 +187,11 @@ def show_con(request, contract_id):
         # less than 24 hours passed
         print(('less than 24 hours has past'))
         allow_signing = True # This is place holder
-    return render(request, 'obligarcy/contract.html', {'contract': contract, 'allow_signing':allow_signing})
+    signees = contract.users.all()
+    deadline_dates = []
+    for dl in users[0].deadline_set.filter(contract=contract):
+        deadline_dates.add(dl.deadline)
+    return render(request, 'obligarcy/contract.html', {'contract': contract, 'allow_signing':allow_signing, 'signees', signees})
 
 
 def challenge(request):
@@ -200,6 +204,8 @@ def challenge(request):
             contract.save()
             u1 = User.objects.get(id=request.POST['first_signee']) # Set the
             u1.contract_set.add(contract)   # default to sessions.users
+            # This can be taken out, now? Or maybe commented out?)
+            """
             if request.POST['second_signee']:# and maybe make it unchangeable?
                 u2 = User.objects.get(id=request.POST['second_signee']) # These forms will be deleted
                 u2.contract_set.add(contract)
@@ -209,10 +215,12 @@ def challenge(request):
             if request.POST['fourth_signee']:
                 u4 = User.objects.get(id=request.POST['fourth_signee'])
                 u4.contract_set.add(contract)
+            """
             if contract.frequency == 'O': # Once off
                 deadline_list = []
                 deadline = contract.end_date # Duh
-                d = Deadline(deadline=deadline, contract_id=contract.id)
+                d = Deadline(deadline=deadline, contract_id=contract.id,
+                             signee=u1)
                 d.save()
             else:
                 deadline_list = pd.date_range(contract.start_date,
@@ -220,11 +228,12 @@ def challenge(request):
                 deadline_list = deadline_list.to_pydatetime()
                 for deadline in deadline_list:
                     deadline = deadline # Should I str this? If i must..?
-                    d = Deadline(deadline=deadline, contract_id=contract.id)
+                    d = Deadline(deadline=deadline, contract_id=contract.id,
+                                 signee=u1)
                     d.save()
             contract.save()
-            signees = contract.users.all()
-            deadlines = contract.deadline_set.all()
+            signees = contract.users.all() # what am I do?
+            deadlines = contract.deadline_set.all() # What happens here?
             return HttpResponseRedirect('/contract/'+contract.id)
         else:
             print((contract_form.errors))
@@ -239,6 +248,11 @@ def sign_con(request, contract_id): # As of now, it will appear (the sign button
         user = User.objects.get(username=request.POST['signee'])
         contract.users.add(user)
         contract.save()
+        deadlines = contract.deadline_set.all()
+        for deadline in deadlines:
+            d = Deadline(deadline=deadline.deadline, contract_id=contract.id,
+                                 signee=user)
+            d.save()
         return HttpResponseRedirect('/contract/'+contract.id)
     else:
         contract = Contract.objects.get(id=contract_id)
