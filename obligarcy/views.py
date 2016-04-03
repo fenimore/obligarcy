@@ -155,7 +155,10 @@ def submit(request, contract_id, user_id):
         new_sub = Submission(body=body, pub_date=timezone.now(), user=author)
         new_sub.save()
         dl.submission = new_sub
-        #if timezone.now() >
+        if dl.deadline < timezone.now():
+            dl.is_expired = True
+            dl.save()
+            dl.is_late = True
         dl.is_accomplished = True
         dl.save()
         new_sub.contract_set.add(contract)
@@ -273,5 +276,5 @@ def firehose(request):
     contracts = Contract.objects.all()
     users = User.objects.all()
     submissions = Submission.objects.all()
-    return render(request, 'obligarcy/firehose.html', {'contracts': contracts,
-         'users':users ,'submissions':submissions})
+    return render(request, 'obligarcy/firehose.html', {'contracts': reversed(contracts),
+         'users':reversed(users) ,'submissions':reversed(submissions)})

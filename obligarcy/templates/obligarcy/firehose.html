@@ -7,7 +7,7 @@
     <ul>
     {% for contract in contracts %}
         <li><a href="/contract/{{ contract.id }}/">{{ contract.preamble }}</a></li>
-        {{ contract.end_date}}
+        Final Deadline: {{ contract.end_date.strftime('%y/%m/%d %A')}}
         <br>
     {% endfor %}
     </ul>
@@ -31,7 +31,7 @@
 {% if submissions %}
     <ul>
     {% for submission in submissions %}
-        <li><a href="/submission/{{ submission.id }}/">{{ submission.body }}</a></li>
+        <li>{{ submission.body[:79] }}<a href="/submission/{{ submission.id }}/">.. read more</a></li>
 
 <br>
     {% endfor %}

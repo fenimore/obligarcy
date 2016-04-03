@@ -41,9 +41,15 @@
               </span>
               {% endif %}
             {% else %}
-            <a href="/submission/{{ u.deadline_set.filter(contract=contract, deadline=dl.deadline).first().submission.id }}/">
-              <span class="glyphicon glyphicon-ok-circle" aria-hidden="true" style="color:green">
-              </span></a><br>
+              {% if u.deadline_set.filter(contract=contract, deadline=dl.deadline).first().is_late %}
+              <a href="/submission/{{ u.deadline_set.filter(contract=contract, deadline=dl.deadline).first().submission.id }}/">
+                <span class="glyphicon glyphicon-ok-circle" aria-hidden="true" style="color:blue">
+                </span></a><br>
+              {% else %}
+              <a href="/submission/{{ u.deadline_set.filter(contract=contract, deadline=dl.deadline).first().submission.id }}/">
+                <span class="glyphicon glyphicon-ok-circle" aria-hidden="true" style="color:green">
+                </span></a>
+              {% endif %}
             {% endif %}
              ~
             {{ u.deadline_set.filter(contract=contract, deadline=dl.deadline).first().deadline.strftime('%Y-%m-%d') }}
@@ -57,11 +63,11 @@
   <div class='col-md-4'>
     <div class="panel panel-default">
       <div class="panel-body">
-        <small>Frequency: {{ contract.frequency }}</small><br>
+        <small>Remaining Deadlines</small><br>
         <div id='deadline_list'>
-        {% for deadline in contract.deadline_set.filter(is_accomplished=False) %}
+        {% for deadline in contract.deadline_set.filter(is_accomplished=False, is_expired=False).order_by('deadline') %}
 
-        {{deadline.deadline}}, {{deadline.signee}}<br>
+        {{deadline.deadline.strftime('%d-%m %H:%M')}} {{deadline.signee}}<br>
 
         {% endfor %}<br>
         </div>
@@ -82,7 +88,7 @@
             {% if contract.submissions.all() %}
                 <ul>
                 {% for submission in contract.submissions.all() %}
-                    <li><a href="/user/{{ submission.user.id }}/">{{ submission.user }}</a> <a href="/submission/{{ submission.id }}">@ {{ submission.pub_date }}</a></li>
+                    <li><a href="/user/{{ submission.user.id }}/">{{ submission.user }}</a>{{submission.body[:50]}}...<br> <a href="/submission/{{ submission.id }}">@ {{ submission.pub_date.strftime('%d-%m %H:%M') }}</a></li>
                     <b>for</b> {{ submission.deadline_set.all().first() }}
                     <hr>
                 {% endfor %}
