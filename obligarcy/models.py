@@ -56,7 +56,7 @@ class Contract(models.Model):
 # add a signee for the
 class Deadline(models.Model):
     deadline = models.DateTimeField('deadline') #DateTimeField makes the sub form not accept
-    submission = models.ForeignKey(Submission) # This has got to be many and many
+    submission = models.ForeignKey(Submission, null=True) # This has got to be many and many
     contract = models.ForeignKey(Contract)
     signee = models.ForeignKey(User)
     is_accomplished = models.BooleanField(default=False)

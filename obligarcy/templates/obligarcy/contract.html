@@ -25,20 +25,28 @@
     {% for dl in contract.users.all().first().deadline_set.filter(contract=contract) %}
     <tr>
       <td>
-        {{ dl.deadline.date() }}
+        {{ dl.deadline.date().strftime('%Y-%m-%d') }}
         {% if dl.is_expired %}
         Expired
         {% endif %}
       </td>
       {% for u in contract.users.all() %}
-        <td>{{ u.deadline_set.filter(contract=contract, deadline=dl.deadline).first() }}
+        <td>
             {% if not u.deadline_set.filter(contract=contract, deadline=dl.deadline).first().is_accomplished %}
-              not submitted
+              {% if u.deadline_set.filter(contract=contract, deadline=dl.deadline).first().is_expired %}
+              <span class="glyphicon glyphicon-remove-circle" aria-hidden="true" style="color:red">
+              </span>
+              {% else %}
+              <span class="glyphicon glyphicon-record" aria-hidden="true" style="color:grey">
+              </span>
+              {% endif %}
             {% else %}
             <a href="/submission/{{ u.deadline_set.filter(contract=contract, deadline=dl.deadline).first().submission.id }}/">
-              <span class="glyphicon glyphicon-circle-ok" aria-hidden="true" style="color:green">
+              <span class="glyphicon glyphicon-ok-circle" aria-hidden="true" style="color:green">
               </span></a><br>
             {% endif %}
+             ~
+            {{ u.deadline_set.filter(contract=contract, deadline=dl.deadline).first().deadline.strftime('%Y-%m-%d') }}
           </td>
       {% endfor %}
     </tr>

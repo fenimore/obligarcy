@@ -149,22 +149,19 @@ def submit(request, contract_id, user_id):
         form = SubForm(request.POST, user_id)
         #if form.is_valid():
         author = User.objects.get(id=request.session['id'])
-        print(('author', author))
         contract = Contract.objects.get(id=contract_id)
-        print(('contract', contract))
         body = request.POST['body']
-        print(('body', body))
+        dl = Deadline.objects.get(id=request.POST['deadline'])
         new_sub = Submission(body=body, pub_date=timezone.now(), user=author)
         new_sub.save()
+        dl.submission = new_sub
+        #if timezone.now() >
+        dl.is_accomplished = True
+        dl.save()
         new_sub.contract_set.add(contract)
         new_sub.save()
         c = new_sub.contract_set.all().first()
-        deadline_id = request.POST['deadline']
-        d = Deadline.objects.get(id=deadline_id)
-        new_sub.deadline_set.add(d)
         new_sub.save()
-        d.is_accomplished = True
-        d.save()
         return HttpResponseRedirect('/submission/' + new_sub.id) # After POST redirect
     else:
         contract_id = contract_id
