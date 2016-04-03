@@ -106,7 +106,7 @@ def user_logout(request):
     request.session['id'] = None
     return HttpResponseRedirect('/')
 
-
+# TODO: Add Prochaine Deadlines
 def profile(request):
     user_id = request.session['id']
     user = get_object_or_404(User, id=user_id)
@@ -163,7 +163,7 @@ def submit(request, contract_id, user_id):
         d = Deadline.objects.get(id=deadline_id)
         new_sub.deadline_set.add(d)
         new_sub.save()
-        d.accomplished = True
+        d.is_accomplished = True
         d.save()
         return HttpResponseRedirect('/submission/' + new_sub.id) # After POST redirect
     else:
@@ -190,6 +190,12 @@ def show_con(request, contract_id):
         print(('less than 24 hours has past'))
         allow_signing = True # This is place holder
     signees = contract.users.all()
+    for dl in contract.deadline_set.all():
+        if dl.deadline < timezone.now():
+            dl.is_expired = True
+            dl.save()
+        else:
+            dl.is_expired = False
     dls = signees[0].deadline_set.filter(contract=contract)
     return render(request, 'obligarcy/contract.html', {'contract': contract, 'allow_signing':allow_signing, 'signees': signees, 'deadlines': dls})
 
@@ -219,17 +225,21 @@ def challenge(request):
             if contract.frequency == 'O': # Once off
                 deadline_list = []
                 deadline = contract.end_date # Duh
+                deadline = deadline.replace(hour=23, minute=59)
+                is_expired = timezone.now() > deadline
                 d = Deadline(deadline=deadline, contract_id=contract.id,
-                             signee=u)
+                             signee=u, is_expired=is_expired)
                 d.save()
             else:
                 deadline_list = pd.date_range(contract.start_date,
                  contract.end_date, freq=contract.frequency)
                 deadline_list = deadline_list.to_pydatetime()
                 for deadline in deadline_list:
-                    deadline = deadline # Should I str this? If i must..?
+                    is_expired = timezone.now() > deadline
+                    deadline = deadline # first argument hour, second minute # Should I str this? If i must..
+                    deadline = deadline.replace(hour=23, minute=59)
                     d = Deadline(deadline=deadline, contract_id=contract.id,
-                                 signee=u)
+                                 signee=u, is_expired=is_expired)
                     d.save()
             contract.save()
             signees = contract.users.all() # what am I do?

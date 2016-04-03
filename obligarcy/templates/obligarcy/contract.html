@@ -24,10 +24,21 @@
     <tr>
     {% for dl in contract.users.all().first().deadline_set.filter(contract=contract) %}
     <tr>
-      <td>{{ dl.deadline.date() }}</td>
+      <td>
+        {{ dl.deadline.date() }}
+        {% if dl.is_expired %}
+        Expired
+        {% endif %}
+      </td>
       {% for u in contract.users.all() %}
         <td>{{ u.deadline_set.filter(contract=contract, deadline=dl.deadline).first() }}
-            {{ u.deadline_set.filter(contract=contract, deadline=dl.deadline).first().accomplished}}
+            {% if not u.deadline_set.filter(contract=contract, deadline=dl.deadline).first().is_accomplished %}
+              not submitted
+            {% else %}
+            <a href="/submission/{{ u.deadline_set.filter(contract=contract, deadline=dl.deadline).first().submission.id }}/">
+              <span class="glyphicon glyphicon-circle-ok" aria-hidden="true" style="color:green">
+              </span></a><br>
+            {% endif %}
           </td>
       {% endfor %}
     </tr>
@@ -40,9 +51,9 @@
       <div class="panel-body">
         <small>Frequency: {{ contract.frequency }}</small><br>
         <div id='deadline_list'>
-        {% for deadline in contract.deadline_set.filter(accomplished=False) %}
+        {% for deadline in contract.deadline_set.filter(is_accomplished=False) %}
 
-        {{deadline.deadline.date()}}, {{deadline.signee}}<br>
+        {{deadline.deadline}}, {{deadline.signee}}<br>
 
         {% endfor %}<br>
         </div>

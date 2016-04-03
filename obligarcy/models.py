@@ -11,7 +11,7 @@ def pkgen():
 
 
 # The default user constructor is:
-# 
+#
 class UserProfile(models.Model):
     # This line is required. Links UserProfile to a User model instance.
     user = models.OneToOneField(User, null=True) #   OneToOneField(User)
@@ -45,7 +45,7 @@ class Contract(models.Model):
     start_date = models.DateTimeField('start date')
     end_date = models.DateTimeField('end date')
     frequency = models.CharField(max_length=2, default='O')
-    deadline_has_past = models.BooleanField(default=False)
+    is_expired = models.BooleanField(default=False)
     users = models.ManyToManyField(User) # signee
     submissions = models.ManyToManyField(Submission)
     # signing_deadline = models.DateTimeField('signing_deadline')
@@ -53,16 +53,17 @@ class Contract(models.Model):
     def __str__(self):              # __unicode__ or str
         return self.preamble
 
-# add a signee for the 
+# add a signee for the
 class Deadline(models.Model):
     deadline = models.DateTimeField('deadline') #DateTimeField makes the sub form not accept
-    submission = models.ManyToManyField(Submission) # This has got to be many and many
+    submission = models.ForeignKey(Submission) # This has got to be many and many
     contract = models.ForeignKey(Contract)
     signee = models.ForeignKey(User)
-    accomplished = models.BooleanField(default=False)
-    late_accomplished = models.BooleanField(default=False)
-    
-    
+    is_accomplished = models.BooleanField(default=False)
+    is_late = models.BooleanField(default=False)
+    is_expired = models.BooleanField(default=False)
+
+
     def __str__(self):              # __unicode__ or str
         string_deadline = self.deadline.strftime("%A %-d %b %Y")
         return string_deadline

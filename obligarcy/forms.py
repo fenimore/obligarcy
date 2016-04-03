@@ -46,7 +46,7 @@ class SubForm(forms.Form):
         print((contract_id))
         print((user_id))
         # deadlines shown only for user
-        dls = Deadline.objects.filter(contract=contract_id, signee=user_id, accomplished=False)
+        dls = Deadline.objects.filter(contract=contract_id, signee=user_id, is_accomplished=False)
         print((dls.first()))
         submitter = User.objects.get(id=user_id)
         print((submitter))
