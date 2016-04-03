@@ -32,9 +32,6 @@
 
 
 
-    {{ contract.preamble }}
-    {{ contract.conditions }}
-    {{ contract.penalties }}
       </div><!-- Col-->
       <div class='col-md-3'>
       <label for="{{ contract_form.start_date.id_for_label }}">Contract starts:</label>
@@ -64,28 +61,9 @@
     <hr>
     <div class='row'>
       <div class='col-md-6'>
-    <div class="form-group">
-        {{ contract_form.first_signee.errors }}
-        <label style='display:none' for="{{ contract_form.first_signee.id_for_label }}">Signee:</label>
-        {{ contract_form.first_signee }}
-    </div>
-    <div class="form-group">
-        {{ contract_form.second_signee.errors }}
-        <label style='display:none' for="{{ contract_form.second_signee.id_for_label }}">Signee:</label>
-        {{ contract_form.second_signee }}
-    </div>
-    <div class="form-group">
-        {{ contract_form.third_signee.errors }}
-        <label style='display:none' for="{{ contract_form.third_signee.id_for_label }}">Signee:</label>
-        {{ contract_form.third_signee }}
-    </div>
-    <div class="form-group">
-        {{ contract_form.fourth_signee.errors }}
-        <label style='display:none' for="{{ contract_form.fourth_signee.id_for_label }}">Signee:</label>
-        {{ contract_form.fourth_signee }}
-    </div>
-    <br><br>
-        <input class='btn btn-default' type="submit" name="submit" value="Sign" />
+
+        <input class='btn btn-default' type="submit" name="submit" value="Sign" />    
+        <br><br>
       </div> <!-- Col-->
     </div>
         </form>

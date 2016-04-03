@@ -7,7 +7,7 @@
     {{ contract.conditions }}<br>
     {{ contract.penalties }}<br><br>
 
-    {% for signee in contract.users.all %}
+    {% for signee in contract.users.all() %}
     Signee: <a href="/user/{{ signee.id }}/">{{signee.username}}</a><br>
     {% endfor %}
 
@@ -15,26 +15,28 @@
 <hr>
 <h4>Deadlines</h4>
 <table class="table table-hover">
-  {% for user in contract.users.all %}
   <tr>
-    {% for deadline in user.deadline_set.all.filter(contract=contact) %}
-      <td> {{user.username}}</td>
-      <td> {{ deadline.deadline}} </td>
-      <td> {{deadline.accomplished }}</td>
-      <td></td>		
+  {% for dl in deadlines %}
+  <th> {{ dl.deadline }} </th>
+  {% endfor %}
+  </tr>
+  {% for user in contract.users.all() %}
+  <tr>
+    {% for deadline in user.deadline_set.filter(contract=contract) %}
+      <td> {{user.username}}, {{deadline.accomplished }}</td>
     {% endfor %}
   </tr>
   {% endfor %}
 
 </table>
 <h4>
-Deadlines and Submission for users:{% for user in contract.users.all %}
+Deadlines and Submission for users:{% for user in contract.users.all() %}
   {{ user.username }} {% endfor %}</h4>
     <table class="table table-hover">
-      {% for deadline in contract.deadline_set.all %}
+      {% for deadline in contract.deadline_set.all() %}
     <tr>
       <td>{{deadline.deadline}}</td>
-        {% for submission in deadline.submission.all %}
+        {% for submission in deadline.submission.all() %}
         <td><a href='/user/{{ submission.user.id }}'>{{ submission.user}}</a>, <a href='/submission/{{ submission.id }}'>{{submission.pub_date}}</a></td>
         {% endfor %}
     </tr>
@@ -48,7 +50,7 @@ Deadlines and Submission for users:{% for user in contract.users.all %}
       <div class="panel-body">
         <small>Frequency: {{ contract.frequency }}</small><br>
         <div id='deadline_list'>
-        {% for deadline in contract.deadline_set.all %}
+        {% for deadline in contract.deadline_set.all() %}
 
         {{deadline.deadline}}<br>
 
@@ -56,7 +58,7 @@ Deadlines and Submission for users:{% for user in contract.users.all %}
         </div>
 
         {% if user.is_authenticated %}<br>
-          {% if user in contract.users.all %}<br>
+          {% if user in contract.users.all() %}<br>
             <a class='btn btn-default' href=/submit/{{ contract.id }}/{{user.id}}>Submit a text</a>
           {% else %}
             {% if allow_signing %}
@@ -68,11 +70,11 @@ Deadlines and Submission for users:{% for user in contract.users.all %}
         <hr>
 
             <h4>Submissions</h4>
-            {% if contract.submissions.all %}
+            {% if contract.submissions.all() %}
                 <ul>
-                {% for submission in contract.submissions.all %}
+                {% for submission in contract.submissions.all() %}
                     <li><a href="/user/{{ submission.user.id }}/">{{ submission.user }}</a> <a href="/submission/{{ submission.id }}">@ {{ submission.pub_date }}</a></li>
-                    <b>for</b> {{ submission.deadline_set.all.first }}
+                    <b>for</b> {{ submission.deadline_set.all().first() }}
                     <hr>
                 {% endfor %}
                 </ul>

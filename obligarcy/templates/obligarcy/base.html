@@ -36,7 +36,7 @@ ul a:hover {
         overflow: auto;
     }
 </style>
-{{ form.media }}
+
 
 <script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
 <!-- Latest compiled and minified JavaScript -->
@@ -70,7 +70,7 @@ $(document).ready(function() {
             <li><a href="/#">About</a></li>
             <li><a href="/profile/">Profile</a></li>
             <li><a href="/firehose">Firehose</a></li>
-            {% if user.is_authenticated %}
+            {% if user.is_authenticated() %}
             <li><a href="/logout/">Logout</a></li>
             {% else %}
             <li><a href="/register/">Register Here</a></li>
@@ -86,7 +86,7 @@ $(document).ready(function() {
       <div class="row" style="padding-top:60px">
         <div class="col-sm-3 col-md-2 well" style='margin-left:10px;margin-right:5px'>
           <ul>
-            {% if user.is_authenticated %}
+            {% if user.is_authenticated() %}
             <li><a href="/profile/"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{ user.username }} Profile</a></li>
             <li><a href="/challenge"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> New Contract</a></li>
             <hr>

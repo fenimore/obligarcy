@@ -188,10 +188,8 @@ def show_con(request, contract_id):
         print(('less than 24 hours has past'))
         allow_signing = True # This is place holder
     signees = contract.users.all()
-    deadline_dates = []
-    for dl in users[0].deadline_set.filter(contract=contract):
-        deadline_dates.add(dl.deadline)
-    return render(request, 'obligarcy/contract.html', {'contract': contract, 'allow_signing':allow_signing, 'signees', signees})
+    dls = signees[0].deadline_set.all()
+    return render(request, 'obligarcy/contract.html', {'contract': contract, 'allow_signing':allow_signing, 'signees': signees, 'deadlines': dls})
 
 
 def challenge(request):
@@ -202,8 +200,8 @@ def challenge(request):
             print('Valid Form')
             contract = contract_form.save()
             contract.save()
-            u1 = User.objects.get(id=request.POST['first_signee']) # Set the
-            u1.contract_set.add(contract)   # default to sessions.users
+            u = User.objects.get(id=request.session['id']) # Set the
+            u.contract_set.add(contract)   # default to sessions.users
             # This can be taken out, now? Or maybe commented out?)
             """
             if request.POST['second_signee']:# and maybe make it unchangeable?

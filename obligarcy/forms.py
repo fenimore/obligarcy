@@ -100,16 +100,6 @@ class ContractForm(forms.ModelForm):
         attrs={'class': 'form-control'}, choices=FREQ))
     #http://getbootstrap.com/css/#forms-control-readonly
     #<input class="form-control" type="text" placeholder="…" readonly>
-    first_signee = forms.ModelChoiceField(queryset=User.objects.all(), # in __init__ pass user_id, and set that to default
-        widget=forms.Select(attrs={'class': 'form-control'}))           # then close off the form
-    second_signee = forms.ModelChoiceField(queryset=User.objects.all(),
-        required=False, widget=forms.Select(attrs={'class': 'form-control'}))
-    third_signee = forms.ModelChoiceField(queryset=User.objects.all(),
-         required=False, widget=forms.Select(attrs={'class':
-              'form-control'}))
-    fourth_signee = forms.ModelChoiceField(queryset=User.objects.all(),
-         required=False, widget=forms.Select(attrs={'class':
-              'form-control'}))
 
     class Meta:
         model = Contract
