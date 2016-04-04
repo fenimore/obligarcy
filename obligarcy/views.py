@@ -131,8 +131,12 @@ def show_prof(request, user_id):
     user = get_object_or_404(User, id=user_id)
     posts = user.submission_set.all()
     contracts = user.contract_set.all()
+    completed_contracts = []
+    for c in contracts:
+        if user in c.completed_by.all():
+            completed_contracts.append(c)
     return render(request, 'obligarcy/profile.html',
-        {'contracts': contracts, 'posts': posts, 'user': user})
+        {'contracts': contracts, 'posts': posts, 'user': user, 'completed':completed_contracts})
 
 
 ##########################
