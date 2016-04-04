@@ -113,7 +113,8 @@ def profile(request):
     #print((user.userprofile.picture.path))
     posts = user.submission_set.all()
     contracts = user.contract_set.all()
-    deadlines = Deadline.objects.filter(signee=user, is_expired=False, is_accomplished=False).order_by(deadline)
+    deadlines = Deadline.objects.filter(signee=user,
+        is_expired=False, is_accomplished=False).order_by('deadline')
 
     return render(request, 'obligarcy/profile.html',
         {'contracts': contracts, 'posts': posts, 'deadlines':deadlines})
