@@ -8,7 +8,7 @@
     <div class="media">
       <div class="media-left">
         <a href="/profile/">
-                  {% if user.userprofile.picture %}
+          {% if user.userprofile.picture %}
 
           <img class="media-object"
                src="{{ user.userprofile.picture.path }}" alt="Problem serving picture"/>
@@ -24,6 +24,23 @@
   </div>
 </div>
 <hr>
+<div class='row'>
+  <div class='col-md-4'>
+
+    <h3>Completed Contracts</h3>
+    {% if completed %}
+        <ul>
+        {% for contract in completed %}
+            <li><a href="/submission/{{ contract.id }}/">{{ contract.title[:30] + '..' }}</a></li>
+            @ {{ contract.end_date.date().strftime('%D - %A')}} <br>
+            <hr>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>This User has no Completed Contracts</p>
+    {% endif %}
+  </div>
+</div>
 <div class='row'>
   <div class='col-md-4'>
 

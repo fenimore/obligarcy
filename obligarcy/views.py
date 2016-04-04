@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 
 from .forms import UserForm, UserProfileForm
 from .forms import ContractForm, SubForm
-from .control import activeContract
+from .control import completeContract, activeContract, activeContracts
 from django.utils import timezone
 from datetime import datetime, timedelta
 from django.http import HttpResponseRedirect, HttpResponse
@@ -118,9 +118,12 @@ def profile(request):
     contracts = user.contract_set.all()
     deadlines = Deadline.objects.filter(signee=user,
         is_expired=False, is_accomplished=False).order_by('deadline')
-
+    completed_contracts = []
+    for c in contracts:
+        if user in c.completed_by.all():
+            completed_contracts.append(c)
     return render(request, 'obligarcy/profile.html',
-        {'contracts': reversed(contracts), 'posts': reversed(posts), 'deadlines':deadlines})
+        {'contracts': reversed(contracts), 'posts': reversed(posts), 'deadlines':deadlines, 'completed':completed_contracts})
      # {'user': user, 'posts': posts}
 
 @login_required(login_url='/login/')
@@ -171,6 +174,7 @@ def submit(request, contract_id, user_id):
         new_sub.save()
         c = new_sub.contract_set.all().first()
         new_sub.save()
+        completeContract(contract_id, user_id)
         return HttpResponseRedirect('/submission/' + new_sub.id) # After POST redirect
     else:
         contract_id = contract_id
@@ -286,7 +290,7 @@ def show_active(request, user_id):
     for con in contracts:
         if con.is_active:
             active_contracts.append(con)
-    return render(request, 'obligarcy/active.html', {'contracts': active_contracts })
+    return render(request, 'obligarcy/active.html', {'contracts': active_contracts})
 
 ##########################
 # Combo Views

@@ -29,3 +29,14 @@ def activeContract(contract):
 def activeContracts(contracts):
     for contract in contracts:
         activeContract(contract)
+
+def completeContract(contract, user):
+    u = User.objects.get(id=user)
+    for dl in u.deadline_set.filter(contract=contract):
+            if not dl.is_accomplished or dl.is_late:
+                return False
+    c = Contract.objects.get(id=contract)
+    c.completed_by.add(user)
+    c.save()
+    print(c.completed_by.all())
+    return True
