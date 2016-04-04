@@ -25,7 +25,7 @@
 </div>
 <hr>
 <div class='row'>
-  <div class='col-md-5'>
+  <div class='col-md-4'>
 
     <h3>Submissions</h3>
     {% if posts %}
@@ -41,7 +41,7 @@
         <p>This User has no submissions</p>
     {% endif %}
   </div>
-  <div class='col-md-5'>
+  <div class='col-md-4'>
     <h3>Contracts</h3>
     {% if contracts %}
         <ul>
@@ -54,10 +54,19 @@
     {% else %}
         <p>This User has no (active) contracts</p>
     {% endif %}
-
-
+  </div>
+  <div class='col-md-4'>
+    <h3>Up Coming Deadlines</h3>
+    {% if deadlines %}
+        <ul>
+        {% for deadline in deadlines %}
+            <li><a href="#">{{ deadline.contract.preamble }}</a></li>
+            Deadline: {{ deadline.deadline }}
+            <hr>
+        {% endfor %}
+        </ul>
     {% else %}
-    <h1>hello world!</h1>
+        <p>This User has no (active) contracts</p>
     {% endif %}
   </div>
 </div>

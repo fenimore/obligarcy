@@ -37,6 +37,7 @@ class Submission(models.Model):
         return self.body
 
 
+# Add active
 class Contract(models.Model):
     id = models.CharField(max_length=6, primary_key=True, default=pkgen, unique=True)
     preamble = models.CharField(max_length=150, null=True)
