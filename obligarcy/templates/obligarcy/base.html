@@ -104,7 +104,7 @@ $(document).ready(function() {
                 <ul class="dropdown-menu">
                   {% if user.is_authenticated() %}
                   <li><a href="/profile/"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{ user.username }} Profile</a></li>
-                  <li><a href="#"><span class="glyphicon glyphicon-inbox" aria-hidden="true"></span> Active Contracts</a></li>
+                  <li><a href="/active/{{ user.id }}"><span class="glyphicon glyphicon-inbox" aria-hidden="true"></span> Active Contracts</a></li>
                   <li><a href="#"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span> Legacy Contracts</a></li>
                   <li><a href="#"><span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span> Contacts</a></li>
                   <li><a href="/challenge"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Challenge</a></li>

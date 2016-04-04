@@ -15,9 +15,9 @@
 
 
     <div class="form-group">
-        {{ contract_form.preamble.errors }}
-        <label style='display:none'  for="{{ contract_form.preamble.id_for_label }}">Contract text:</label>
-        {{ contract_form.preamble }}
+        {{ contract_form.title.errors }}
+        <label style='display:none'  for="{{ contract_form.title.id_for_label }}">Contract text:</label>
+        {{ contract_form.title }}
     </div>
     <div class="form-group">
         {{ contract_form.conditions.errors }}
@@ -25,9 +25,9 @@
         {{ contract_form.conditions }}
     </div>
     <div class="form-group">
-        {{ contract_form.penalties.errors }}
-        <label style='display:none'  for="{{ contract_form.penalties.id_for_label }}">Contract text:</label>
-        {{ contract_form.penalties }}
+        {{ contract_form.small_print.errors }}
+        <label style='display:none'  for="{{ contract_form.small_print.id_for_label }}">Contract text:</label>
+        {{ contract_form.small_print }}
     </div>
 
 

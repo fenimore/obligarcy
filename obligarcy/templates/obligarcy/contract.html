@@ -3,9 +3,10 @@
 {% block content %}
 <div class='row'>
   <div class='col-md-6'>
-    <h4>{{ contract.preamble }}</h4><br>
-    {{ contract.conditions }}<br>
-    {{ contract.penalties }}<br><br>
+    <h4>{{ contract.title }}</h4>
+    <p>{{ contract.conditions }}</p>
+    <p><small>
+    {{ contract.small_print }}</small></p><br><br>
 
     {% for signee in contract.users.all() %}
     Signee: <a href="/user/{{ signee.id }}/">{{signee.username}}</a><br>
@@ -22,10 +23,10 @@
         </th>
       {% endfor %}
     <tr>
-    {% for dl in contract.users.all().first().deadline_set.filter(contract=contract) %}
+    {% for dl in deadlines %}
     <tr>
       <td>
-        {{ dl.deadline.date().strftime('%D - %H:%M') }}
+        {{ dl.deadline.date().strftime('%D') }}
         {% if dl.is_expired %}
         Expired
         {% endif %}
@@ -51,7 +52,7 @@
                 </span></a>
               {% endif %}
             {% endif %}
-             ~
+
             {{ u.deadline_set.filter(contract=contract, deadline=dl.deadline).first().deadline.strftime('%D - %H:%M') }}
           </td>
       {% endfor %}
@@ -81,7 +82,7 @@
             {% endif %}<br>
           {% endif %}<br>
         {% endif %}<br>
-
+        Active Contract: {{ contract.is_active}}
         <hr>
 
             <h4>Submissions</h4>

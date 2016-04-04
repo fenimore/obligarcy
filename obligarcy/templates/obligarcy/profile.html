@@ -46,7 +46,7 @@
     {% if contracts %}
         <ul>
         {% for contract in contracts %}
-            <li><a href="/contract/{{ contract.id }}/">{{ contract.preamble }}</a></li>
+            <li><a href="/contract/{{ contract.id }}/">{{ contract.title }}</a></li>
             Deadline: {{ contract.end_date.strftime('%D')}}
             <hr>
         {% endfor %}
@@ -61,7 +61,7 @@
         <ul>
         {% for deadline in deadlines %}
         Deadline: {{ deadline.deadline.strftime('%D') }}
-            <li>Contract: <a href="/contract/{{ deadline.contract.id }}/">{{ deadline.contract.preamble[:30] }}...</a></li>
+            <li>Contract: <a href="/contract/{{ deadline.contract.id }}/">{{ deadline.contract.title[:30] }}...</a></li>
 
             <hr>
         {% endfor %}

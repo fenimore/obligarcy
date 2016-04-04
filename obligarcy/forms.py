@@ -83,18 +83,18 @@ class ContractForm(forms.ModelForm):
         ('Y', 'Yearly'),
     )
 
-    preamble = forms.CharField(max_length=150,
+    title = forms.CharField(max_length=100,
         widget=forms.Textarea(attrs={'class': 'form-control',
-'placeholder': 'We the undersigned agree to this contract ...',
-         'rows': '3'}))
+'placeholder': 'Contract Title ...',
+         'rows': '2'}))
     conditions = forms.CharField(max_length=400,
         widget=forms.Textarea(attrs={'class': 'form-control',
-'placeholder': 'I must submit a movie review no less than 200 words every ...',
+'placeholder': 'Contract Conditions ...',
          'rows': '7'}))
-    penalties = forms.CharField(max_length=200,
+    small_print = forms.CharField(max_length=200,
         widget=forms.Textarea(attrs={'class': 'form-control',
-'placeholder': 'I agree to the aforementioned conditions on pain of ...',
-         'rows': '5'}))
+'placeholder': 'Small Print (not required) ...',
+         'rows': '3'}))
     end_date = forms.DateField(widget=DateInput())
     start_date = forms.DateField(widget=DateInput())
     frequency = forms.CharField(max_length=20, widget=forms.Select(
@@ -104,7 +104,7 @@ class ContractForm(forms.ModelForm):
 
     class Meta:
         model = Contract
-        fields = ['preamble','conditions','penalties', 'end_date', 'start_date', 'frequency']
+        fields = ['title','conditions','small_print', 'end_date', 'start_date', 'frequency']
 
 
 

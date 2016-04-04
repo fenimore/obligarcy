@@ -41,19 +41,19 @@ class Submission(models.Model):
 # Add active
 class Contract(models.Model):
     id = models.CharField(max_length=6, primary_key=True, default=pkgen, unique=True)
-    preamble = models.CharField(max_length=150, null=True)
+    title = models.CharField(max_length=150, null=True)
     conditions = models.CharField(max_length=400, null=True)
-    penalties = models.CharField(max_length=200, null=True)
+    small_print = models.CharField(max_length=200, null=True)
     start_date = models.DateTimeField('start date')
     end_date = models.DateTimeField('end date')
     frequency = models.CharField(max_length=2, default='O')
-    is_expired = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=False)
     users = models.ManyToManyField(User) # signee
     submissions = models.ManyToManyField(Submission)
     # signing_deadline = models.DateTimeField('signing_deadline')
 
     def __str__(self):              # __unicode__ or str
-        return self.preamble
+        return self.title
 
 # add a signee for the
 class Deadline(models.Model):
