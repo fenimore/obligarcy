@@ -10,8 +10,8 @@
     {% for signee in contract.users.all() %}
     Signee: <a href="/user/{{ signee.id }}/">{{signee.username}}</a><br>
     {% endfor %}
-
-<br>Contract ends: {{ contract.end_date }}<br>
+    <br>Contract starts: {{ contract.start_date.strftime('%D - %H:%M') }}<br>
+        Contract ends: {{ contract.end_date.strftime('%D - %H:%M') }}<br>
 <hr>
 <h4>Deadlines</h4>
 <table class="table table-hover">
@@ -25,7 +25,7 @@
     {% for dl in contract.users.all().first().deadline_set.filter(contract=contract) %}
     <tr>
       <td>
-        {{ dl.deadline.date().strftime('%Y-%m-%d') }}
+        {{ dl.deadline.date().strftime('%D - %H:%M') }}
         {% if dl.is_expired %}
         Expired
         {% endif %}
@@ -52,7 +52,7 @@
               {% endif %}
             {% endif %}
              ~
-            {{ u.deadline_set.filter(contract=contract, deadline=dl.deadline).first().deadline.strftime('%Y-%m-%d') }}
+            {{ u.deadline_set.filter(contract=contract, deadline=dl.deadline).first().deadline.strftime('%D - %H:%M') }}
           </td>
       {% endfor %}
     </tr>

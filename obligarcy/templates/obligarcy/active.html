@@ -1,0 +1,18 @@
+{% extends "obligarcy/base.html" %}
+
+{% block content %}
+
+<h2>Active Contracts</h2>
+{% if contracts %}
+    <ul>
+    {% for contract in contracts %}
+        <li><a href="/contract/{{ contract.id }}/">{{ contract.preamble }}</a></li>
+        Final Deadline: {{ contract.end_date.strftime('%y/%m/%d %A')}}<br>
+        Next Deadline: <br>
+        <br>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No contracts active</p>
+{% endif %}
+{% endblock content %}

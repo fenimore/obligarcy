@@ -237,12 +237,14 @@ def challenge(request):
                  contract.end_date, freq=contract.frequency)
                 deadline_list = deadline_list.to_pydatetime()
                 for deadline in deadline_list:
-                    is_expired = timezone.now() > deadline
                     deadline = deadline # first argument hour, second minute # Should I str this? If i must..
                     deadline = deadline.replace(hour=23, minute=59)
+                    is_expired = timezone.now() > deadline
                     d = Deadline(deadline=deadline, contract_id=contract.id,
                                  signee=u, is_expired=is_expired)
                     d.save()
+            #contract.start_date = contract.start_date.replace(hour=23, minute=59)
+            contract.end_date = contract.end_date.replace(hour=23, minute=59)
             contract.save()
             signees = contract.users.all() # what am I do?
             deadlines = contract.deadline_set.all() # What happens here?
