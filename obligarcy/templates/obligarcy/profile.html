@@ -31,7 +31,7 @@
     {% if completed %}
         <ul>
         {% for contract in completed %}
-            <li><a href="/submission/{{ contract.id }}/">{{ contract.title[:30] + '..' }}</a></li>
+            <li><a href="/contract/{{ contract.id }}/">{{ contract.title[:30] + '..' }}</a></li>
             @ {{ contract.end_date.date().strftime('%D - %A')}} <br>
             <hr>
         {% endfor %}

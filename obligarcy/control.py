@@ -19,6 +19,7 @@ import json
 ##########################
 
 def activeContract(contract):
+    # if contract is not completed
     if contract.start_date < timezone.now() < contract.end_date:
         contract.is_active = True
         contract.save()
