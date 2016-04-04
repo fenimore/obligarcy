@@ -50,6 +50,7 @@ class Contract(models.Model):
     is_active = models.BooleanField(default=False)
     users = models.ManyToManyField(User) # signee
     submissions = models.ManyToManyField(Submission)
+    completions = models.ManyToManyField(User)
     # signing_deadline = models.DateTimeField('signing_deadline')
 
     def __str__(self):              # __unicode__ or str

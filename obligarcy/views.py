@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, get_list_or_404
 from .models import Submission, Contract, Deadline, UserProfile
 from django.contrib.auth.models import User
 from django.contrib.sessions.models import Session
+from django.contrib.auth.decorators import login_required
 
 from .forms import UserForm, UserProfileForm
 from .forms import ContractForm, SubForm
@@ -108,6 +109,7 @@ def user_logout(request):
     return HttpResponseRedirect('/')
 
 # TODO: Add Prochaine Deadlines
+@login_required(login_url='/login/')
 def profile(request):
     user_id = request.session['id']
     user = get_object_or_404(User, id=user_id)
@@ -121,7 +123,7 @@ def profile(request):
         {'contracts': reversed(contracts), 'posts': reversed(posts), 'deadlines':deadlines})
      # {'user': user, 'posts': posts}
 
-
+@login_required(login_url='/login/')
 def show_prof(request, user_id):
     user = get_object_or_404(User, id=user_id)
     posts = user.submission_set.all()
@@ -133,6 +135,7 @@ def show_prof(request, user_id):
 ##########################
 # Submission Views
 ##########################
+@login_required(login_url='/login/')
 def show_sub(request, submission_id):
     template = 'obligarcy/submission.html'
     submission = get_object_or_404(Submission, id=submission_id)
@@ -146,7 +149,7 @@ def show_sub(request, submission_id):
          'author':author, 'contract':contract, 'word_count':word_count,
           'deadline':deadline})
 
-
+@login_required(login_url='/login/')
 def submit(request, contract_id, user_id):
     if request.method == 'POST':
         form = SubForm(request.POST, user_id)
@@ -183,6 +186,7 @@ def submit(request, contract_id, user_id):
 ##########################
 # Contract Views
 ##########################
+@login_required(login_url='/login/')
 def show_con(request, contract_id):
     contract = get_object_or_404(Contract, id=contract_id)
     activeContract(contract)
@@ -203,7 +207,7 @@ def show_con(request, contract_id):
     dls = signees[0].deadline_set.filter(contract=contract)
     return render(request, 'obligarcy/contract.html', {'contract': contract, 'allow_signing':allow_signing, 'signees': signees, 'deadlines': dls})
 
-
+@login_required(login_url='/login/')
 def challenge(request):
     if request.method == 'POST':
         print('is post')
@@ -257,7 +261,7 @@ def challenge(request):
     return render(request, 'obligarcy/challenge.html',
             {'contract_form': contract_form})
 
-
+@login_required(login_url='/login/')
 def sign_con(request, contract_id): # As of now, it will appear (the sign button)
     if request.method == 'POST':   # only if it has been less than a day after the
         contract = Contract.objects.get(id=contract_id) # contract start date
@@ -274,6 +278,7 @@ def sign_con(request, contract_id): # As of now, it will appear (the sign button
         contract = Contract.objects.get(id=contract_id)
         return render(request, 'obligarcy/sign.html', {'contract': contract})
 
+@login_required(login_url='/login/')
 def show_active(request, user_id):
     contracts = get_list_or_404(Contract.objects.order_by('-start_date'), users=user_id)
     map(activeContract, contracts)
@@ -281,7 +286,7 @@ def show_active(request, user_id):
     for con in contracts:
         if con.is_active:
             active_contracts.append(con)
-    return render(request, 'obligarcy/active.html', {'contracts': active_contracts})
+    return render(request, 'obligarcy/active.html', {'contracts': active_contracts })
 
 ##########################
 # Combo Views
@@ -293,7 +298,3 @@ def firehose(request):
     submissions = Submission.objects.all()
     return render(request, 'obligarcy/firehose.html', {'contracts': reversed(contracts),
          'users':reversed(users) ,'submissions':reversed(submissions)})
-
-def checkDeadlines(deadline):
-    # check if deadline is expired
-    return true
