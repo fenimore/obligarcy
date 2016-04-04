@@ -9,10 +9,9 @@
     <div class="panel panel-default">
       <div class="panel-body">
         <a href='/contract/{{contract.id}}' >Contract:</a> {{ contract.conditions[50:] }}...<br><br>
-        Submitted for {{ deadline.deadline.date() }} deadline.<br><br>
+        Submitted for {{ deadline.deadline.date() }} deadline on {{ submission.pub_date.date() }}<br><br>
         Word Count: {{ word_count }} <br>
         Author: <a href="/user/{{ submission.user.id }}/">{{ submission.user.username }}</a> <br>
-        Submission Date : {{ submission.pub_date.date() }}<br>
         Is late: {{ deadline.is_late }}<br>
       </div>
     </div>

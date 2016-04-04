@@ -117,7 +117,7 @@ def profile(request):
         is_expired=False, is_accomplished=False).order_by('deadline')
 
     return render(request, 'obligarcy/profile.html',
-        {'contracts': contracts, 'posts': posts, 'deadlines':deadlines})
+        {'contracts': reversed(contracts), 'posts': reversed(posts), 'deadlines':deadlines})
      # {'user': user, 'posts': posts}
 
 
