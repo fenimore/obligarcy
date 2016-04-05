@@ -134,6 +134,7 @@ def profile(request):
 
 @login_required(login_url='/login/')
 def show_prof(request, user_id):
+    browser = User.objects.get(id=request.session['id'])
     user = get_object_or_404(User, id=user_id)
     posts = user.submission_set.all()
     contracts = user.contract_set.all()
@@ -144,16 +145,17 @@ def show_prof(request, user_id):
             completed_contracts.append(c)
     # Get Follows and followed_by
     follows = user.userprofile.follows.all()
-    print(follows)
     followed_by = user.userprofile.followed_by.all() # followed_by.user
-    print(followed_by)
     # Following
     can_follow = False
     already_follows = False
     if int(user_id) != int(request.session['id']):
         can_follow = True
-    if user.userprofile.follows.filter(user=request.session['id']):
+    print(browser, browser.userprofile)
+    if browser.userprofile in followed_by:
         already_follows = True
+        print(already_follows)
+    print(already_follows)
     return render(request, 'obligarcy/profile.html',
         {'contracts': contracts, 'posts': posts, 'profile': user,
         'completed':completed_contracts,
