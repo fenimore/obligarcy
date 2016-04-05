@@ -306,6 +306,10 @@ def challenge(request):
 
 @login_required(login_url='/login/')
 def sign_con(request, contract_id): # As of now, it will appear (the sign button)
+    # Crucial! Nice save!
+    if not checkEligibility(request.session['id'], contract_id, timezone.now()):
+        return HttpResponseRedirect('/contract/'+contract_id)
+
     if request.method == 'POST':   # only if it has been less than a day after the
         contract = Contract.objects.get(id=contract_id) # contract start date
         user = User.objects.get(username=request.POST['signee'])

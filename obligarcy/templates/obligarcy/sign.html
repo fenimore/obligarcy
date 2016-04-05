@@ -2,9 +2,9 @@
 {% block content %}
     <div class='row'>
       <div class='col-md-6'>
-    {{ contract.preamble }}<br>
+    {{ contract.title }}<br>
     {{ contract.conditions }}<br>
-    {{ contract.penalties }}<br>
+    {{ contract.small_print }}<br>
       </div><!-- Col-->
       <div class='col-md-3'>
         {% if user.is_authenticated %}

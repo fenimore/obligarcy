@@ -18,11 +18,18 @@
       <div class="media-body">
         <h4 class="media-heading">{{ profile.username }}</h4>
         {{ profile.userprofile.bio}}<br>
-        {{profile.userprofile.location}}
+        Joined {{ user.date_joined.strftime('%D') }}<br>
       </div>
     </div>
   </div>
   <div class=col-md-4>
+    <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> {{ user.userprofile.location }}<br><br>
+    <span class="glyphicon glyphicon-apple" aria-hidden="true"></span> {{ user.has_completed.all()|length }}<br>
+    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> {{ user.deadline_set.filter(is_accomplished=True, is_late=False)|length }}<br>
+    <span class="glyphicon glyphicon-inbox" aria-hidden="true"></span> {{ user.deadline_set.filter(is_expired=False, is_accomplished=False)|length }}<br>
+
+
+    <hr>
     {% if can_follow %}
       {% if already_follows %}
       <a class='btn btn-default' href=/unfollow/{{ request.session.id }}/{{profile.id}}>Unsubscribe</a>
@@ -38,38 +45,43 @@
 
     <h3>Completed Contracts</h3>
     {% if completed %}
-        <ul>
+      <table class="table  table-hover">
+        <tr><th>Completed Contracts</th></tr>
         {% for contract in completed %}
-            <li><a href="/contract/{{ contract.id }}/">{{ contract.title[:30] + '..' }}</a></li>
-            @ {{ contract.end_date.date().strftime('%D - %A')}} <br>
-            <hr>
+            <tr>
+              <td><a href="/contract/{{ contract.id }}/">{{ contract.title[:30] + '..' }}<br>
+              @ {{ contract.end_date.date().strftime('%D - %A')}}</td>
+            </tr>
         {% endfor %}
-        </ul>
+      </table>
     {% else %}
         <p>This User has no Completed Contracts</p>
     {% endif %}
   </div>
   <div class='col-md-4'>
-    <h3>Follows</h3>
     {% if follows %}
-        <ul>
+    <table class="table table-hover">
+      <tr><th>Follows</th></tr>
         {% for f in follows %}
-            <li><a href="/user/{{ f.user.id }}/">{{ f.user.username }}</a></li>
-        {% endfor %}
-        </ul>
+          <tr>
+            <td><a href="/user/{{ f.user.id }}/">{{ f.user.username }}</a></td>
+          </tr>
+         {% endfor %}
+    </table>
     {% else %}
         <p>No one is following {{ profile.username }}</p>
     {% endif %}
   </div>
   <div class='col-md-4'>
-    <h3>Followed By</h3>
     {% if followed_by %}
-        <ul>
+    <table class="table table-striped table-hover">
+      <tr><th>Followed By</th></tr>
         {% for f in followed_by %}
-            <li><a href="/user/{{ f.user.id }}/">{{ f.user.username }}</a></li>
-            <hr>
-        {% endfor %}
-        </ul>
+          <tr>
+            <td><a href="/user/{{ f.user.id }}/">{{ f.user.username }}</a></td>
+          </tr>
+         {% endfor %}
+    </table>
     {% else %}
         <p>No one is following {{ profile.username }}</p>
     {% endif %}
@@ -77,22 +89,41 @@
 </div>
 <div class='row'>
   <div class='col-md-4'>
-
-    <h3>Submissions</h3>
     {% if posts %}
-        <ul>
+    <table class="table table-hover">
+      <tr><th>Submissions</th></tr>
         {% for post in posts %}
-            <li><a href="/submission/{{ post.id }}/">{{ post.body[:30] + '..' }}</a></li>
-            @ {{ post.pub_date.date().strftime('%D - %A')}} <br>
-            For deadline: {{ post.deadline_set.all().first()}}
-            <hr>
-        {% endfor %}
-        </ul>
+          <tr>
+            <td>
+              <a href="/submission/{{ post.id }}/">{{ post.body[:30] + '..' }}</a><br>
+              @ {{ post.pub_date.date().strftime('%D - %A')}} <br>
+              For deadline: {{ post.deadline_set.all().first()}}
+            </td>
+          </tr>
+         {% endfor %}
+    </table>
     {% else %}
-        <p>This User has no submissions</p>
+        <p>No Submissions</p>
     {% endif %}
   </div>
   <div class='col-md-4'>
+    {% if contracts %}
+    <table class="table table-hover">
+      <tr><th>Contracts</th></tr>
+        {% for contract in contracts %}
+          <tr>
+            <td>
+              <a href="/contract/{{ contract.id }}/">{{ contract.title[:15] }}...</a>
+            </td>
+            <td>
+              {{contract.end_date.strftime('%D')}}
+            </td>
+          </tr>
+         {% endfor %}
+    </table>
+    {% else %}
+        <p>No Submissions</p>
+    {% endif %}
     <h3>Contracts</h3>
     {% if contracts %}
         <ul>
