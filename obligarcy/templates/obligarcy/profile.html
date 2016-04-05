@@ -55,7 +55,6 @@
         <ul>
         {% for f in follows %}
             <li><a href="/user/{{ f.user.id }}/">{{ f.user.username }}</a></li>
-            <hr>
         {% endfor %}
         </ul>
     {% else %}

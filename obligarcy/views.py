@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 
 from .forms import UserForm, UserProfileForm
 from .forms import ContractForm, SubForm
-from .control import completeContract, activeContract, activeContracts
+from .control import completeContract, activeContract, activeContracts, checkEligibility
 from django.utils import timezone
 from datetime import datetime, timedelta
 from django.http import HttpResponseRedirect, HttpResponse
@@ -125,7 +125,7 @@ def profile(request):
             completed_contracts.append(c)
     # Get Follows and followed_by
     follows = user.userprofile.follows.all()
-    followed_by = user.userprofile.follows.all() # followed_by.user
+    followed_by = user.userprofile.followed_by.all() # followed_by.user
     return render(request, 'obligarcy/profile.html',
         {'contracts': reversed(contracts), 'profile': user, 'posts': reversed(posts),
         'deadlines':deadlines, 'completed':completed_contracts,
@@ -151,11 +151,9 @@ def show_prof(request, user_id):
     already_follows = False
     if int(user_id) != int(request.session['id']):
         can_follow = True
-    print(browser, browser.userprofile)
     if browser.userprofile in followed_by:
         already_follows = True
         print(already_follows)
-    print(already_follows)
     return render(request, 'obligarcy/profile.html',
         {'contracts': contracts, 'posts': posts, 'profile': user,
         'completed':completed_contracts,
@@ -240,12 +238,7 @@ def submit(request, contract_id, user_id):
 def show_con(request, contract_id):
     contract = get_object_or_404(Contract, id=contract_id)
     activeContract(contract)
-    allow_signing = False
-    print(contract.is_active)
-    if(timezone.now() < contract.start_date):
-        allow_signing = True # Contract has not begun
-    if (timezone.now() - contract.start_date) < timedelta(1):
-        allow_signing = True
+    allow_signing = checkEligibility(request.session['id'], contract_id, timezone.now())
     signees = contract.users.all()
     for dl in contract.deadline_set.all():
         if dl.deadline < timezone.now():

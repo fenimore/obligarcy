@@ -19,8 +19,22 @@ import json
 ##########################
 
 ##########################
-# Follows
+# Eligibility
 ##########################
+def checkEligibility(u_id, c_id, now):
+    contract = Contract.objects.get(id=c_id)
+    user = User.objects.get(id=u_id)
+    followed_by = user.userprofile.followed_by.all()
+    # Sois it's not begun, or it's still the first day
+    if(now < contract.start_date) or ((now - contract.start_date) < timedelta(1)):
+        for u in contract.users.all():
+            if u in followed_by:
+                return True
+        return False
+    return False
+
+
+
 ##########################
 # Functions
 ##########################
