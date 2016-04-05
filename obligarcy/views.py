@@ -127,14 +127,11 @@ def profile(request):
     follows = user.userprofile.follows.all()
     followed_by = user.userprofile.followed_by.all() # followed_by.user
     return render(request, 'obligarcy/profile.html',
-        {'contracts': reversed(contracts), 'profile': user, 'posts': reversed(posts),
-        'deadlines':deadlines, 'completed':completed_contracts,
-        'follows':follows, 'followed_by':followed_by})
-    return render(request, 'obligarcy/profile.html',
-        {'contracts': contracts, 'posts': reversed(posts[:4]), 'profile': user,
+        {'contracts': contracts, 'posts': reversed(posts), 'profile': user,
         'completed':completed_contracts, 'deadlines':deadlines,
-        'follows':follows[:4], 'followed_by':followed_by[:4],
-        'can_follow':can_follow, 'already_follows': already_follows})
+        'follows':follows, 'followed_by':followed_by,
+        'can_follow':False, 'already_follows': False})
+
 @login_required(login_url='/login/')
 def show_prof(request, user_id):
     browser = User.objects.get(id=request.session['id'])
@@ -159,9 +156,9 @@ def show_prof(request, user_id):
     if browser.userprofile in followed_by:
         already_follows = True
     return render(request, 'obligarcy/profile.html',
-        {'contracts': contracts[:4], 'posts': posts[:4], 'profile': user,
-        'completed':completed_contracts[:4], 'deadlines':deadlines,
-        'follows':follows[:4], 'followed_by':followed_by[:4],
+        {'contracts': contracts, 'posts': reversed(posts), 'profile': user,
+        'completed':completed_contracts, 'deadlines':deadlines,
+        'follows':follows, 'followed_by':followed_by,
         'can_follow':can_follow, 'already_follows': already_follows})
 
 @login_required(login_url='/login/')
@@ -202,6 +199,7 @@ def show_sub(request, submission_id):
 
 @login_required(login_url='/login/')
 def submit(request, contract_id, user_id):
+    # This needs to be restricted to those who have persmission...
     if request.method == 'POST':
         form = SubForm(request.POST, user_id)
         #if form.is_valid():
