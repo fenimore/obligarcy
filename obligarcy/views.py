@@ -127,7 +127,7 @@ def profile(request):
     follows = user.userprofile.follows.all()
     followed_by = user.userprofile.follows.all() # followed_by.user
     return render(request, 'obligarcy/profile.html',
-        {'contracts': reversed(contracts), 'posts': reversed(posts),
+        {'contracts': reversed(contracts), 'profile': user, 'posts': reversed(posts),
         'deadlines':deadlines, 'completed':completed_contracts,
         'follows':follows, 'followed_by':followed_by})
      # {'user': user, 'posts': posts}
@@ -144,11 +144,13 @@ def show_prof(request, user_id):
             completed_contracts.append(c)
     # Get Follows and followed_by
     follows = user.userprofile.follows.all()
-    followed_by = user.userprofile.follows.all() # followed_by.user
+    print(follows)
+    followed_by = user.userprofile.followed_by.all() # followed_by.user
+    print(followed_by)
     # Following
     can_follow = False
     already_follows = False
-    if user_id != request.session['id']:
+    if int(user_id) != int(request.session['id']):
         can_follow = True
     if user.userprofile.follows.filter(id=request.session['id']):
         already_follows = True
@@ -163,7 +165,19 @@ def follow(request, user_1_id, user_2_id): # 1 is Who, 2 is Whom
     u1 = User.objects.get(id=user_1_id)
     u2 = User.objects.get(id=user_2_id)
     u1.userprofile.follows.add(u2.userprofile)
+    u1.save()
+    print(user_1_id, user_2_id, u2.userprofile)
+    print(u1.userprofile.follows.get(id=u2.id).user.username)
     return HttpResponseRedirect('/user/' + user_2_id) # After POST redirect
+
+@login_required(login_url='/login/')
+def unfollow(request, user_1_id, user_2_id): # 1 is Who, 2 is Whom
+    u1 = User.objects.get(id=user_1_id)
+    u2 = User.objects.get(id=user_2_id)
+    u1.userprofile.follows.remove(u2.userprofile)
+    u1.save()
+    return HttpResponseRedirect('/user/' + user_2_id) # After POST redirect
+
 
 ##########################
 # Submission Views

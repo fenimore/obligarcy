@@ -12,6 +12,9 @@ urlpatterns = [
     url(r'^profile/$', views.profile),
     # ex: /obligarcy/user/5/
     url(r'^user/([0-9]+)/$', views.show_prof, name='user'),
+    url(r'^follow/([0-9]+)/([0-9]+)/$', views.follow, name='follow'),
+    url(r'^unfollow/([0-9]+)/([0-9]+)/$', views.unfollow, name='unfollow'),
+
     # ex: /obligarcy/user
     #url(r'^user/$', views.profile, name='profile'),
 
