@@ -152,7 +152,7 @@ def show_prof(request, user_id):
     already_follows = False
     if int(user_id) != int(request.session['id']):
         can_follow = True
-    if user.userprofile.follows.filter(id=request.session['id']):
+    if user.userprofile.follows.filter(user=request.session['id']):
         already_follows = True
     return render(request, 'obligarcy/profile.html',
         {'contracts': contracts, 'posts': posts, 'profile': user,
