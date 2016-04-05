@@ -42,14 +42,12 @@
 <hr>
 <div class='row'>
   <div class='col-md-4'>
-
-    <h3>Completed Contracts</h3>
     {% if completed %}
       <table class="table  table-hover">
         <tr><th>Completed Contracts</th></tr>
         {% for contract in completed %}
             <tr>
-              <td><a href="/contract/{{ contract.id }}/">{{ contract.title[:30] + '..' }}<br>
+              <td><a href="/contract/{{ contract.id }}/">{{ contract.title[:30] + '..' }}</a><br>
               @ {{ contract.end_date.date().strftime('%D - %A')}}</td>
             </tr>
         {% endfor %}
@@ -74,7 +72,7 @@
   </div>
   <div class='col-md-4'>
     {% if followed_by %}
-    <table class="table table-striped table-hover">
+    <table class="table table-hover">
       <tr><th>Followed By</th></tr>
         {% for f in followed_by %}
           <tr>
@@ -109,7 +107,7 @@
   <div class='col-md-4'>
     {% if contracts %}
     <table class="table table-hover">
-      <tr><th>Contracts</th></tr>
+      <tr><th>Contracts</th><td>end dates</td></tr>
         {% for contract in contracts %}
           <tr>
             <td>
@@ -122,36 +120,28 @@
          {% endfor %}
     </table>
     {% else %}
-        <p>No Submissions</p>
-    {% endif %}
-    <h3>Contracts</h3>
-    {% if contracts %}
-        <ul>
-        {% for contract in contracts %}
-            <li><a href="/contract/{{ contract.id }}/">{{ contract.title }}</a></li>
-            Deadline: {{ contract.end_date.strftime('%D')}}
-            <hr>
-        {% endfor %}
-        </ul>
-    {% else %}
-        <p>This User has no (active) contracts</p>
+        <p>No (active) contracts</p>
     {% endif %}
   </div>
   <div class='col-md-4'>
-    <h3>Up Coming Deadlines</h3>
     {% if deadlines %}
-        <ul>
-        {% for deadline in deadlines %}
-        Deadline: {{ deadline.deadline.strftime('%D') }}
-            <li>Contract: <a href="/contract/{{ deadline.contract.id }}/">{{ deadline.contract.title[:30] }}...</a></li>
-
-            <hr>
-        {% endfor %}
-        </ul>
+    <table class="table table-hover">
+      <tr><th>Upcoming</th><th>Deadlines</th></tr>
+        {% for deadline in deadlines[:4] %}
+          <tr>
+            <td>
+              {{ deadline.deadline.strftime('%D') }}
+            </td>
+            <td>
+              <a href="/contract/{{ deadline.contract.id }}/">{{ deadline.contract.title[:20] }}...</a>
+            </td>
+          </tr>
+         {% endfor %}
+         <tr><td>Load All</td><td></tr>
+    </table>
     {% else %}
-        <p>This User has no (active) contracts</p>
+        <p>No (active) deadlines</p>
     {% endif %}
-
     {% else %}
         <p>You are Not Authenticated!</p>
     {% endif %}

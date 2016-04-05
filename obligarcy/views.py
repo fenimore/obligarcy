@@ -130,14 +130,19 @@ def profile(request):
         {'contracts': reversed(contracts), 'profile': user, 'posts': reversed(posts),
         'deadlines':deadlines, 'completed':completed_contracts,
         'follows':follows, 'followed_by':followed_by})
-     # {'user': user, 'posts': posts}
-
+    return render(request, 'obligarcy/profile.html',
+        {'contracts': contracts, 'posts': reversed(posts[:4]), 'profile': user,
+        'completed':completed_contracts, 'deadlines':deadlines,
+        'follows':follows[:4], 'followed_by':followed_by[:4],
+        'can_follow':can_follow, 'already_follows': already_follows})
 @login_required(login_url='/login/')
 def show_prof(request, user_id):
     browser = User.objects.get(id=request.session['id'])
     user = get_object_or_404(User, id=user_id)
     posts = user.submission_set.all()
     contracts = user.contract_set.all()
+    deadlines = Deadline.objects.filter(signee=user,
+        is_expired=False, is_accomplished=False).order_by('deadline')
     # Completed Contracts
     completed_contracts = []
     for c in contracts:
@@ -153,11 +158,10 @@ def show_prof(request, user_id):
         can_follow = True
     if browser.userprofile in followed_by:
         already_follows = True
-        print(already_follows)
     return render(request, 'obligarcy/profile.html',
-        {'contracts': contracts, 'posts': posts, 'profile': user,
-        'completed':completed_contracts,
-        'follows':follows, 'followed_by':followed_by,
+        {'contracts': contracts[:4], 'posts': posts[:4], 'profile': user,
+        'completed':completed_contracts[:4], 'deadlines':deadlines,
+        'follows':follows[:4], 'followed_by':followed_by[:4],
         'can_follow':can_follow, 'already_follows': already_follows})
 
 @login_required(login_url='/login/')
