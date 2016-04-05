@@ -26,7 +26,7 @@
         {% endfor %}<br>
         </div>
 
-        {% if user.is_authenticated %}<br>
+        {% if contract.is_active %}<br>
           {% if user in contract.users.all() %}
             {% if user.deadline_set.filter(contract=contract, is_accomplished=False).first() %}<br>
             <a class='btn btn-default' href=/submit/{{ contract.id }}/{{user.id}}>Submit a text</a>

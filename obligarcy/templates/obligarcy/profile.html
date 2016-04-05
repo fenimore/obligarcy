@@ -18,15 +18,15 @@
       <div class="media-body">
         <h4 class="media-heading">{{ profile.username }}</h4>
         {{ profile.userprofile.bio}}<br>
-        Joined {{ user.date_joined.strftime('%D') }}<br>
+        Joined {{ profile.date_joined.strftime('%D') }}<br>
       </div>
     </div>
   </div>
   <div class=col-md-4>
-    <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> {{ user.userprofile.location }}<br><br>
-    <span class="glyphicon glyphicon-apple" aria-hidden="true"></span> {{ user.has_completed.all()|length }}<br>
-    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> {{ user.deadline_set.filter(is_accomplished=True, is_late=False)|length }}<br>
-    <span class="glyphicon glyphicon-inbox" aria-hidden="true"></span> {{ user.deadline_set.filter(is_expired=False, is_accomplished=False)|length }}<br>
+    <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> {{ profile.userprofile.location }}<br><br>
+    <span class="glyphicon glyphicon-apple" aria-hidden="true"></span> {{ profile.has_completed.all()|length }}<br>
+    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> {{ profile.deadline_set.filter(is_accomplished=True, is_late=False)|length }}<br>
+    <span class="glyphicon glyphicon-inbox" aria-hidden="true"></span> {{ profile.deadline_set.filter(is_expired=False, is_accomplished=False)|length }}<br>
 
 
     <hr>
