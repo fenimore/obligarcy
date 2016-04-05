@@ -118,12 +118,18 @@ def profile(request):
     contracts = user.contract_set.all()
     deadlines = Deadline.objects.filter(signee=user,
         is_expired=False, is_accomplished=False).order_by('deadline')
+    # Completed Contracts
     completed_contracts = []
     for c in contracts:
         if user in c.completed_by.all():
             completed_contracts.append(c)
+    # Get Follows and followed_by
+    follows = user.userprofile.follows.all()
+    followed_by = user.userprofile.follows.all() # followed_by.user
     return render(request, 'obligarcy/profile.html',
-        {'contracts': reversed(contracts), 'posts': reversed(posts), 'deadlines':deadlines, 'completed':completed_contracts})
+        {'contracts': reversed(contracts), 'posts': reversed(posts),
+        'deadlines':deadlines, 'completed':completed_contracts,
+        'follows':follows, 'followed_by':followed_by})
      # {'user': user, 'posts': posts}
 
 @login_required(login_url='/login/')
@@ -131,13 +137,33 @@ def show_prof(request, user_id):
     user = get_object_or_404(User, id=user_id)
     posts = user.submission_set.all()
     contracts = user.contract_set.all()
+    # Completed Contracts
     completed_contracts = []
     for c in contracts:
         if user in c.completed_by.all():
             completed_contracts.append(c)
+    # Get Follows and followed_by
+    follows = user.userprofile.follows.all()
+    followed_by = user.userprofile.follows.all() # followed_by.user
+    # Following
+    can_follow = False
+    already_follows = False
+    if user_id != request.session['id']:
+        can_follow = True
+    if user.userprofile.follows.filter(id=request.session['id']):
+        already_follows = True
     return render(request, 'obligarcy/profile.html',
-        {'contracts': contracts, 'posts': posts, 'user': user, 'completed':completed_contracts})
+        {'contracts': contracts, 'posts': posts, 'profile': user,
+        'completed':completed_contracts,
+        'follows':follows, 'followed_by':followed_by,
+        'can_follow':can_follow, 'already_follows': already_follows})
 
+@login_required(login_url='/login/')
+def follow(request, user_1_id, user_2_id): # 1 is Who, 2 is Whom
+    u1 = User.objects.get(id=user_1_id)
+    u2 = User.objects.get(id=user_2_id)
+    u1.userprofile.follows.add(u2.userprofile)
+    return HttpResponseRedirect('/user/' + user_2_id) # After POST redirect
 
 ##########################
 # Submission Views

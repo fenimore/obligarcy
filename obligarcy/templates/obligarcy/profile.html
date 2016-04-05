@@ -4,23 +4,32 @@
 
 {% if user.is_authenticated %}
 <div class='row'>
-  <div>
+  <div class=col-md-4>
     <div class="media">
       <div class="media-left">
         <a href="/profile/">
-          {% if user.userprofile.picture %}
+          {% if profile.userprofile.picture %}
 
           <img class="media-object"
-               src="{{ user.userprofile.picture.path }}" alt="Problem serving picture"/>
+               src="{{ profile.userprofile.picture.path }}" alt="Problem serving picture"/>
           {% endif %}
         </a>
       </div>
       <div class="media-body">
-        <h4 class="media-heading">{{ user.username }}</h4>
-        {{ user.userprofile.bio}}<br>
-        {{user.userprofile.location}}
+        <h4 class="media-heading">{{ profile.username }}</h4>
+        {{ profile.userprofile.bio}}<br>
+        {{profile.userprofile.location}}
       </div>
     </div>
+  </div>
+  <div class=col-md-4>
+    {% if can_follow %}
+      {% if already_follows %}
+      <a class='btn btn-default' href=/unfollow/{{ request.session.id }}/{{profile.id}}>Unsubscribe</a>
+      {% else %}
+      <a class='btn btn-info' href=/follow/{{ request.session.id }}/{{profile.id}}>Follow</a>
+      {% endif %}
+    {% endif %}
   </div>
 </div>
 <hr>
@@ -38,6 +47,32 @@
         </ul>
     {% else %}
         <p>This User has no Completed Contracts</p>
+    {% endif %}
+  </div>
+  <div class='col-md-4'>
+    <h3>Followed By</h3>
+    {% if follows %}
+        <ul>
+        {% for f in follows %}
+            <li><a href="/user/{{ f.user.id }}/">{{ f.user.username }}</a></li>
+            <hr>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No one is following {{ profile.username }}</p>
+    {% endif %}
+  </div>
+  <div class='col-md-4'>
+    <h3>Followed By</h3>
+    {% if followed_by %}
+        <ul>
+        {% for f in followed_by %}
+            <li><a href="/user/{{ f.user.id }}/">{{ f.user.username }}</a></li>
+            <hr>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No one is following {{ profile.username }}</p>
     {% endif %}
   </div>
 </div>

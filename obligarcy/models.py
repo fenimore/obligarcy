@@ -20,7 +20,7 @@ class UserProfile(models.Model):
     picture = models.ImageField(upload_to='profile_images', null=True)
     location = models.CharField(max_length=20, null=True)
     bio = models.CharField(max_length=144, null=True)
-    #follows = models.ManyToManyField('UserProfile', related_name='followed_by')
+    follows = models.ManyToManyField('UserProfile', related_name='followed_by')
 
     def str(self):
         return self.user.username

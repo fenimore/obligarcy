@@ -16,6 +16,10 @@
 <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.min.css">
 
 <style>
+    .container {
+      margin-right: 15px;
+    }
+
     ul {
         list-style-type: none;
         margin: 0;
@@ -30,7 +34,7 @@
         text-decoration: none;
     }
     .navbar-right {
-      margin-right: 20%;
+      margin-right: 24%;
     }
 
     #deadline_list{
@@ -85,6 +89,33 @@ $(document).ready(function() {
                 </ul>
               </li>
             </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                  <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
+                  <span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <li><h6>Next Deadline</h6></li>
+                    <table class="table table-hover">
+                        <tr>
+                          <td>{{ user.deadline_set.filter(is_expired=False).order_by('deadline').first() }}</td>
+                        </tr>
+                    </table>
+                    <h6>Active Contracts</h6>
+                    <table class="table table-hover">
+                      {% for c in user.contract_set.filter(is_active=True).order_by('-start_date')[:3] %}
+                        <tr>
+                          <td><a href="/contract/{{ c.id }}">{{ c.title[:10] }}</a></td>
+                        </tr>
+                      {% endfor %}
+                    </table>
+                    <h6>Following Contracts</h6>
+                    <h6>Following Submissions</h6>
+                    <hr>
+                    <li><a href="/logout">Logout</a></li>
+                  </ul>
+                </li>
+              </ul>
            {% endif %}
 
           <ul class="nav navbar-nav navbar-right">
@@ -120,36 +151,12 @@ $(document).ready(function() {
     </nav>
     <div class="container">
       <div class="row" style="padding-top:60px">
-        <div class="col-sm-3 col-md-2 well" style='margin-left:10px;margin-right:5px'>
-          <ul>
-            {% if user.is_authenticated() %}
-            <h6>Next Deadline</h6>
-            <table class="table table-hover">
-                <tr>
-                  <td>{{ user.deadline_set.filter(is_expired=False).order_by('deadline').first() }}</td>
-                </tr>
-            </table>
-            <h6>Active Contracts</h6>
-            <table class="table table-hover">
-              {% for c in user.contract_set.filter(is_active=True).order_by('-start_date')[:3] %}
-                <tr>
-                  <td><a href="/contract/{{ c.id }}">{{ c.title[:10] }}</a></td>
-                </tr>
-              {% endfor %}
-            </table>
-            <h6>Following Contracts</h6>
-            <h6>Following Submissions</h6>
-            <hr>
-            <li><a href="/logout">Logout</a></li>
-            {% else %}
-            <li><a href="/register/">Register Here</a></li>
-            <li><a href="/login/">Login</a></li>
-            {% endif %}
-          </ul>
-          {% block side_block %}{% endblock %}
-        </div>
-        <div class="col-sm-9 col-md-9 col-md-offset-1" style='margin-left:5px;margin-right:10px;'>
+
+        <div class="col-sm-9 col-md-9 col-md-offset-3" style='margin-left:5px;margin-right:10px;'>
                 {% block content %}{% endblock %}
+        </div>
+        <div>
+          {% block side_block %}{% endblock %}
         </div>
       </div>
     </div><!-- /.container -->
