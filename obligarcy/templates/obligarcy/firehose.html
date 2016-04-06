@@ -33,7 +33,7 @@
           </div>
         </div>
       {% else %}
-      <a href="/user/{{ profile.id }}/">{{ [profile].username }}</a>
+      <a href="/user/{{ profile.id }}/">{{ profile.username }}</a>
       {% endif %}
     {% endfor %}
     </ul>
