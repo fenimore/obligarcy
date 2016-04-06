@@ -11,7 +11,7 @@
           {% if profile.userprofile.picture %}
 
           <img class="media-object img-rounded"
-               src="/media/{{ profile.userprofile.picture}}"  height=150px alt="Problem serving picture"/>
+               src="/media/{{ profile.userprofile.picture}}"  width=auto height=200px alt="Problem serving picture"/>
           {% endif %}
         </a>
       </div>
@@ -62,7 +62,12 @@
       <tr><th>Follows</th></tr>
         {% for f in follows %}
           <tr>
-            <td><a href="/user/{{ f.user.id }}/">{{ f.user.username }}</a></td>
+            <td>
+              {% if f.picture %}
+              <img class="media-object img-rounded"
+                   src="/media/{{ f.picture}}"  width=auto height=200px alt="Problem serving picture"/>
+              {% endif %}
+              <a href="/user/{{ f.user.id }}/">{{ f.user.username }}</a></td>
           </tr>
          {% endfor %}
     </table>
@@ -76,7 +81,22 @@
       <tr><th>Followed By</th></tr>
         {% for f in followed_by %}
           <tr>
-            <td><a href="/user/{{ f.user.id }}/">{{ f.user.username }}</a></td>
+            <td>
+              {% if f.picture %}
+                <div class="media">
+                  <div class="media-left">
+                    <a href="/user/{{ f.user.id }}/">
+                      <img class="media-object img-circle"
+                           src="/media/{{ f.picture}}"  width=auto height=50px alt="Problem serving picture"/></a>
+                  </div>
+                  <div class="media-body">
+                    <h5 class="media-heading">{{ f.user.username }}</h5>
+                    ...
+                  </div>
+                </div>
+              {% else %}
+              <a href="/user/{{ f.user.id }}/">{{ f.user.username }}</a></td>
+              {% endif %}
           </tr>
          {% endfor %}
     </table>
