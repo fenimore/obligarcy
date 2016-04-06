@@ -19,21 +19,21 @@
 <h2>Users</h2>
 {% if users %}
     <ul>
-    {% for user in users %}
-      {% if user.userprofile.picture %}
+    {% for profile in users %}
+      {% if profile.userprofile.picture %}
           <div class="media">
             <div class="media-left">
-              <a href="/user/{{ user.id }}/">
-              <img class="media-object img-circle" src="/media/{{ user.userprofile.picture['avatar']}}" alt="Problem serving picture"/>
+              <a href="/user/{{ profile.id }}/">
+              <img class="media-object img-circle" src="/media/{{ profile.userprofile.picture['avatar']}}" alt="Problem serving picture"/>
             </a>
           </div>
           <div class="media-body">
-            <h5 class="media-heading">{{ user.username }}</h5>
+            <h5 class="media-heading">{{ profile.username }}</h5>
             ...
           </div>
         </div>
       {% else %}
-      <a href="/user/{{ user.id }}/">{{ user.username }}</a>
+      <a href="/user/{{ profile.id }}/">{{ [profile].username }}</a>
       {% endif %}
     {% endfor %}
     </ul>
