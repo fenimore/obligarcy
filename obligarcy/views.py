@@ -33,10 +33,11 @@ def environment(**options):
     env.filters.update(**{
         'thumbnail_url': thumbnail_url,
     })
+    from easy_thumbnails.templatetags.thumbnail import thumbnail
+    env.filters.update(**{
+        'thumbnail': thumbnail,
+    })
     return env
-
-#from pytagcloud import create_tag_image, make_tags
-#from pytagcloud.lang.counter import get_tag_counts
 
 def index(request):
     return render(request, 'obligarcy/index.html')
