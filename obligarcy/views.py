@@ -39,8 +39,6 @@ def environment(**options):
 #from pytagcloud.lang.counter import get_tag_counts
 
 def index(request):
-    if request.session['id']:
-        activeContracts(User.objects.get(id=request.session['id']).contract_set.all())
     return render(request, 'obligarcy/index.html')
 
 
