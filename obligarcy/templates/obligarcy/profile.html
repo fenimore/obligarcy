@@ -10,8 +10,8 @@
         <a href="/profile/">
           {% if profile.userprofile.picture %}
 
-          <img class="media-object"
-               src="{{ profile.userprofile.picture.path }}" alt="Problem serving picture"/>
+          <img class="media-object img-rounded"
+               src="/media/{{ profile.userprofile.picture}}"  height=150px alt="Problem serving picture"/>
           {% endif %}
         </a>
       </div>

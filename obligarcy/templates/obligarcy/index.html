@@ -1,11 +1,17 @@
 {% extends "obligarcy/base.html" %}
 
 {% block content %}
-
-<h3>Muse</h3>
-<h4>obligation-exchange</h4>
-{% if user.is_authenticated %}
-<br>
+<div class='row'>
+  <div class='col-md-3'><br>
+    <h3>Muse</h3>
+    <h4>obligation-exchange</h4>
+    {% if user.is_authenticated %}
+    <br>
+  </div>
+  <div class='col-md-3'><br>
+    <img alt="Image not working" src='{{ static('favicon.png') }}' height="100px" alt="">
+  </div>
+</div>
 <div class='row'>
   <div class='col-md-6'><br>
     <p>

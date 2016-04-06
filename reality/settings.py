@@ -61,10 +61,14 @@ TEMPLATES = [
         'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
+            'environment': 'obligarcy.views.environment',
             'match_extension': '.html',
+            "match_regex": r"^(?!admin/).*",
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
+                'django.core.context_processors.media',
+                'django.core.context_processors.static',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
@@ -78,6 +82,7 @@ TEMPLATES = [
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
+                'django.core.context_processors.static',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
@@ -115,6 +120,11 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
+STATICFILES_DIRS = [
+    os.path.dirname(BASE_DIR) + '/reality/obligarcy/static/',
+]
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.dirname(BASE_DIR) + '/public/static/'
+MEDIA_ROOT = os.path.dirname(BASE_DIR) +  '/public/media/'
+MEDIA_URL = '/media/'

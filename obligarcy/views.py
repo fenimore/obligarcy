@@ -3,6 +3,10 @@ from .models import Submission, Contract, Deadline, UserProfile
 from django.contrib.auth.models import User
 from django.contrib.sessions.models import Session
 from django.contrib.auth.decorators import login_required
+from django.contrib.staticfiles.storage import staticfiles_storage
+from django.core.urlresolvers import reverse as rev
+
+from jinja2 import Environment
 
 from .forms import UserForm, UserProfileForm
 from .forms import ContractForm, SubForm
@@ -17,10 +21,21 @@ from datetime import datetime
 import time
 import json
 
+
+def environment(**options):
+    env = Environment(**options)
+    env.globals.update({
+       'static': staticfiles_storage.url,
+       'url': rev,
+    })
+    return env
+
 #from pytagcloud import create_tag_image, make_tags
 #from pytagcloud.lang.counter import get_tag_counts
 
 def index(request):
+    if request.session['id']:
+        activeContracts(User.objects.get(id=request.session['id']).contract_set.all())
     return render(request, 'obligarcy/index.html')
 
 
