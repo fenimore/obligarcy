@@ -186,8 +186,6 @@ def follow(request, user_1_id, user_2_id): # 1 is Who, 2 is Whom
     u2 = User.objects.get(id=user_2_id)
     u1.userprofile.follows.add(u2.userprofile)
     u1.save()
-    print(user_1_id, user_2_id, u2.userprofile)
-    print(u1.userprofile.follows.get(id=u2.id).user.username)
     return HttpResponseRedirect('/user/' + user_2_id) # After POST redirect
 
 @login_required(login_url='/login/')
