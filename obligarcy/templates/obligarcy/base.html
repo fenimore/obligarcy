@@ -16,26 +16,7 @@
 <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.min.css">
 
 <style>
-    .thumb {
-        display: block;
-        overflow: hidden;
-        height: 50px;
-        width: 50px;
-    }
 
-    .profilethumb {
-        display: block;
-        overflow: hidden;
-        height: 180px;
-        width: 180px;
-    }
-
-    .thumb, .profilethumb img {
-        display: block; /* Otherwise it keeps some space around baseline */
-        min-width: 100%;    /* Scale up to fill container width */
-        min-height: 100%;   /* Scale up to fill container height */
-        -ms-interpolation-mode: bicubic; /* Scaled images look a bit better in IE now */
-    }
 
     .container {
       margin-right: 15px;
@@ -75,6 +56,12 @@
 <script>
 $(document).ready(function() {
     $('.datepicker').datepicker();
+    $('.cropped-images img').each(function() {
+      if ($(this).width() > $(this).height()) {
+        $(this).addClass('landscape');
+      }
+    });
+
 });
 </script>
   </head>

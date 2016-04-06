@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from easy_thumbnails.fields import ThumbnailerImageField
 #from django.utils import timezone
 
 
@@ -17,7 +18,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, null=True) #   OneToOneField(User)
     # The additional attributes we wish to include.
     website = models.URLField(null=True)
-    picture = models.ImageField(upload_to='profile_images', null=True)
+    picture = ThumbnailerImageField(upload_to='profile_images', null=True)
     location = models.CharField(max_length=20, null=True)
     bio = models.CharField(max_length=144, null=True)
     follows = models.ManyToManyField('UserProfile', related_name='followed_by')

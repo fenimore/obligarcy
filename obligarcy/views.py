@@ -28,6 +28,15 @@ def environment(**options):
        'static': staticfiles_storage.url,
        'url': rev,
     })
+    # add easy-thumbnails function as a Jinja2 filter
+    from easy_thumbnails.templatetags.thumbnail import thumbnail_url
+    env.filters.update(**{
+        'thumbnail_url': thumbnail_url,
+    })
+    from easy_thumbnails.templatetags.thumbnail import thumbnail
+    env.filters.update(**{
+        'thumbnail': thumbnail,
+    })
     return env
 
 #from pytagcloud import create_tag_image, make_tags

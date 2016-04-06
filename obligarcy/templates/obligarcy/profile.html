@@ -11,7 +11,7 @@
           {% if profile.userprofile.picture %}
 
           <img class="media-object img-rounded profilethumb"
-               src="/media/{{ profile.userprofile.picture}}"  alt="Problem serving picture"/>
+               src="/media/{{ profile.userprofile.picture['profile']}}"  alt="Problem serving picture"/>
           {% endif %}
         </a>
       </div>
@@ -61,14 +61,25 @@
     <table class="table table-hover">
       <tr><th>Follows</th></tr>
         {% for f in follows %}
-          <tr>
-            <td>
-              {% if f.picture %}
-              <img class="media-object img-rounded"
-                   src="/media/{{ f.picture}}"  width=auto height=200px alt="Problem serving picture"/>
-              {% endif %}
-              <a href="/user/{{ f.user.id }}/">{{ f.user.username }}</a></td>
-          </tr>
+        <tr>
+          <td>
+            {% if f.picture %}
+              <div class="media">
+                <div class="media-left">
+                  <a href="/user/{{ f.user.id }}/">
+                    <img class="media-object img-circle" src="/media/{{ f.picture['avatar']}}" alt="Problem serving picture"/>
+                  </a>
+                </div>
+                <div class="media-body">
+                  <h5 class="media-heading">{{ f.user.username }}</h5>
+                  ...
+                </div>
+              </div>
+            {% else %}
+            <a href="/user/{{ f.user.id }}/">{{ f.user.username }}</a>
+            {% endif %}
+          </td>
+        </tr>
          {% endfor %}
     </table>
     {% else %}
@@ -86,8 +97,8 @@
                 <div class="media">
                   <div class="media-left">
                     <a href="/user/{{ f.user.id }}/">
-                      <img class="media-object img-circle thumb"
-                           src="/media/{{ f.picture}}"  width=auto height=50px alt="Problem serving picture"/></a>
+                      <img class="media-object img-circle" src="/media/{{ f.picture['avatar']}}" alt="Problem serving picture"/>
+                    </a>
                   </div>
                   <div class="media-body">
                     <h5 class="media-heading">{{ f.user.username }}</h5>
@@ -95,8 +106,9 @@
                   </div>
                 </div>
               {% else %}
-              <a href="/user/{{ f.user.id }}/">{{ f.user.username }}</a></td>
+              <a href="/user/{{ f.user.id }}/">{{ f.user.username }}</a>
               {% endif %}
+            </td>
           </tr>
          {% endfor %}
     </table>

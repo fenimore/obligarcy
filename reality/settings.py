@@ -39,6 +39,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django_extensions',
     'django_jinja',
+    'easy_thumbnails',
     'obligarcy',
 )
 
@@ -128,3 +129,11 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.dirname(BASE_DIR) + '/public/static/'
 MEDIA_ROOT = os.path.dirname(BASE_DIR) +  '/public/media/'
 MEDIA_URL = '/media/'
+
+
+THUMBNAIL_ALIASES = {
+    '': {
+        'avatar': {'size': (50, 50), 'crop': True},
+        'profile': {'size': (200, 200), 'crop': True},
+    },
+}
