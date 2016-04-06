@@ -33,10 +33,6 @@ def environment(**options):
     env.filters.update(**{
         'thumbnail_url': thumbnail_url,
     })
-    from easy_thumbnails.templatetags.thumbnail import thumbnail
-    env.filters.update(**{
-        'thumbnail': thumbnail,
-    })
     return env
 
 #from pytagcloud import create_tag_image, make_tags
