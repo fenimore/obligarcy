@@ -45,7 +45,14 @@
 {% if submissions %}
     <ul>
     {% for submission in submissions %}
-        <li>{{ submission.body[:79] }}<a href="/submission/{{ submission.id }}/">.. read more</a></li>
+        <li>
+          <a href="/submission/{{ submission.id }}/">
+          {% if submission.is_media %}
+          <img src=/media/{{ submission.media['avatar']}} class="img-responsive img-rounded" alt="Responsive image">
+          <hr>
+          {% else %}
+          {{ submission.body[:30] + '...' }} read more
+          {% endif %}</a></li>
 
 <br>
     {% endfor %}
