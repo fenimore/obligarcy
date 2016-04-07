@@ -40,8 +40,13 @@ def environment(**options):
     from crispy_forms.templatetags.crispy_forms_filters import as_crispy_form
     def crispy(form):
         return as_crispy_form(form, 'Bootstrap3', form.helper.label_class, form.helper.field_class)
+    def reverse_list(list):
+            return reversed(list)
     env.filters.update(**{'crispy':crispy,})
+    env.filters.update(**{'reverse_list':reverse_list})
     return env
+
+
 
 def index(request):
     return render(request, 'obligarcy/index.html')

@@ -1,62 +1,66 @@
 {% extends "obligarcy/base.html" %}
 
 {% block content %}
-
-<h2>Contracts</h2>
-{% if contracts %}
-    <ul>
-    {% for contract in contracts %}
-        <li><a href="/contract/{{ contract.id }}/">{{ contract.title }}</a></li>
-        Final Deadline: {{ contract.end_date.strftime('%y/%m/%d %A')}}
-        <br>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No contracts</p>
-{% endif %}
-
-
-<h2>Users</h2>
-{% if users %}
-    <ul>
-    {% for profile in users %}
-      {% if profile.userprofile.picture %}
-          <div class="media">
-            <div class="media-left">
-              <a href="/user/{{ profile.id }}/">
-              <img class="media-object img-circle" src="/media/{{ profile.userprofile.picture['avatar']}}" alt="Problem serving picture"/>
-            </a>
-          </div>
-          <div class="media-body">
-            <h5 class="media-heading">{{ profile.username }}</h5>
-            ...
-          </div>
-        </div>
-      {% else %}
-      <a href="/user/{{ profile.id }}/">{{ profile.username }}</a>
-      {% endif %}
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No Users</p>
-{% endif %}
-
-<h2>Submissions</h2>
-{% if submissions %}
-    <ul>
-    {% for submission in submissions %}
-        <li>
-          <a href="/submission/{{ submission.id }}/">
-          {% if submission.is_media %}
-          <img src=/media/{{ submission.media['avatar'] }} class="img-responsive img-rounded" alt="Responsive image">
+<div class="row">
+  <div class="col-md-4">
+    <h2>Contracts</h2>
+    {% if contracts %}
+        <ul>
+        {% for contract in contracts %}
+            <li><a href="/contract/{{ contract.id }}/">{{ contract.title }}</a></li>
+            Final Deadline: {{ contract.end_date.strftime('%y/%m/%d %A')}}
+            <br>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No contracts</p>
+    {% endif %}
+    <h2>Users</h2>
+    {% if users %}
+        <ul>
+        {% for profile in users %}
+          {% if profile.userprofile.picture %}
+              <div class="media">
+                <div class="media-left">
+                  <a href="/user/{{ profile.id }}/">
+                  <img class="media-object img-circle" src="/media/{{ profile.userprofile.picture['avatar']}}" alt="Problem serving picture"/>
+                </a>
+              </div>
+              <div class="media-body">
+                <h5 class="media-heading">{{ profile.username }}</h5>
+                ...
+              </div>
+            </div>
           {% else %}
-          {{ submission.body[:30] + '...' }} read more
-          {% endif %}</a></li>
+          <a href="/user/{{ profile.id }}/">{{ profile.username }}</a>
+          {% endif %}
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No Users</p>
+    {% endif %}
+  </div>
+  <div class=col-md-8>
 
-<br>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No Submissions</p>
-{% endif %}
+    <h2>Submissions</h2>
+    {% if submissions %}
+        {% for submission in submissions %}
+              <a href="/submission/{{ submission.id }}/">
+              {% if submission.is_media %}
+              <img src=/media/{{ submission.media['firehose'] }} class="img-responsive img-rounded" style="float:left;margin-left:5px;margin-bottom:5px;" alt="Responsive image">
+              {% else %}
+              <div class="panel panel-default" style="width:50%;height:128px;width:192px;margin-left:5px;float:left">
+                    <div class="panel-body" style="height:128px;width:192px;">
+                      {{ submission.body[:80] + '...' }} read more
+                    </div>
+              </div>
+              {% endif %}
+            </a>
+        {% endfor %}
+    {% else %}
+        <p>No Submissions</p>
+    {% endif %}
+  </div>
+</div>
+
 {% endblock content %}

@@ -23,10 +23,10 @@
     </div>
   </div>
   <div class=col-md-4>
-    <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> {{ profile.userprofile.location }}<br><br>
-    <span class="glyphicon glyphicon-apple" aria-hidden="true"></span> {{ profile.has_completed.all()|length }}<br>
-    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> {{ profile.deadline_set.filter(is_accomplished=True, is_late=False)|length }}<br>
-    <span class="glyphicon glyphicon-inbox" aria-hidden="true"></span> {{ profile.deadline_set.filter(is_expired=False, is_accomplished=False)|length }}<br>
+    <span class="glyphicon glyphicon-map-marker" aria-hidden="true" title="Location"></span> {{ profile.userprofile.location }}<br><br>
+    <span class="glyphicon glyphicon-apple" aria-hidden="true" title="Completed Contracts"></span> {{ profile.has_completed.all()|length }}<br>
+    <span class="glyphicon glyphicon-ok" aria-hidden="true" title="Completed Deadlines"></span> {{ profile.deadline_set.filter(is_accomplished=True, is_late=False)|length }}<br>
+    <span class="glyphicon glyphicon-inbox" aria-hidden="true" title="Upcoming Deadlines"></span> {{ profile.deadline_set.filter(is_expired=False, is_accomplished=False)|length }}<br>
 
 
     <hr>
@@ -36,6 +36,8 @@
       {% else %}
       <a class='btn btn-info' href=/follow/{{ request.session.id }}/{{profile.id}}>Follow</a>
       {% endif %}
+    {% else %}
+      <a class='btn btn-default' href=/profile/update >Update Profile</a>
     {% endif %}
   </div>
 </div>

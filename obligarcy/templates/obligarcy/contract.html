@@ -29,7 +29,8 @@
         {% if contract.is_active %}
           {% if user in contract.users.all() %}
             {% if user.deadline_set.filter(contract=contract, is_accomplished=False).first() %}
-            <a class='btn btn-default' href=/submit/{{ contract.id }}/{{user.id}}>Submit a text</a>
+            <br>
+            <a class='btn btn-default' href=/submit/{{ contract.id }}/{{user.id}}>Submit</a>
             {% endif %}
           {% endif %}
         {% endif %}<br>
