@@ -208,7 +208,6 @@ def unfollow(request, user_1_id, user_2_id): # 1 is Who, 2 is Whom
 def show_sub(request, submission_id):
     template = 'obligarcy/submission.html'
     submission = get_object_or_404(Submission, id=submission_id)
-    print(submission.media['avatar'])
     author = submission.user
     contracts = submission.contract_set.all()
     word_count = ""
