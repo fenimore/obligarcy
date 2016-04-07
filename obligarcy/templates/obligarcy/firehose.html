@@ -48,8 +48,7 @@
         <li>
           <a href="/submission/{{ submission.id }}/">
           {% if submission.is_media %}
-          <img src=/media/{{ submission.media['avatar']}} class="img-responsive img-rounded" alt="Responsive image">
-          <hr>
+          <img src=/media/{{ submission.media['avatar'] }} class="img-responsive img-rounded" alt="Responsive image">
           {% else %}
           {{ submission.body[:30] + '...' }} read more
           {% endif %}</a></li>

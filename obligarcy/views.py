@@ -229,7 +229,11 @@ def submit_upload(request, contract_id, user_id):
         author = User.objects.get(id=request.session['id'])
         contract = Contract.objects.get(id=contract_id)
         f = request.FILES['upload']
-        dl = Deadline.objects.get(id=request.POST['deadline'])
+        dl = Deadline.objects.get(id=request.POST['upload_deadline'])
+        subs = author.submission_set.filter(contract=contract)
+        for sub in subs:
+            if sub.deadline_set.filter(deadline=dl.deadline):
+                return HttpResponseRedirect('/submit/' + contract_id + "/" + str(author.id)) # After POST redirect
         new_sub = Submission(pub_date=timezone.now(), user=author, media=f, is_media=True)
         new_sub.save()
         dl.submission = new_sub
@@ -246,7 +250,7 @@ def submit_upload(request, contract_id, user_id):
         completeContract(contract_id, user_id)
         return HttpResponseRedirect('/submission/' + new_sub.id) # After POST redirect
     else:
-        return HttpResponseRedirect('/submit/' + contract_id) # After POST redirect
+        return HttpResponseRedirect('/submit/' + contract_id + "/" + author.id) # After POST redirect
 
 @login_required(login_url='/login/')
 def submit(request, contract_id, user_id):
@@ -387,10 +391,12 @@ def sign_con(request, contract_id): # As of now, it will appear (the sign button
 def show_active(request, user_id):
     contracts = get_list_or_404(Contract.objects.order_by('-start_date'), users=user_id)
     map(activeContract, contracts)
+    u = User.objects.get(id=user_id)
     active_contracts = []
     for con in contracts:
         if con.is_active:
-            active_contracts.append(con)
+            if not u in con.completed_by.all():
+                active_contracts.append(con)
     return render(request, 'obligarcy/active.html', {'contracts': active_contracts})
 
 ##########################

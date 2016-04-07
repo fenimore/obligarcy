@@ -127,13 +127,21 @@
             <td>
               <a href="/submission/{{ post.id }}/">
               {% if post.is_media %}
-              <img src=/media/{{ post.media['avatar']}} class="img-responsive img-rounded" alt="Responsive image">
-              <hr>
+              <div class="media">
+                <div class="media-left">
+                    <img src=/media/{{ post.media['avatar']}}
+                    class="img-responsive img-rounded" alt="Problem Serving Image">
+                </div>
+                <div class="media-body">
+                  <h6 class="media-heading">@{{ post.pub_date.date().strftime('%D - %A')}}</h6>
+                  For {{ post.deadline_set.all().first()}}
+                </div>
+              </div>
               {% else %}
               {{ post.body[:30] + '..' }}<br>
-              {% endif %}</a>
               @ {{ post.pub_date.date().strftime('%D - %A')}} <br>
               For deadline: {{ post.deadline_set.all().first()}}
+              {% endif %}</a>
             </td>
           </tr>
          {% endfor %}

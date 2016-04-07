@@ -20,36 +20,34 @@
   <div class='col-md-6'>
     <form action="/submit/{{ contract_id }}/{{ user_id}}/" method="post">
       {% csrf_token %}
-      Text<br>
+      <h4>Submit Text</h4>
       {{ text_form.body}}
-  </div>
-  <div class='col-md-6'>
     <br>
     Submit for deadline:
-    {{ text_form.deadline }}<br>
-    <input type="submit" value="submit" class='btn btn-default'/>
+    {{ text_form.deadline }}<hr>
+    <input type="submit" value="submit text" class='btn btn-default'/>
   </form>
   </div>
-</div>
-<div class=row>
   <div class='col-md-6'>
+    <h4>Submit Media</h4>
+
     <form action="/upload/{{ contract_id }}/{{ user_id}}/" method="post"
       enctype="multipart/form-data">
       {% csrf_token %}
-      Upload<br>
       {{ upload_form.upload }}<br>
-  </div>
-  <div class='col-md-6'>
     <br>
     Submit for deadline:
-    {{ upload_form.deadline }}<br>
-    <input type="submit" value="submit" class='btn btn-default'/>
+    {{ upload_form.upload_deadline }}<hr>
+    <input type="submit" value="submit media" class='btn btn-default'/>
   </form>
   </div>
 </div>
 <script>
 $(document).ready(function() {
     document.getElementById("id_deadline").className += " form-control"
+    document.getElementById("id_upload").className += " form-control"
+    document.getElementById("id_upload_deadline").className += " form-control"
+
 });
 </script>
 

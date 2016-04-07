@@ -38,14 +38,14 @@ class UserProfileForm(forms.ModelForm):
 class SubForm(forms.Form):
     # rename text
     body = forms.CharField(widget=forms.Textarea(attrs=
-        {'rows':'18'}))
+        {'class': 'form-control','rows':'18'}))
     deadline = forms.ChoiceField(choices='[(m,m)]')
 
     def __init__(self, contract_id, user_id, *args, **kwargs):
         super(SubForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_id = 'id-SubForm'
-        self.helper.form_class = 'blueForms'
+        self.helper.form_class = 'myForms'
         self.helper.form_method = 'post'
         self.helper.form_action = 'submit_survey'
         # deadlines shown only for user
@@ -76,14 +76,14 @@ class SubForm(forms.Form):
 
 class UploadForm(forms.Form):
     # rename text
-    deadline = forms.ChoiceField(choices='[(m,m)]')
+    upload_deadline = forms.ChoiceField(choices='[(m,m)]')
     upload = forms.FileField() #attrs={'class': 'form-control'}
 
     def __init__(self, contract_id, user_id, *args, **kwargs):
         super(UploadForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_id = 'id-SubForm'
-        self.helper.form_class = 'blueForms'
+        self.helper.form_class = 'form-control'
         self.helper.form_method = 'post'
         self.helper.form_action = 'submit_upload'
         # deadlines shown only for user
@@ -108,7 +108,7 @@ class UploadForm(forms.Form):
         for deadline in deadlines:
             tup = (deadline.id, deadline.deadline.date()) # On the date is relevant,
             deadline_tups.append(tup)                     # but its still good to keep things
-        self.fields['deadline'].choices = deadline_tups  # in DateTime, stay consistent.
+        self.fields['upload_deadline'].choices = deadline_tups  # in DateTime, stay consistent.
         #can believe that worked
 
 class ContractForm(forms.ModelForm):
