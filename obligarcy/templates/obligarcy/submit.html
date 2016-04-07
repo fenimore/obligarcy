@@ -15,12 +15,12 @@
         </div>
     {% endfor %}
 {% endif %}
-
+    Submission for <a href="/contract/{{contract_id}}">{{ contract.title }}</a>
 <div class=row>
   <div class='col-md-6'>
     <form action="/submit/{{ contract_id }}/{{ user_id}}/" method="post">
       {% csrf_token %}
-      <h4>Submit Text</h4>
+      <h4>Text</h4>
       {{ text_form.body}}
     <br>
     Submit for deadline:
@@ -29,8 +29,7 @@
   </form>
   </div>
   <div class='col-md-6'>
-    <h4>Submit Media</h4>
-
+    <h4>Media</h4>
     <form action="/upload/{{ contract_id }}/{{ user_id}}/" method="post"
       enctype="multipart/form-data">
       {% csrf_token %}

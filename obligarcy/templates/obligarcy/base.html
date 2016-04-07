@@ -47,6 +47,22 @@
         max-height: 115px;
         overflow: auto;
     }
+
+    html {
+      position: relative;
+      min-height: 100%;
+    }
+    body {
+      /* Margin bottom by footer height */
+      margin-bottom: 60px;
+    }
+    .footer {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      /* Set the fixed height of the footer here */
+      height: 50px;
+    }
 </style>
 
 
@@ -100,11 +116,14 @@ $(document).ready(function() {
                   <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
                   <span class="caret"></span></a>
                   <ul class="dropdown-menu">
-                    <li>Nex Deadlines</li>
+                    <li> Next Deadlines</li>
                     <table class="table table-hover">
-                        <tr>
-                          <td>{{ user.deadline_set.filter(is_expired=False).order_by('deadline').first() }}</td>
-                        </tr>
+                      <tr>
+                        <td>
+                          <a href="/submit/{{ user.deadline_set.filter(is_expired=False).order_by('deadline').first().contract.id }}/{{ user.id }}">
+                            {{ user.deadline_set.filter(is_expired=False, is_accomplished=False).order_by('deadline').first() }}</a>
+                        </td>
+                      </tr>
                     </table>
                     <li role="separator" class="divider"></li>
                     <li>Active Contracts</li>
@@ -203,7 +222,14 @@ $(document).ready(function() {
           {% block side_block %}{% endblock %}
         </div>
       </div>
+      <br>
+      <br>
+      <br>
     </div><!-- /.container -->
-
+    <footer class="footer">
+      <div class="container">
+        <p class="text-muted"> Muse | 2015-2016 | <a href=#>About</a> <a href=#>Register</a> <a href=#>Login</a> <a href=#>Logout</a></p>
+      </div>
+    </footer>
   </body>
 </html>

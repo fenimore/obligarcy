@@ -293,7 +293,7 @@ def submit(request, contract_id, user_id):
         #contract_id = contract_id
         c = Contract.objects.get(id=contract_id)
         return render(request, 'obligarcy/submit.html', {'text_form': text_form, 'upload_form':upload_form,
-         'contract_id': contract_id, 'user_id':request.session['id']})
+         'contract_id': contract_id, 'contract':c, 'user_id':request.session['id']})
 
 
 ##########################
@@ -313,7 +313,8 @@ def show_con(request, contract_id):
             dl.is_expired = False
             dl.save()
     dls = signees[0].deadline_set.filter(contract=contract)
-    return render(request, 'obligarcy/contract.html', {'contract': contract, 'allow_signing':allow_signing, 'signees': signees, 'deadlines': dls})
+    return render(request, 'obligarcy/contract.html', {'contract': contract,
+            'allow_signing':allow_signing, 'signees': signees, 'deadlines': dls})
 
 @login_required(login_url='/login/')
 def challenge(request):
