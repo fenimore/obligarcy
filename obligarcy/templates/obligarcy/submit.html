@@ -1,33 +1,52 @@
 {% extends "obligarcy/base.html" %}
 
 {% block content %}
-{% if form.errors %}
-    {% for field in form %}
+{% if text_form.errors %}
+    {% for field in text_form %}
         {% for error in field.errors %}
             <div class="alert alert-error">
                 <strong>{{ error|escape }}</strong>
             </div>
         {% endfor %}
     {% endfor %}
-    {% for error in form.non_field_errors %}
+    {% for error in text_form.non_field_errors %}
         <div class="alert alert-error">
             <strong>{{ error|escape }}</strong>
         </div>
     {% endfor %}
 {% endif %}
 
-<div class=row><div class='col-md-6'>
-<form action="/submit/{{ contract_id }}/{{ user_id}}/" method="post">
-{% csrf_token %}
-Text
-{{ form.body}}
-<br>
-Submit for deadline:
-{{ form.deadline }}<br>
-<input type="submit" value="submit" class='btn btn-default'/>
-</form>
-</div></div>
-
+<div class=row>
+  <div class='col-md-6'>
+    <form action="/submit/{{ contract_id }}/{{ user_id}}/" method="post">
+      {% csrf_token %}
+      Text<br>
+      {{ text_form.body}}
+  </div>
+  <div class='col-md-6'>
+    <br>
+    Submit for deadline:
+    {{ text_form.deadline }}<br>
+    <input type="submit" value="submit" class='btn btn-default'/>
+  </form>
+  </div>
+</div>
+<div class=row>
+  <div class='col-md-6'>
+    <form action="/upload/{{ contract_id }}/{{ user_id}}/" method="post"
+      enctype="multipart/form-data">
+      {% csrf_token %}
+      Upload<br>
+      {{ upload_form.upload }}<br>
+  </div>
+  <div class='col-md-6'>
+    <br>
+    Submit for deadline:
+    {{ upload_form.deadline }}<br>
+    <input type="submit" value="submit" class='btn btn-default'/>
+  </form>
+  </div>
+</div>
 <script>
 $(document).ready(function() {
     document.getElementById("id_deadline").className += " form-control"

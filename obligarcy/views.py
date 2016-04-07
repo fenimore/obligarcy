@@ -9,7 +9,7 @@ from django.core.urlresolvers import reverse as rev
 from jinja2 import Environment
 
 from .forms import UserForm, UserProfileForm
-from .forms import ContractForm, SubForm
+from .forms import ContractForm, SubForm, UploadForm
 from .control import completeContract, activeContract, activeContracts, checkEligibility
 from django.utils import timezone
 from datetime import datetime, timedelta
@@ -37,6 +37,10 @@ def environment(**options):
     env.filters.update(**{
         'thumbnail': thumbnail,
     })
+    from crispy_forms.templatetags.crispy_forms_filters import as_crispy_form
+    def crispy(form):
+        return as_crispy_form(form, 'Bootstrap3', form.helper.label_class, form.helper.field_class)
+    env.filters.update(**{'crispy':crispy,})
     return env
 
 def index(request):
@@ -206,13 +210,42 @@ def show_sub(request, submission_id):
     submission = get_object_or_404(Submission, id=submission_id)
     author = submission.user
     contracts = submission.contract_set.all()
-    word_count = len(submission.body.split())
+    word_count = ""
+    if not submission.is_media:
+        word_count = len(submission.body.split())
     deadline = submission.deadline_set.all().first()
     for c in contracts:
         contract = c
     return render(request, template, {'submission': submission,
          'author':author, 'contract':contract, 'word_count':word_count,
           'deadline':deadline})
+
+@login_required(login_url='/login/')
+def submit_upload(request, contract_id, user_id):
+    if request.method == 'POST':
+        form = SubForm(request.POST, user_id)
+        #if form.is_valid():
+        author = User.objects.get(id=request.session['id'])
+        contract = Contract.objects.get(id=contract_id)
+        f = request.FILES['upload']
+        dl = Deadline.objects.get(id=request.POST['deadline'])
+        new_sub = Submission(pub_date=timezone.now(), user=author, media=f, is_media=True)
+        new_sub.save()
+        dl.submission = new_sub
+        if dl.deadline < timezone.now():
+            dl.is_expired = True
+            dl.save()
+            dl.is_late = True
+        dl.is_accomplished = True
+        dl.save()
+        new_sub.contract_set.add(contract)
+        new_sub.save()
+        c = new_sub.contract_set.all().first()
+        new_sub.save()
+        completeContract(contract_id, user_id)
+        return HttpResponseRedirect('/submission/' + new_sub.id) # After POST redirect
+    else:
+        return HttpResponseRedirect('/submit/' + contract_id) # After POST redirect
 
 @login_required(login_url='/login/')
 def submit(request, contract_id, user_id):
@@ -224,6 +257,10 @@ def submit(request, contract_id, user_id):
         contract = Contract.objects.get(id=contract_id)
         body = request.POST['body']
         dl = Deadline.objects.get(id=request.POST['deadline'])
+        subs = author.submission_set.filter(contract=contract)
+        for sub in subs:
+            if sub.deadline_set.filter(deadline=dl.deadline):
+                return HttpResponseRedirect('/submit/' + contract_id) # After POST redirect
         new_sub = Submission(body=body, pub_date=timezone.now(), user=author)
         new_sub.save()
         dl.submission = new_sub
@@ -243,10 +280,11 @@ def submit(request, contract_id, user_id):
         contract_id = contract_id
         print(request.session['id'])
         author = User.objects.get(id=request.session['id'])
-        form = SubForm(contract_id, request.session['id'])
+        text_form = SubForm(contract_id, request.session['id'])
+        upload_form = UploadForm(contract_id, request.session['id'])
         #contract_id = contract_id
         c = Contract.objects.get(id=contract_id)
-        return render(request, 'obligarcy/submit.html', {'form': form,
+        return render(request, 'obligarcy/submit.html', {'text_form': text_form, 'upload_form':upload_form,
          'contract_id': contract_id, 'user_id':request.session['id']})
 
 

@@ -4,7 +4,8 @@ from django import forms
 from django.forms.extras.widgets import SelectDateWidget
 from .models import Submission, Contract, UserProfile, Deadline
 from django.contrib.auth.models import User
-
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
 # http://stackoverflow.com/questions/20700185/how-to-use-datepicker-in-django
 # for the datepicker:
 DateInput = partial(forms.DateInput, {'class': 'datepicker'})
@@ -35,21 +36,59 @@ class UserProfileForm(forms.ModelForm):
 
 
 class SubForm(forms.Form):
-    # here we use a dummy `queryset`, because ModelChoiceField
-    # requires some queryset
+    # rename text
     body = forms.CharField(widget=forms.Textarea(attrs=
-        {'class': 'form-control','rows':'18'}))
+        {'rows':'18'}))
     deadline = forms.ChoiceField(choices='[(m,m)]')
 
-    def __init__(self, contract_id, user_id):
-        super(SubForm, self).__init__()
-        print((contract_id))
-        print((user_id))
+    def __init__(self, contract_id, user_id, *args, **kwargs):
+        super(SubForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'id-SubForm'
+        self.helper.form_class = 'blueForms'
+        self.helper.form_method = 'post'
+        self.helper.form_action = 'submit_survey'
         # deadlines shown only for user
         dls = Deadline.objects.filter(contract=contract_id, signee=user_id, is_accomplished=False)
-        print((dls.first()))
         submitter = User.objects.get(id=user_id)
-        print((submitter))
+        deadlines = []
+        for deadline in dls:
+            if submitter.submission_set.all():
+                for sub in submitter.submission_set.all():
+                    if deadline in sub.deadline_set.all():
+                        print('user submitted already')
+                        break
+                    else:
+                        if deadline not in deadlines:
+                            deadlines.append(deadline)
+                            print('user has nothing submitted')
+                        else:
+                            print(('deadline already added'))
+            else:
+                deadlines = dls
+        deadline_tups = []
+        for deadline in deadlines:
+            tup = (deadline.id, deadline.deadline.date()) # On the date is relevant,
+            deadline_tups.append(tup)                     # but its still good to keep things
+        self.fields['deadline'].choices = deadline_tups  # in DateTime, stay consistent.
+        #can believe that worked
+
+
+class UploadForm(forms.Form):
+    # rename text
+    deadline = forms.ChoiceField(choices='[(m,m)]')
+    upload = forms.FileField() #attrs={'class': 'form-control'}
+
+    def __init__(self, contract_id, user_id, *args, **kwargs):
+        super(UploadForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'id-SubForm'
+        self.helper.form_class = 'blueForms'
+        self.helper.form_method = 'post'
+        self.helper.form_action = 'submit_upload'
+        # deadlines shown only for user
+        dls = Deadline.objects.filter(contract=contract_id, signee=user_id, is_accomplished=False)
+        submitter = User.objects.get(id=user_id)
         deadlines = []
         for deadline in dls:
             if submitter.submission_set.all():

@@ -1,17 +1,14 @@
 {% extends "obligarcy/base.html" %}
 {% block content %}
-<div class="alert alert-danger" role="alert">
-  The forms for adding signees will be taken out. The authenticated user
-  will be automatically first signee, and others must themselves visit the
-  contract page and click sign within the signing window (current default
-  one day).
-</div>
+        <div class="alert alert-danger" role="alert">
+          {{ contract_form.non_field_errors }}
+        </div>
 
         <form id="contract_form" method="POST" class='form-inline' action="/challenge/">
         {% csrf_token %}
     <div class='row'>
       <div class='col-md-6'>
-    {{ contract_form.non_field_errors }}
+
 
 
     <div class="form-group">

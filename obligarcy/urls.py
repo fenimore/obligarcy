@@ -1,5 +1,4 @@
 from django.conf.urls import url
-
 from . import views
 from django.conf.urls.static import static, settings
 
@@ -22,6 +21,8 @@ urlpatterns = [
     # ex: /oblicarcy/submissions/5/
     url(r'^submission/([0-9a-z]+)/$', views.show_sub, name='submission'),
     url(r'^submit/([0-9a-z]+)/([0-9]+)/$', views.submit, name='submit'),
+    url(r'^upload/([0-9a-z]+)/([0-9]+)/$', views.submit_upload, name='upload'),
+
 #    url(r'^submit/([0-9a-z]+)/([0-9]+)/$', views.submit, name='submit'),
 
     # ex: /oblicarcy/contracts/5/

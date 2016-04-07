@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'django_extensions',
     'django_jinja',
     'easy_thumbnails',
+    'crispy_forms',
     'obligarcy',
 )
 
@@ -137,3 +138,5 @@ THUMBNAIL_ALIASES = {
         'profile': {'size': (200, 200), 'crop': True},
     },
 }
+
+CRISPY_TEMPLATE_PACK = 'bootstrap3'

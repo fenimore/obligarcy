@@ -29,15 +29,19 @@ class UserProfile(models.Model):
 
 class Submission(models.Model):
     id = models.CharField(max_length=6, primary_key=True, default=pkgen, unique=True)
-    body = models.CharField(max_length=200)
+    body = models.CharField(max_length=200, null=True)
+    media = ThumbnailerImageField(upload_to='submissions/%Y/%m/%d', null=True)
     pub_date = models.DateTimeField('submitted')
     user = models.ForeignKey(User)
+    is_media = models.BooleanField(default=False)
     # Word Count
     # FILE
 
     def __str__(self):
-        return self.body
-
+        if not is_media:
+            return self.body
+        elif is_media:
+            return "This is "+ user.username +"\'s Media Submission"
 
 # Add active
 class Contract(models.Model):
