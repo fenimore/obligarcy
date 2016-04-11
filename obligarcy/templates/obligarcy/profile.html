@@ -60,15 +60,15 @@
         <div class="col-md-6" style="margin-top:2%">
           <div class="panel panel-default">
             <div class="panel-heading">Active Contracts</div>
-            {% if contracts %}
+            {% if active %}
             <table class="table table-hover">
-                {% for contract in contracts %}
+                {% for contract in active %}
                   <tr>
                     <td>
-                      <a href="/contract/{{ contract.id }}/">{{ contract.title[:30] }}...</a>
+                      <a href="/contract/{{ contract.id }}/">{{ contract.title[:25] }}...</a>
                     </td>
                     <td>Ends:
-                      {{contract.end_date.strftime('%D')}}
+                      {{contract.end_date.strftime('%D - %A')}}
                     </td>
                   </tr>
                  {% endfor %}
@@ -85,9 +85,9 @@
               <table class="table  table-hover">
                 {% for contract in completed %}
                     <tr>
-                      <td><a href="/contract/{{ contract.id }}/">{{ contract.title[:30] + '..' }}</a></td>
+                      <td><a href="/contract/{{ contract.id }}/">{{ contract.title[:25] + '..' }}</a></td>
                       <td>
-                       for {{ contract.end_date.date().strftime('%D - %A')}}
+                       {{ contract.end_date.date().strftime('%D - %A')}}
                       </td>
                     </tr>
                 {% endfor %}
@@ -165,82 +165,79 @@
         </div>
       </div>
       <div class="tab-pane fade" id="dropdown1">
-        {% if posts %}
-        <table class="table table-hover">
-            {% for post in posts %}
-              <tr>
-                <td>
-                  <a href="/submission/{{ post.id }}/">
-                  {% if post.is_media %}
-                  <div class="media">
-                    <div class="media-left">
-                        <img src=/media/{{ post.media['avatar']}}
-                        class="img-responsive img-rounded" alt="Problem Serving Image">
-                    </div>
-                    <div class="media-body">
-                      <h6 class="media-heading">@{{ post.pub_date.date().strftime('%D - %A')}}</h6>
-                      For {{ post.deadline_set.all().first()}}
-                    </div>
-                  </div>
-                  {% else %}
-                  {{ post.body[:30] + '..' }}<br>
-                  @ {{ post.pub_date.date().strftime('%D - %A')}} <br>
-                  For deadline: {{ post.deadline_set.all().first()}}
-                  {% endif %}</a>
-                </td>
-              </tr>
-             {% endfor %}
-        </table>
-        {% else %}
-            <p>No Submissions</p>
-        {% endif %}
+        <div class='col-md-10' style='margin-top:2%'>
+          <div class="panel panel-default">
+            <div class="panel-heading">Submissions</div>
+            {% if posts %}
+            <table class="table table-hover">
+                {% for post in posts %}
+                  <tr>
+                    {% if post.is_media %}
+                      <td>
+                        <div class="media">
+                          <div class="media-left">
+                            <a href="/submission/{{ post.id }}/">
+                              <img src=/media/{{ post.media['avatar']}}
+                              class="img-responsive img-rounded" alt="Problem Serving Image">
+                            </a>
+                          </div>
+                          <div class="media-body">
+                            <h6 class="media-heading">@{{ post.pub_date.date().strftime('%D - %A')}}</h6>
+                            For {{ post.deadline_set.all().first()}}
+                          </div>
+                        </div>
+                      </td>
+                    {% else %}
+                      <td>
+                        <h6 class="media-heading">@{{ post.pub_date.date().strftime('%D - %A')}}</h6>
+                        For {{ post.deadline_set.all().first()}} <a href="/submission/{{ post.id }}/">{{ post.body[:30] + '..' }}</a>
+                      </td>
+                    {% endif %}
+                  </tr>
+                 {% endfor %}
+            </table>
+            {% else %}
+                <p>No Submissions</p>
+            {% endif %}
+          </div>
+        </div>
       </div>
       <div class="tab-pane fade" id="dropdown2">
-        {% if deadlines %}
-        <table class="table table-hover">
-          <tr><th>Upcoming Deadlines</th></tr>
-            {% for deadline in deadlines[:4] %}
-              <tr>
-                <td>
-                  {{ deadline.deadline.strftime('%D') }}
-                </td>
-                <td>
-                  <a href="/contract/{{ deadline.contract.id }}/">{{ deadline.contract.title[:20] }}...</a>
-                </td>
-              </tr>
-             {% endfor %}
-             <tr><td>Load All</td><td></tr>
-        </table>
-        {% else %}
-            <p>No (active) deadlines</p>
-        {% endif %}
-        {% else %}
-            <p>You are Not Authenticated!</p>
-        {% endif %}
+        <div class='col-md-10' style='margin-top:2%'>
+          <div class="panel panel-default">
+            <div class="panel-heading">Upcoming Deadlines</div>
+            {% if deadlines %}
+              <table class="table table-hover">
+                  {% for deadline in deadlines[:4] %}
+                    <tr>
+                      <td>
+                        <a href="/contract/{{ deadline.contract.id }}/">{{ deadline.contract.title[:25] }}...</a>
+                      </td>
+                      <td>
+                        {{ deadline.deadline.strftime('%D - %A') }}
+                      </td>
+                      {% if not can_follow %}
+                      <td>
+                        <a class='btn btn-default' href="/submit/{{ deadline.contract.id }}/{{profile.id}}/">Submit</a>
+                      </td>
+                      {% endif %}
+                    </tr>
+                   {% endfor %}
+                   <tr><td>Load All</td><td></tr>
+              </table>
+            {% else %}
+                <p>No (active) deadlines</p>
+            {% endif %}
+          {% else %}
+              <p>You are Not Authenticated!</p>
+          {% endif %}
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
-<div class='row'>
-  <div class='col-md-4'>
 
-  </div>
-  <div class='col-md-4'>
-
-  </div>
-  <div class='col-md-4'>
-  </div>
-</div>
-<div class='row'>
-  <div class='col-md-4'>
-
-  </div>
-  <div class='col-md-4'>
-
-  </div>
-  <div class='col-md-4'>
-  </div>
-</div>
 
 
 

@@ -2,30 +2,24 @@
 
 {% block content %}
 
-<h2>Active Contracts</h2>
 {% if contracts %}
-    <ul>
-    {% for contract in contracts %}
-    <li>
     <div class="panel panel-default" style="width:50%">
       <div class="panel-body">
-        <table class='table'>
+        <div class='panel-headin'>Active Contracts</div>
+    {% for contract in contracts %}
+        <table class='table table-hover'>
           <tr>
-            <td><a href="/contract/{{ contract.id }}/">{{ contract.title[:50] }}...</a></li>
+            <td><a href="/contract/{{ contract.id }}/">{{ contract.title[:50] }}...</a><br>
                     Final Deadline: {{ contract.end_date.strftime('%y/%m/%d %A')}}<br>
                     Next Deadline: {{ contract.deadline_set.filter(is_expired=False).first().deadline.strftime('%y/%m/%d %A')}}<br>
             </td>
             <td><a class='btn btn-default' href="/submit/{{ contract.id }}/{{user.id}}/">Submit</a>
             </td>
           </tr>
-        </table
-
-
-        <br>
+        </table>
+    {% endfor %}
       </div>
     </div>
-    {% endfor %}
-    </ul>
 {% else %}
     <p>Nothing To Report</p>
 {% endif %}

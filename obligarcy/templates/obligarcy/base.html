@@ -95,6 +95,10 @@ a:active {
       /* Set the fixed height of the footer here */
       height: 50px;
     }
+    .nav table {
+      color:black;
+    }
+
 </style>
 
 
@@ -106,7 +110,9 @@ a:active {
 <script>
 $(document).ready(function() {
     $('.datepicker').datepicker();
-
+    $(".nav li.disabled a").click(function() {
+      return false;
+    });
 });
 $('#myTab a').click(function (e) {
     if($(this).parent('li').hasClass('active')){
@@ -169,6 +175,27 @@ $('#myTab a').click(function (e) {
                       </tr>
                     </table>
                     <li role="separator" class="divider"></li>
+                    <li>Follows</li>
+                    <table class="table table-hover">
+                      {% for u in user.userprofile.follows.all() %}
+                        <tr>
+                          <td>
+                            <div class="media">
+                              <div class="media-left">
+                                <a href="/user/{{ u.user.id }}">
+                                  <img src=/media/{{ u.picture['avatar']}}
+                                  class="img-responsive img-circle" alt="Problem Serving Image">
+                                </a>
+                              </div>
+                              <div class="media-body">
+                                <h5 class="media-heading">{{ u.user.username}}</h5>
+                                {{ u.bio }}
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      {% endfor %}
+                    </table>
                     <li><a href="/logout">Logout</a></li>
                   </ul>
                 </li>
@@ -189,18 +216,18 @@ $('#myTab a').click(function (e) {
                   {% if user.is_authenticated() %}
                   <li><a href="/profile/"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{ user.username }} Profile</a></li>
                   <li><a href="/active/{{ user.id }}"><span class="glyphicon glyphicon-inbox" aria-hidden="true"></span> Active Contracts</a></li>
-                  <li><a href="#"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span> Legacy Contracts</a></li>
-                  <li><a href="#"><span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span> Contacts</a></li>
+                  <li class='disabled'><a href="#"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span> Legacy Contracts</a></li>
+                  <li class='disabled'><a href="#"><span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span> Contacts</a></li>
                   <li><a href="/challenge"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Challenge</a></li>
                   <li role="separator" class="divider"></li>
-                  <li><a href="#"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Settings</a></li>
+                  <li class='disabled'><a href="#"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Settings</a></li>
                   <li><a href="/logout">Logout</a></li>
                   {% else %}
                   <li><a href="/register/">Register Here</a></li>
                   <li><a href="/login/">Login</a></li>
                   <li role="separator" class="divider"></li>
                   {% endif %}
-                  <li class="dropdown-header">Help</li>
+                  <li class="dropdown-header disabled">Help</li>
                 </ul>
             </li>
           </ul>
@@ -223,7 +250,7 @@ $('#myTab a').click(function (e) {
     </div><!-- /.container -->
     <footer class="footer">
       <div class="container">
-        <p class="text-muted"> Muse | 2015-2016 | <a href=#>About</a> <a href=#>Register</a> <a href=#>Login</a> <a href=#>Logout</a></p>
+        <p class="text-muted"> Muse | 2015-2016 | <a href='/'>About</a> <a href='/register'>Register</a> <a href=/login>Login</a> <a href=/logout>Logout</a></p>
       </div>
     </footer>
   </body>

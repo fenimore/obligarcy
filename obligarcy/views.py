@@ -146,6 +146,13 @@ def profile(request):
     contracts = user.contract_set.all()
     deadlines = Deadline.objects.filter(signee=user,
         is_expired=False, is_accomplished=False).order_by('deadline')
+    # Active Contracts
+    map(activeContract, contracts)
+    active_contracts = []
+    for con in contracts:
+        if con.is_active:
+            if not user in con.completed_by.all():
+                active_contracts.append(con)
     # Completed Contracts
     completed_contracts = []
     for c in contracts:
@@ -158,7 +165,8 @@ def profile(request):
         {'contracts': contracts, 'posts': reversed(posts), 'profile': user,
         'completed':completed_contracts, 'deadlines':deadlines,
         'follows':follows, 'followed_by':followed_by,
-        'can_follow':False, 'already_follows': False})
+        'can_follow':False, 'already_follows': False,
+        'active':active_contracts})
 
 @login_required(login_url='/login/')
 def show_prof(request, user_id):
@@ -168,6 +176,13 @@ def show_prof(request, user_id):
     contracts = user.contract_set.all()
     deadlines = Deadline.objects.filter(signee=user,
         is_expired=False, is_accomplished=False).order_by('deadline')
+    # Active Contracts
+    map(activeContract, contracts)
+    active_contracts = []
+    for con in contracts:
+        if con.is_active:
+            if not user in con.completed_by.all():
+                active_contracts.append(con)
     # Completed Contracts
     completed_contracts = []
     for c in contracts:
@@ -187,7 +202,8 @@ def show_prof(request, user_id):
         {'contracts': contracts, 'posts': reversed(posts), 'profile': user,
         'completed':completed_contracts, 'deadlines':deadlines,
         'follows':follows, 'followed_by':followed_by,
-        'can_follow':can_follow, 'already_follows': already_follows})
+        'can_follow':can_follow, 'already_follows': already_follows,
+        'active':active_contracts})
 
 @login_required(login_url='/login/')
 def follow(request, user_1_id, user_2_id): # 1 is Who, 2 is Whom
@@ -394,13 +410,14 @@ def sign_con(request, contract_id): # As of now, it will appear (the sign button
 @login_required(login_url='/login/')
 def show_active(request, user_id):
     contracts = get_list_or_404(Contract.objects.order_by('-start_date'), users=user_id)
-    map(activeContract, contracts)
     u = User.objects.get(id=user_id)
-    active_contracts = []
-    for con in contracts:
-        if con.is_active:
-            if not u in con.completed_by.all():
-                active_contracts.append(con)
+    if contracts:
+        map(activeContract, contracts)
+        active_contracts = []
+        for con in contracts:
+            if con.is_active:
+                if not u in con.completed_by.all():
+                    active_contracts.append(con)
     return render(request, 'obligarcy/active.html', {'contracts': active_contracts})
 
 ##########################
