@@ -293,7 +293,7 @@ def submit(request, contract_id, user_id):
         #contract_id = contract_id
         c = Contract.objects.get(id=contract_id)
         return render(request, 'obligarcy/submit.html', {'text_form': text_form, 'upload_form':upload_form,
-         'contract_id': contract_id, 'contract':c, 'user_id':request.session['id']})
+         'contract_id': contract_id,'contract':c, 'user_id':request.session['id']})
 
 
 ##########################

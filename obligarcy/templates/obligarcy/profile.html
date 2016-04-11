@@ -7,7 +7,7 @@
   <div class=col-md-6>
     <div class="media">
       <div class="media-left">
-        <a href="/profile/">
+        <a href="/user/{{ profile.id }}">
           {% if profile.userprofile.picture %}
 
           <img class="media-object img-rounded profilethumb"
@@ -43,156 +43,202 @@
 </div>
 <hr>
 <div class='row'>
-  <div class='col-md-4'>
-    {% if completed %}
-      <table class="table  table-hover">
-        <tr><th>Completed Contracts</th></tr>
-        {% for contract in completed %}
-            <tr>
-              <td><a href="/contract/{{ contract.id }}/">{{ contract.title[:30] + '..' }}</a><br>
-              @ {{ contract.end_date.date().strftime('%D - %A')}}</td>
-            </tr>
-        {% endfor %}
-      </table>
-    {% else %}
-        <p>This User has no Completed Contracts</p>
-    {% endif %}
-  </div>
-  <div class='col-md-4'>
-    {% if follows %}
-    <table class="table table-hover">
-      <tr><th>Follows</th></tr>
-        {% for f in follows %}
-        <tr>
-          <td>
-            {% if f.picture %}
-              <div class="media">
-                <div class="media-left">
-                  <a href="/user/{{ f.user.id }}/">
-                    <img class="media-object img-circle" src="/media/{{ f.picture['avatar']}}" alt="Problem serving picture"/>
-                  </a>
-                </div>
-                <div class="media-body">
-                  <h5 class="media-heading">{{ f.user.username }}</h5>
-                  ...
-                </div>
-              </div>
+  <div class="bs-docs-example">
+    <ul id="myTab" class="nav nav-tabs">
+      <li class="active"><a href="#home" data-toggle="tab">Contracts</a></li>
+      <li><a href="#profile" data-toggle="tab">Network</a></li>
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Activity <b class="caret"></b></a>
+        <ul class="dropdown-menu">
+          <li><a href="#dropdown1" data-toggle="tab">Submissions</a></li>
+          <li><a href="#dropdown2" data-toggle="tab">Upcoming Deadlines</a></li>
+        </ul>
+      </li>
+    </ul>
+    <div id="myTabContent" class="tab-content">
+      <div class="tab-pane fade in active" id="home">
+        <div class="col-md-6" style="margin-top:2%">
+          <div class="panel panel-default">
+            <div class="panel-heading">Active Contracts</div>
+            {% if contracts %}
+            <table class="table table-hover">
+                {% for contract in contracts %}
+                  <tr>
+                    <td>
+                      <a href="/contract/{{ contract.id }}/">{{ contract.title[:30] }}...</a>
+                    </td>
+                    <td>Ends:
+                      {{contract.end_date.strftime('%D')}}
+                    </td>
+                  </tr>
+                 {% endfor %}
+            </table>
             {% else %}
-            <a href="/user/{{ f.user.id }}/">{{ f.user.username }}</a>
+                <p>No (active) contracts</p>
             {% endif %}
-          </td>
-        </tr>
-         {% endfor %}
-    </table>
-    {% else %}
-        <p>No one is following {{ profile.username }}</p>
-    {% endif %}
-  </div>
-  <div class='col-md-4'>
-    {% if followed_by %}
-    <table class="table table-hover">
-      <tr><th>Followed By</th></tr>
-        {% for f in followed_by %}
-          <tr>
-            <td>
-              {% if f.picture %}
-                <div class="media">
-                  <div class="media-left">
-                    <a href="/user/{{ f.user.id }}/">
-                      <img class="media-object img-circle" src="/media/{{ f.picture['avatar']}}" alt="Problem serving picture"/>
-                    </a>
+          </div>
+        </div>
+        <div class="col-md-6" style="margin-top:2%">
+          <div class="panel panel-default">
+            <div class="panel-heading">Completed Contracts</div>
+            {% if completed %}
+              <table class="table  table-hover">
+                {% for contract in completed %}
+                    <tr>
+                      <td><a href="/contract/{{ contract.id }}/">{{ contract.title[:30] + '..' }}</a></td>
+                      <td>
+                       for {{ contract.end_date.date().strftime('%D - %A')}}
+                      </td>
+                    </tr>
+                {% endfor %}
+              </table>
+            {% else %}
+                <p>This User has no Completed Contracts</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <div class="tab-pane fade" id="profile">
+        <div class="col-md-6" style="margin-top:2%">
+          <div class="panel panel-default">
+            <div class="panel-heading">Followed By</div>
+            {% if followed_by %}
+            <table class="table table-hover">
+                {% for f in followed_by %}
+                  <tr>
+                    <td>
+                      {% if f.picture %}
+                        <div class="media">
+                          <div class="media-left">
+                            <a href="/user/{{ f.user.id }}/">
+                              <img class="media-object img-circle" src="/media/{{ f.picture['avatar']}}" alt="Problem serving picture"/>
+                            </a>
+                          </div>
+                          <div class="media-body">
+                            <h4 class="media-heading">{{ f.user.username }}</h4>
+                            {{ f.bio }}
+                          </div>
+                        </div>
+                      {% else %}
+                      <a href="/user/{{ f.user.id }}/">{{ f.user.username }}</a>
+                      {% endif %}
+                    </td>
+                  </tr>
+                 {% endfor %}
+            </table>
+            {% else %}
+                <p>No one is following {{ profile.username }}</p>
+            {% endif %}
+          </div>
+        </div>
+        <div class="col-md-6" style="margin-top:2%">
+          <div class="panel panel-default">
+            <div class="panel-heading">Following</div>
+            {% if follows %}
+            <table class="table table-hover">
+                {% for f in follows %}
+                <tr>
+                  <td>
+                    {% if f.picture %}
+                      <div class="media">
+                        <div class="media-left">
+                          <a href="/user/{{ f.user.id }}/">
+                            <img class="media-object img-circle" src="/media/{{ f.picture['avatar']}}" alt="Problem serving picture"/>
+                          </a>
+                        </div>
+                        <div class="media-body">
+                          <h4 class="media-heading">{{ f.user.username }}</h4>
+                          {{ f.bio }}
+                        </div>
+                      </div>
+                    {% else %}
+                    <a href="/user/{{ f.user.id }}/">{{ f.user.username }}</a>
+                    {% endif %}
+                  </td>
+                </tr>
+                 {% endfor %}
+            </table>
+            {% else %}
+                <p>No one is following {{ profile.username }}</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <div class="tab-pane fade" id="dropdown1">
+        {% if posts %}
+        <table class="table table-hover">
+            {% for post in posts %}
+              <tr>
+                <td>
+                  <a href="/submission/{{ post.id }}/">
+                  {% if post.is_media %}
+                  <div class="media">
+                    <div class="media-left">
+                        <img src=/media/{{ post.media['avatar']}}
+                        class="img-responsive img-rounded" alt="Problem Serving Image">
+                    </div>
+                    <div class="media-body">
+                      <h6 class="media-heading">@{{ post.pub_date.date().strftime('%D - %A')}}</h6>
+                      For {{ post.deadline_set.all().first()}}
+                    </div>
                   </div>
-                  <div class="media-body">
-                    <h5 class="media-heading">{{ f.user.username }}</h5>
-                    ...
-                  </div>
-                </div>
-              {% else %}
-              <a href="/user/{{ f.user.id }}/">{{ f.user.username }}</a>
-              {% endif %}
-            </td>
-          </tr>
-         {% endfor %}
-    </table>
-    {% else %}
-        <p>No one is following {{ profile.username }}</p>
-    {% endif %}
+                  {% else %}
+                  {{ post.body[:30] + '..' }}<br>
+                  @ {{ post.pub_date.date().strftime('%D - %A')}} <br>
+                  For deadline: {{ post.deadline_set.all().first()}}
+                  {% endif %}</a>
+                </td>
+              </tr>
+             {% endfor %}
+        </table>
+        {% else %}
+            <p>No Submissions</p>
+        {% endif %}
+      </div>
+      <div class="tab-pane fade" id="dropdown2">
+        {% if deadlines %}
+        <table class="table table-hover">
+          <tr><th>Upcoming Deadlines</th></tr>
+            {% for deadline in deadlines[:4] %}
+              <tr>
+                <td>
+                  {{ deadline.deadline.strftime('%D') }}
+                </td>
+                <td>
+                  <a href="/contract/{{ deadline.contract.id }}/">{{ deadline.contract.title[:20] }}...</a>
+                </td>
+              </tr>
+             {% endfor %}
+             <tr><td>Load All</td><td></tr>
+        </table>
+        {% else %}
+            <p>No (active) deadlines</p>
+        {% endif %}
+        {% else %}
+            <p>You are Not Authenticated!</p>
+        {% endif %}
+      </div>
+    </div>
   </div>
 </div>
 <div class='row'>
   <div class='col-md-4'>
-    {% if posts %}
-    <table class="table table-hover">
-      <tr><th>Submissions</th></tr>
-        {% for post in posts %}
-          <tr>
-            <td>
-              <a href="/submission/{{ post.id }}/">
-              {% if post.is_media %}
-              <div class="media">
-                <div class="media-left">
-                    <img src=/media/{{ post.media['avatar']}}
-                    class="img-responsive img-rounded" alt="Problem Serving Image">
-                </div>
-                <div class="media-body">
-                  <h6 class="media-heading">@{{ post.pub_date.date().strftime('%D - %A')}}</h6>
-                  For {{ post.deadline_set.all().first()}}
-                </div>
-              </div>
-              {% else %}
-              {{ post.body[:30] + '..' }}<br>
-              @ {{ post.pub_date.date().strftime('%D - %A')}} <br>
-              For deadline: {{ post.deadline_set.all().first()}}
-              {% endif %}</a>
-            </td>
-          </tr>
-         {% endfor %}
-    </table>
-    {% else %}
-        <p>No Submissions</p>
-    {% endif %}
+
   </div>
   <div class='col-md-4'>
-    {% if contracts %}
-    <table class="table table-hover">
-      <tr><th>Contracts</th><td>end dates</td></tr>
-        {% for contract in contracts %}
-          <tr>
-            <td>
-              <a href="/contract/{{ contract.id }}/">{{ contract.title[:15] }}...</a>
-            </td>
-            <td>
-              {{contract.end_date.strftime('%D')}}
-            </td>
-          </tr>
-         {% endfor %}
-    </table>
-    {% else %}
-        <p>No (active) contracts</p>
-    {% endif %}
+
   </div>
   <div class='col-md-4'>
-    {% if deadlines %}
-    <table class="table table-hover">
-      <tr><th>Upcoming</th><th>Deadlines</th></tr>
-        {% for deadline in deadlines[:4] %}
-          <tr>
-            <td>
-              {{ deadline.deadline.strftime('%D') }}
-            </td>
-            <td>
-              <a href="/contract/{{ deadline.contract.id }}/">{{ deadline.contract.title[:20] }}...</a>
-            </td>
-          </tr>
-         {% endfor %}
-         <tr><td>Load All</td><td></tr>
-    </table>
-    {% else %}
-        <p>No (active) deadlines</p>
-    {% endif %}
-    {% else %}
-        <p>You are Not Authenticated!</p>
-    {% endif %}
+  </div>
+</div>
+<div class='row'>
+  <div class='col-md-4'>
+
+  </div>
+  <div class='col-md-4'>
+
+  </div>
+  <div class='col-md-4'>
   </div>
 </div>
 
