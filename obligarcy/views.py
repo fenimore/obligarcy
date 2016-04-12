@@ -10,7 +10,8 @@ from jinja2 import Environment
 
 from .forms import UserForm, UserProfileForm
 from .forms import ContractForm, SubForm, UploadForm
-from .control import completeContract, activeContract, activeContracts, checkEligibility
+from .control import completeContract, activeContract, activeContracts
+from .control import checkEligibility, expireDeadlines
 from django.utils import timezone
 from datetime import datetime, timedelta
 from django.http import HttpResponseRedirect, HttpResponse
@@ -321,13 +322,7 @@ def show_con(request, contract_id):
     activeContract(contract)
     allow_signing = checkEligibility(request.session['id'], contract_id, timezone.now())
     signees = contract.users.all()
-    for dl in contract.deadline_set.all():
-        if dl.deadline < timezone.now():
-            dl.is_expired = True
-            dl.save()
-        else:
-            dl.is_expired = False
-            dl.save()
+    expireDeadlines(contract.deadline_set.all())
     dls = signees[0].deadline_set.filter(contract=contract)
     subs = Submission.objects.filter(contract=contract).order_by('-pub_date')
     return render(request, 'obligarcy/contract.html', {'contract': contract,

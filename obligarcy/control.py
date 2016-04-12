@@ -55,6 +55,15 @@ def activeContracts(contracts):
     for contract in contracts:
         activeContract(contract)
 
+def expireDeadlines(deadlines):
+    for dl in deadlines:
+        if dl.deadline < timezone.now():
+            dl.is_expired = True
+            dl.save()
+        else:
+            dl.is_expired = False
+            dl.save()
+
 def completeContract(contract, user):
     u = User.objects.get(id=user)
     for dl in u.deadline_set.filter(contract=contract):
