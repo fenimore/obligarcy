@@ -107,7 +107,7 @@
             <tr>
               <td>
                 {{  sub.deadline_set.all().first() }}
-                {% if sub.is_late %}
+                {% if sub.deadline_set.all().first().is_late %}
                 <br>(Late)
                 {% endif %}
               </td>
