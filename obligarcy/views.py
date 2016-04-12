@@ -329,8 +329,10 @@ def show_con(request, contract_id):
             dl.is_expired = False
             dl.save()
     dls = signees[0].deadline_set.filter(contract=contract)
+    subs = Submission.objects.filter(contract=contract).order_by('-pub_date')
     return render(request, 'obligarcy/contract.html', {'contract': contract,
-            'allow_signing':allow_signing, 'signees': signees, 'deadlines': dls})
+            'allow_signing':allow_signing, 'signees': signees, 'deadlines': dls,
+            'submissions': subs})
 
 @login_required(login_url='/login/')
 def challenge(request):

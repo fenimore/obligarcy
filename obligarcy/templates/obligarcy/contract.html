@@ -17,29 +17,32 @@
   <div class='col-md-4 col-md-offset-2'>
     <div class="panel panel-default">
       <div class="panel-body">
-        <small>Remaining Deadlines</small><br>
-        <div id='deadline_list'>
-        {% for deadline in contract.deadline_set.filter(is_accomplished=False, is_expired=False).order_by('deadline') %}
-
-        {{deadline.deadline.strftime('%d-%m %H:%M')}} {{deadline.signee}}<br>
-
-        {% endfor %}<br>
-        </div>
-
         {% if contract.is_active %}
+          <small>Remaining Deadlines</small><br>
+          <div id='deadline_list'>
+          {% for deadline in contract.deadline_set.filter(is_accomplished=False, is_expired=False).order_by('deadline') %}
+          {{deadline.deadline.strftime('%d-%m %H:%M')}} {{deadline.signee}}<br>
+          {% endfor %}<br>
+          </div>
           {% if user in contract.users.all() %}
             {% if user.deadline_set.filter(contract=contract, is_accomplished=False).first() %}
             <br>
             <a class='btn btn-default' href=/submit/{{ contract.id }}/{{user.id}}>Submit</a>
             {% endif %}
           {% endif %}
+        {% else %}
+        <div class="alert alert-info" role="alert">
+          <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+          <span class="sr-only">Inactive Contract:</span> Inactive Contract
+        </div>
         {% endif %}<br>
+
             {% if allow_signing %}
               <a class='btn btn-info' href=/sign/{{ contract.id }}>Sign Contract</a>
             {% endif %}<br>
-        Active Contract: {{ contract.is_active}}<br>
         Completed By: {% for com in contract.completed_by.all() %}
-                      <a href="/user/{{ com.id }}/">{{ com.username }}</a>
+                      <a href="/user/{{ com.id }}/"><img src='/media/{{ com.userprofile.picture['avatar'] }}'
+                        class="img-responsive img-circle" alt="Problem Serving Image">'</a>
                       {% endfor %}
       </div>
     </div> <!-- Col -->
@@ -47,51 +50,93 @@
 </div> <!-- Row? -->
 <div class="row">
   <div class="col-md-12">
-    <table class="table table-hover">
-        <tr>
-          <th>Deadlines:</th>
-          {% for u in contract.users.all() %}
-            <th>{{ u.username }}
-            </th>
-          {% endfor %}
-        </tr>
-        {% for dl in deadlines %}
-        <tr>
-          <td>
-            {{ dl.deadline.date().strftime('%D') }}
-            {% if dl.is_expired %}
-            Expired
-            {% endif %}
-          </td>
-          {% for u in contract.users.all() %}
-            <td>
-                {% if not u.deadline_set.filter(contract=contract, deadline=dl.deadline).first().is_accomplished %}
-                  {% if u.deadline_set.filter(contract=contract, deadline=dl.deadline).first().is_expired %}
-                  <span class="glyphicon glyphicon-remove-circle" aria-hidden="true" style="color:red">
-                  </span>
-                  {% else %}
-                  <span class="glyphicon glyphicon-record" aria-hidden="true" style="color:grey">
-                  </span>
-                  {% endif %}
-                {% else %}
-                  {% if u.deadline_set.filter(contract=contract, deadline=dl.deadline).first().is_late %}
-                  <a href="/submission/{{ u.deadline_set.filter(contract=contract, deadline=dl.deadline).first().submission.id }}/">
-                    <span class="glyphicon glyphicon-ok-circle" aria-hidden="true" style="color:blue">
-                    </span></a><br>
-                  {% else %}
-                  <a href="/submission/{{ u.deadline_set.filter(contract=contract, deadline=dl.deadline).first().submission.id }}/">
-                    <span class="glyphicon glyphicon-ok-circle" aria-hidden="true" style="color:green">
-                    </span></a>
-                  {% endif %}
+  <div class="bs-docs-example">
+    <ul id="myTab" class="nav nav-tabs">
+      <li class="active"><a href="#home" data-toggle="tab">Deadlines</a></li>
+      <li><a href="#profile" data-toggle="tab">Submissions</a></li>
+    </ul>
+    <div id="myTabContent" class="tab-content">
+      <div class="tab-pane fade in active" id="home">
+        <table class="table table-hover">
+            <tr>
+              <th></th>
+              {% for u in contract.users.all() %}
+                <th>{{ u.username }}
+                </th>
+              {% endfor %}
+            </tr>
+            {% for dl in deadlines %}
+            <tr>
+              <td>
+                {{ dl.deadline.date().strftime('%D') }}
+                {% if dl.is_expired %}
+                Expired
                 {% endif %}
-
-                {{ u.deadline_set.filter(contract=contract, deadline=dl.deadline).first().deadline.strftime('%D - %H:%M') }}
               </td>
-          {% endfor %}
-        </tr>
-        {% endfor %}
-
-    </table>
+              {% for u in contract.users.all() %}
+                <td>
+                    {% if not u.deadline_set.filter(contract=contract, deadline=dl.deadline).first().is_accomplished %}
+                      {% if u.deadline_set.filter(contract=contract, deadline=dl.deadline).first().is_expired %}
+                      <span class="glyphicon glyphicon-remove-circle" aria-hidden="true" style="color:red">
+                      </span>
+                      {% else %}
+                      <span class="glyphicon glyphicon-record" aria-hidden="true" style="color:grey">
+                      </span>
+                      {% endif %}
+                    {% else %}
+                      {% if u.deadline_set.filter(contract=contract, deadline=dl.deadline).first().is_late %}
+                      <a href="/submission/{{ u.deadline_set.filter(contract=contract, deadline=dl.deadline).first().submission.id }}/">
+                        <span class="glyphicon glyphicon-ok-circle" aria-hidden="true" style="color:blue">
+                        </span></a><br>
+                      {% else %}
+                      <a href="/submission/{{ u.deadline_set.filter(contract=contract, deadline=dl.deadline).first().submission.id }}/">
+                        <span class="glyphicon glyphicon-ok-circle" aria-hidden="true" style="color:green">
+                        </span></a>
+                      {% endif %}
+                    {% endif %}
+                    {{ u.deadline_set.filter(contract=contract, deadline=dl.deadline).first().deadline.strftime('%D - %H:%M') }}
+                  </td>
+              {% endfor %}
+            </tr>
+            {% endfor %}
+        </table>
+      </div>
+      <div class="tab-pane fade" id="profile">
+        <table class="table table-hover">
+            {% for sub in submissions %}
+            <tr>
+              <td>
+                {{  sub.deadline_set.all().first() }}
+                {% if sub.is_late %}
+                <br>(Late)
+                {% endif %}
+              </td>
+              <td>
+                <h5 class="media-heading">{{ sub.user.username }}</h5>
+                Submitted: <a href='/submission/{{ sub.id }}'> {{ sub.pub_date.date().strftime('%D') }} </a><br>
+              </td>
+                <td>
+                  {% if sub.is_media %}
+                    <td>
+                      <a href="/submission/{{ sub.id }}/">
+                        <img src=/media/{{ sub.media['firehose']}}
+                          class="img-responsive img-rounded" alt="Problem Serving Image">
+                      </a>
+                    </td>
+                  {% else %}
+                    <td>
+                      <div  style='width:400px' >
+                        <p>{{ sub.body[:300] + '..' }}</p>
+                      </div>
+                    </td>
+                  {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+      </div>
+    </div>
+</div>
   </div>
 </div>
 <br><br>
