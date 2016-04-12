@@ -58,8 +58,10 @@ def activeContracts(contracts):
 def expireDeadlines(deadlines):
     for dl in deadlines:
         if dl.deadline < timezone.now():
-            dl.is_expired = True
-            dl.save()
+            if dl.is_expired == False:
+                # Send Action User missed Deadline
+                dl.is_expired = True
+                dl.save()
         else:
             dl.is_expired = False
             dl.save()
@@ -72,5 +74,4 @@ def completeContract(contract, user):
     c = Contract.objects.get(id=contract)
     c.completed_by.add(user)
     c.save()
-    print(c.completed_by.all())
     return True
