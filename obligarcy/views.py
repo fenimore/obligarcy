@@ -14,7 +14,7 @@ from .control import completeContract, activeContract, activeContracts
 from .control import checkEligibility, expireDeadlines
 from django.utils import timezone
 from datetime import datetime, timedelta
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.contrib.auth import authenticate, login, logout
 
 import pandas as pd
@@ -205,6 +205,30 @@ def show_prof(request, user_id):
         'follows':follows, 'followed_by':followed_by,
         'can_follow':can_follow, 'already_follows': already_follows,
         'active':active_contracts})
+
+
+def foll(request):
+    if request.method == 'POST':
+        print('is post')
+        user_id = request.POST.get('id')
+        action = request.POST.get('action')
+        print(action)
+        if user_id and action:
+            try:
+                target = User.objects.get(id=user_id)
+                actor = User.objects.get(id=request.session['id'])
+                print(actor)
+                print(target)
+                if action == 'follow':
+                    actor.userprofile.follows.add(target.userprofile)
+                    actor.save()
+                else:
+                    actor.userprofile.follows.remove(target.userprofile)
+                    actor.save()
+                return JsonResponse({'status':'ok'})
+            except User.DoesNotExist:
+                return JsonResponse({'status':'ko'})
+        return JsonResponse({'status':'ko'})
 
 @login_required(login_url='/login/')
 def follow(request, user_1_id, user_2_id): # 1 is Who, 2 is Whom

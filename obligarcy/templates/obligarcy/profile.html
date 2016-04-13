@@ -30,12 +30,16 @@
 
 
     <hr>
+
     {% if can_follow %}
+    <a href="#" class='btn btn-default follow' data-id="{{ profile.id }}"
+    data-action="{% if already_follows %}un{% endif %}follow">
       {% if already_follows %}
-      <a class='btn btn-default' href=/unfollow/{{ request.session.id }}/{{profile.id}}>Unsubscribe</a>
+      Unfollow
       {% else %}
-      <a class='btn btn-info' href=/follow/{{ request.session.id }}/{{profile.id}}>Follow</a>
+      Follow
       {% endif %}
+    </a>
     {% else %}
       <a class='btn btn-default' href=/profile/update >Update Profile</a>
     {% endif %}
@@ -239,6 +243,53 @@
 </div>
 
 
+<script>
 
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+        }
+    }
+});
+
+$(document).ready(function() {
+    $('a.follow').click(function(e){
+      var csrftoken = getCookie('csrftoken');
+      e.preventDefault();
+      $.post('{{ url('foll') }}',
+        {
+          id: $(this).data('id'),
+          action: $(this).data('action')
+        },
+        function(data){
+          if (data['status'] == 'ok') {
+            var previous_action = $('a.follow').data('action');
+            // toggle data-action
+            $('a.follow').data('action',
+            previous_action == 'follow' ? 'unfollow' : 'follow');
+            // toggle link text
+            $('a.follow').text(
+              previous_action == 'follow' ? 'Unfollow' : 'Follow');
+              }
+            }
+          );
+        });
+});
+$('#myTab a').click(function (e) {
+    if($(this).parent('li').hasClass('active')){
+        $( $(this).attr('href') ).hide();
+    }
+    else {
+        e.preventDefault();
+        $(this).tab('show');
+    }
+});
+
+</script>
 
 {% endblock content %}

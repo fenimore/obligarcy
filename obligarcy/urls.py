@@ -14,7 +14,7 @@ urlpatterns = [
     url(r'^user/([0-9]+)/$', views.show_prof, name='user'),
     url(r'^follow/([0-9]+)/([0-9]+)/$', views.follow, name='follow'),
     url(r'^unfollow/([0-9]+)/([0-9]+)/$', views.unfollow, name='unfollow'),
-
+    url(r'^foll/$', views.foll, name='foll'),
     # ex: /obligarcy/user
     #url(r'^user/$', views.profile, name='profile'),
 

@@ -40,9 +40,9 @@ INSTALLED_APPS = (
     'django_extensions',
     'django_jinja',
     'easy_thumbnails',
-    'obligarcy',
     'crispy_forms',
-    'actstream',
+    'obligarcy',
+
 )
 
 MIDDLEWARE_CLASSES = (
@@ -143,11 +143,3 @@ THUMBNAIL_ALIASES = {
 }
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
-
-ACTSTREAM_SETTINGS = {
-    'MANAGER': 'obligarcy.managers.MyActionManager',
-    'FETCH_RELATIONS': True,
-    'USE_PREFETCH': True,
-    'USE_JSONFIELD': False,
-    'GFK_FETCH_DEPTH': 1,
-}
