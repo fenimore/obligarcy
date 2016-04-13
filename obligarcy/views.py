@@ -207,18 +207,14 @@ def show_prof(request, user_id):
         'active':active_contracts})
 
 
-def foll(request):
+def follow(request):
     if request.method == 'POST':
-        print('is post')
         user_id = request.POST.get('id')
         action = request.POST.get('action')
-        print(action)
         if user_id and action:
             try:
                 target = User.objects.get(id=user_id)
                 actor = User.objects.get(id=request.session['id'])
-                print(actor)
-                print(target)
                 if action == 'follow':
                     actor.userprofile.follows.add(target.userprofile)
                     actor.save()
@@ -229,23 +225,6 @@ def foll(request):
             except User.DoesNotExist:
                 return JsonResponse({'status':'ko'})
         return JsonResponse({'status':'ko'})
-
-@login_required(login_url='/login/')
-def follow(request, user_1_id, user_2_id): # 1 is Who, 2 is Whom
-    u1 = User.objects.get(id=user_1_id)
-    u2 = User.objects.get(id=user_2_id)
-    u1.userprofile.follows.add(u2.userprofile)
-    u1.save()
-    return HttpResponseRedirect('/user/' + user_2_id) # After POST redirect
-
-@login_required(login_url='/login/')
-def unfollow(request, user_1_id, user_2_id): # 1 is Who, 2 is Whom
-    u1 = User.objects.get(id=user_1_id)
-    u2 = User.objects.get(id=user_2_id)
-    u1.userprofile.follows.remove(u2.userprofile)
-    u1.save()
-    return HttpResponseRedirect('/user/' + user_2_id) # After POST redirect
-
 
 ##########################
 # Submission Views

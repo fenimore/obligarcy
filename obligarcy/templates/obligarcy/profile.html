@@ -32,12 +32,12 @@
     <hr>
 
     {% if can_follow %}
-    <a href="#" class='btn btn-default follow' data-id="{{ profile.id }}"
+    <a href="#" class='btn btn-success follow' data-id="{{ profile.id }}"
     data-action="{% if already_follows %}un{% endif %}follow">
       {% if already_follows %}
       Unfollow
       {% else %}
-      Follow
+       Follow 
       {% endif %}
     </a>
     {% else %}
@@ -261,7 +261,7 @@ $(document).ready(function() {
     $('a.follow').click(function(e){
       var csrftoken = getCookie('csrftoken');
       e.preventDefault();
-      $.post('{{ url('foll') }}',
+      $.post('{{ url('follow') }}',
         {
           id: $(this).data('id'),
           action: $(this).data('action')
