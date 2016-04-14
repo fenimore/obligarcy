@@ -12,6 +12,7 @@ from .forms import UserForm, UserProfileForm
 from .forms import ContractForm, SubForm, UploadForm
 from .control import completeContract, activeContract, activeContracts
 from .control import checkEligibility, expireDeadlines, create_action
+from .control import get_stream
 from django.utils import timezone
 from datetime import datetime, timedelta
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
@@ -170,12 +171,13 @@ def profile(request):
     # Get Follows and followed_by
     follows = user.userprofile.follows.all()
     followed_by = user.userprofile.followed_by.all() # followed_by.user
+    stream = get_stream(user)
     return render(request, 'obligarcy/profile.html',
         {'contracts': contracts, 'posts': reversed(posts), 'profile': user,
         'completed':completed_contracts, 'deadlines':deadlines,
         'follows':follows, 'followed_by':followed_by,
         'can_follow':False, 'already_follows': False,
-        'active':active_contracts})
+        'active':active_contracts, 'stream':stream})
 
 @login_required(login_url='/login/')
 def show_prof(request, user_id):
@@ -207,12 +209,13 @@ def show_prof(request, user_id):
         can_follow = True
     if browser.userprofile in followed_by:
         already_follows = True
+    stream = Action.objects.filter(actor=user)
     return render(request, 'obligarcy/profile.html',
         {'contracts': contracts, 'posts': reversed(posts), 'profile': user,
         'completed':completed_contracts, 'deadlines':deadlines,
         'follows':follows, 'followed_by':followed_by,
         'can_follow':can_follow, 'already_follows': already_follows,
-        'active':active_contracts})
+        'active':active_contracts, 'stream':stream})
 
 
 def follow(request):

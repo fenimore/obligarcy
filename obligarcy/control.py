@@ -26,6 +26,16 @@ def create_action(actor, verb, target=None):
     # If not similar_actions page 186
     action = Action(actor=actor, verb=verb, target=target)
     action.save()
+
+def get_stream(actor):
+    user = User.objects.filter(id=actor.id).first()
+    user_stream = []
+    followers = user.userprofile.followed_by.all()
+    for a in Action.objects.all():
+        if a.actor.userprofile in followers:
+            user_stream.append(a)
+    return user_stream
+
 ##########################
 # Eligibility
 ##########################

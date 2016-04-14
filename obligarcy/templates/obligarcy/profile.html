@@ -19,29 +19,61 @@
         <h4 class="media-heading">{{ profile.username }}</h4>
         {{ profile.userprofile.bio}}<br>
         Joined {{ profile.date_joined.strftime('%D') }}<br>
+        <span class="glyphicon glyphicon-apple" aria-hidden="true" title="Completed Contracts"></span> {{ profile.has_completed.all()|length }}
+        <span class="glyphicon glyphicon-ok" aria-hidden="true" title="Completed Deadlines"></span> {{ profile.deadline_set.filter(is_accomplished=True, is_late=False)|length }}
+        <span class="glyphicon glyphicon-inbox" aria-hidden="true" title="Upcoming Deadlines"></span> {{ profile.deadline_set.filter(is_expired=False, is_accomplished=False)|length }}
+        <span class="glyphicon glyphicon-map-marker" aria-hidden="true" title="Location"></span> {{ profile.userprofile.location }}<br>
+
+
+        <hr>
+
+        {% if can_follow %}
+        <a href="#" class='btn btn-success follow' data-id="{{ profile.id }}"
+        data-action="{% if already_follows %}un{% endif %}follow">
+          {% if already_follows %}
+          Unfollow
+          {% else %}
+           Follow
+          {% endif %}
+        </a>
+        {% else %}
+          <a class='btn btn-default' href=/profile/update >Update Profile</a>
+        {% endif %}
       </div>
     </div>
   </div>
-  <div class=col-md-4>
-    <span class="glyphicon glyphicon-map-marker" aria-hidden="true" title="Location"></span> {{ profile.userprofile.location }}<br><br>
-    <span class="glyphicon glyphicon-apple" aria-hidden="true" title="Completed Contracts"></span> {{ profile.has_completed.all()|length }}<br>
-    <span class="glyphicon glyphicon-ok" aria-hidden="true" title="Completed Deadlines"></span> {{ profile.deadline_set.filter(is_accomplished=True, is_late=False)|length }}<br>
-    <span class="glyphicon glyphicon-inbox" aria-hidden="true" title="Upcoming Deadlines"></span> {{ profile.deadline_set.filter(is_expired=False, is_accomplished=False)|length }}<br>
-
-
-    <hr>
-
-    {% if can_follow %}
-    <a href="#" class='btn btn-success follow' data-id="{{ profile.id }}"
-    data-action="{% if already_follows %}un{% endif %}follow">
-      {% if already_follows %}
-      Unfollow
-      {% else %}
-       Follow
-      {% endif %}
-    </a>
+  <div class='col-md-4 stream-box'>
+    {% if stream %}
+    <table class="table table-hover">
+      <tr>
+      <td>Activity</td></tr>
+        {% for activity in stream[:10] %}
+          <tr>
+            <td>
+              <a href="/user/{{ activity.actor.id }}/">{{ activity.actor.username }}</a>
+              {{ activity.verb }}
+              {% if activity.target %}
+                {%  if activity.verb == 'followed'  %}
+                  <a href="/user/{{ activity.target.id }}/">{{ activity.target.username }}</a>
+                {% elif activity.verb == 'signed contract' %}
+                  <a href="/contract/{{ activity.target.id }}/">{{ activity.target.title }}</a>
+                {% elif activity.verb == 'drafted new contract' %}
+                   <a href="/contract/{{ activity.target.id }}/">{{ activity.target.title }}</a> <span class="glyphicon glyphicon-certificate" aria-hidden="true" style="color:gold"></span>
+                {% elif activity.verb == 'submitted a text' %}
+                  <a href="/submission/{{ activity.target.id }}/">{{ activity.target.body }}</a> <span class="glyphicon glyphicon-check" aria-hidden="true" style="color:green"></span>
+                {% elif activity.verb == 'submitted media' %}
+                    <a href="/submission/{{ activity.target.id }}/">Image</a> <span class="glyphicon glyphicon-check" aria-hidden="true" style="color:green"></span>
+                {% else  %}
+                  {{ activity.target }}
+                {% endif  %}
+              {% endif %}
+            </td>
+          </tr>
+         {% endfor %}
+         <tr><td>load 10 more</td></tr>
+    </table>
     {% else %}
-      <a class='btn btn-default' href=/profile/update >Update Profile</a>
+        <p>No Activity to Report</p>
     {% endif %}
   </div>
 </div>
@@ -52,7 +84,7 @@
       <li class="active"><a href="#home" data-toggle="tab">Contracts</a></li>
       <li><a href="#profile" data-toggle="tab">Network</a></li>
       <li class="dropdown">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Activity <b class="caret"></b></a>
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Deadlines <b class="caret"></b></a>
         <ul class="dropdown-menu">
           <li><a href="#dropdown1" data-toggle="tab">Submissions</a></li>
           <li><a href="#dropdown2" data-toggle="tab">Upcoming Deadlines</a></li>
@@ -241,7 +273,6 @@
     </div>
   </div>
 </div>
-
 
 <script>
 
