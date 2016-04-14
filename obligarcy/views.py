@@ -42,7 +42,12 @@ def environment(**options):
     def crispy(form):
         return as_crispy_form(form, 'Bootstrap3', form.helper.label_class, form.helper.field_class)
     def reverse_list(list):
-            return reversed(list)
+        return reversed(list)
+    def time_until(deadline):
+        until = deadline.deadline - timezone.now()
+        time_until = str(until.days)
+        return time_until
+    env.globals.update(**{'time_until':time_until})
     env.filters.update(**{'crispy':crispy,})
     env.filters.update(**{'reverse_list':reverse_list})
     return env

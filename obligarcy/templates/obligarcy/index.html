@@ -17,11 +17,15 @@
     <h4>First Time Here?</h4>
     <p>
       Oblige your productivity. Agree to certain conditions of creative production,
-       under a contract either alone or with others. <br>
-       <a href="/challenge" class='btn btn-success'>Draft a Contract</a>
+       under a contract either alone or with others. To see what's already floating
+        about, visit the 'firehose'<br><br>
+       <a href="/challenge" class='btn btn-success'>Draft a Contract</a>  <a href="/firehose" class='btn btn-danger'>Firehose</a><br><br>
+       <a href="#about" class='btn btn-info'>Questions?</a>
     </p>
+    <hr>
     <p>
-      New Rules! (1) In order to sign a contract, one must first be followed
+      <h4>New Rules!</h4>
+      (1) In order to sign a contract, one must first be followed
        by a signee of that contract. One must also sign during the first
        day of the contract, or before. (2) One can submit one submission
        for every deadline (calculated by the start/end dates and frequency).
@@ -34,7 +38,7 @@
     <table class="table table-hover">
       <tr>
       <td>Activity Feed</td></tr>
-        {% for activity in activity_feed %}
+        {% for activity in activity_feed[:10] %}
           <tr>
             <td>
               <a href="/user/{{ activity.actor.id }}/">{{ activity.actor.username }}</a>
@@ -61,6 +65,30 @@
     {% else %}
         <p>No (active) contracts</p>
     {% endif %}
+  </div>
+</div>
+<a id='about' href=#about></a>
+<div class='row'>
+  <div class='col-md-10'>
+    <h2>About/todo</h2>
+    <h4>Contracts</h4>
+    <ul>
+      <li>One is able to sign an existing contract only if they are followed by one of the signees.
+      </li>
+      <li>TODO: Allow open signatures</li>
+      <li>TODO: add markup</li>
+    </ul>
+    <h4>Deadlines</h4>
+    <ul>
+      <li>TODO: Add the action of Missing a Deadline</li>
+    </ul>
+    <h4>Submissions</h4>
+    <ul>
+      <li>Submissions can be either Text or Media (image), each deadline will take one of each,
+      (that is, one cannot submitt multiple pictures for one deadline, TOOD: add a zip upload?)</li>
+    </ul>
+    <h4>Following</h4>
+
   </div>
 </div>
 {% endif %}
