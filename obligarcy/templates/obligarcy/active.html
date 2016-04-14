@@ -1,26 +1,63 @@
 {% extends "obligarcy/base.html" %}
 
 {% block content %}
-
-{% if contracts %}
-    <div class="panel panel-default" style="width:50%">
-      <div class="panel-body">
-        <div class='panel-headin'>Active Contracts</div>
-    {% for contract in contracts %}
-        <table class='table table-hover'>
-          <tr>
-            <td><a href="/contract/{{ contract.id }}/">{{ contract.title[:50] }}...</a><br>
-                    Final Deadline: {{ contract.end_date.strftime('%y/%m/%d %A')}}<br>
-                    Next Deadline: {{ contract.deadline_set.filter(is_expired=False).first().deadline.strftime('%y/%m/%d %A')}}<br>
-            </td>
-            <td><a class='btn btn-default' href="/submit/{{ contract.id }}/{{user.id}}/">Submit</a>
-            </td>
-          </tr>
-        </table>
-    {% endfor %}
-      </div>
-    </div>
-{% else %}
-    <p>Nothing To Report</p>
-{% endif %}
+<style>
+.media-body{
+  width:auto;
+}
+</style>
+<div class='row'>
+  <div class='col-md-10'>
+    {% if contracts %}
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class='panel-headin'>Active Contracts</div>
+            <table class='table table-hover'>
+              <tr>
+                <th>Contract</th>
+                <th>Deadlines</th>
+                <th>Signees</th>
+                <th></th>
+              </tr>
+        {% for contract in contracts %}
+              <tr>
+                <td><a href="/contract/{{ contract.id }}/">{{ contract.title }}</a>
+                </td>
+                <td>
+                  <small>Final Deadline:</small> {{ contract.end_date.strftime('%y/%m/%d %A')}}<br>
+                  <small>Next Deadline:</small> {{ contract.deadline_set.filter(is_expired=False, is_accomplished=False).first().deadline.strftime('%y/%m/%d %A')}}<br>
+                  <small>Time Remaining:</small> {{ time_until(contract.deadline_set.filter(is_expired=False, is_accomplished=False).first()) }} days<br>
+                </td>
+                <td>
+                  {% for u in contract.users.all() %}
+                  {% if u.userprofile.picture %}
+                    <div class="media">
+                      <div class="media-left">
+                        <a href="/user/{{ u.id }}/">
+                          <img class="media-object img-rounded" src="/media/{{ u.userprofile.picture['feed']}}" alt="Problem serving picture"/>
+                        </a>
+                      </div>
+                      <div class="media-body">
+                        <h5 class="media-heading"><a href="/user/{{ u.id }}/">{{ u.username }}</a></h5>
+                        {{ u.userprofile.bio }}
+                      </div>
+                    </div>
+                  {% else %}
+                  <h5><a href="/user/{{ u.id }}/">{{ u.username }}</a></h5>
+                  {{ u.userprofile.bio }}
+                  {% endif %}
+                  {% endfor %}
+                </td>
+                <td><a class='btn btn-default' href="/submit/{{ contract.id }}/{{user.id}}/">Submit</a>
+                </td>
+              </tr>
+        {% endfor %}
+            </table>
+          </div>
+        </div>
+    {% else %}
+        <p>Nothing To Report</p>
+    {% endif %}
+  </div>
+</div>
 {% endblock content %}

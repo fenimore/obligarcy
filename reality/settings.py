@@ -136,6 +136,7 @@ MEDIA_URL = '/media/'
 THUMBNAIL_ALIASES = {
     '': {
         'avatar': {'size': (50, 50), 'crop': True},
+        'feed': {'size': (32, 32), 'crop': True},
         'profile': {'size': (200, 200), 'crop': True},
         'upload': {'size': ('auto', 500), 'quality':80},
         'firehose':{'size': (192, 128), 'crop': True},
