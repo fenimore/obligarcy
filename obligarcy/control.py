@@ -20,11 +20,11 @@ import json
 def create_action(actor, verb, target=None):
     # Check if a similiar action has occured in the last minute
     now = timezone.now()
-    last_minute = now - datetime.timedelta(seconds=60)
-    similar_actions = Action.objects.filter(actor_id=actor.id, verb=verb, timestamp_gte=last_minute)
+    #last_minute = now - datetime.timedelta(seconds=60)
+    #similar_actions = Action.objects.filter(actor_id=actor.id, verb=verb, timestamp_gte=last_minute)
     # If target
     # If not similar_actions page 186
-    action = Action(actor=user, verb=verb, target=target)
+    action = Action(actor=actor, verb=verb, target=target)
     action.save()
 ##########################
 # Eligibility

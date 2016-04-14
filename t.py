@@ -1,7 +1,7 @@
 from obligarcy.models import *
 from obligarcy.control import *
 
-u = User.objects.all()[0]
-c = u.contract_set.all()[0]
-
-
+u = User.objects.all()
+c = Contract.objects.all()
+a = Action.objects.all()
+d = Deadline.objects.all()

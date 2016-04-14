@@ -23,6 +23,39 @@
        and thereafter, the signee cannot 'complete' a contract.
     </p>
   </div>
+  <div class='col-md-6'>
+    {% if activity_feed %}
+    <table class="table table-hover">
+      <tr>
+      <td>Activity Feed</td></tr>
+        {% for activity in activity_feed %}
+          <tr>
+            <td>
+              <a href="/user/{{ activity.actor.id }}/">{{ activity.actor.username }}</a>
+              {{ activity.verb }}
+              {% if activity.target %}
+                {%  if activity.verb == 'followed'  %}
+                  <a href="/user/{{ activity.target.id }}/">{{ activity.target.username }}</a>
+                {% elif activity.verb == 'signed contract' %}
+                  <a href="/contract/{{ activity.target.id }}/">{{ activity.target.title }}</a>
+                {% elif activity.verb == 'drafted new contract' %}
+                  <a href="/contract/{{ activity.target.id }}/">{{ activity.target.title }}</a>
+                {% elif activity.verb == 'submitted a text' %}
+                  <a href="/submission/{{ activity.target.id }}/">{{ activity.target.body }}</a>
+                {% elif activity.verb == 'submitted media' %}
+                    <a href="/submission/{{ activity.target.id }}/">Image</a>
+                {% else  %}
+                  {{ activity.target }}
+                {% endif  %}
+              {% endif %}
+            </td>
+          </tr>
+         {% endfor %}
+    </table>
+    {% else %}
+        <p>No (active) contracts</p>
+    {% endif %}
+  </div>
 </div>
 {% endif %}
 {% endblock content %}

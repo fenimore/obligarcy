@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, get_list_or_404
-from .models import Submission, Contract, Deadline, UserProfile
+from .models import Submission, Contract, Deadline, UserProfile, Action
 from django.contrib.auth.models import User
 from django.contrib.sessions.models import Session
 from django.contrib.auth.decorators import login_required
@@ -11,7 +11,7 @@ from jinja2 import Environment
 from .forms import UserForm, UserProfileForm
 from .forms import ContractForm, SubForm, UploadForm
 from .control import completeContract, activeContract, activeContracts
-from .control import checkEligibility, expireDeadlines
+from .control import checkEligibility, expireDeadlines, create_action
 from django.utils import timezone
 from datetime import datetime, timedelta
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
@@ -50,7 +50,9 @@ def environment(**options):
 
 
 def index(request):
-    return render(request, 'obligarcy/index.html')
+    activity_feed = Action.objects.all()
+    return render(request, 'obligarcy/index.html',
+         {'activity_feed': activity_feed})
 
 
 ##########################
@@ -78,6 +80,7 @@ def register(request):
             if 'picture' in request.FILES:
                 profile.picture = request.FILES['picture']
             profile.save()
+            create_action(user, 'created an account')
             registered = True
             u = authenticate(username=user.username, password=pswd)
             login(request, u)
@@ -218,6 +221,8 @@ def follow(request):
                 if action == 'follow':
                     actor.userprofile.follows.add(target.userprofile)
                     actor.save()
+                    create_action(actor, 'followed', target)
+
                 else:
                     actor.userprofile.follows.remove(target.userprofile)
                     actor.save()
@@ -270,6 +275,7 @@ def submit_upload(request, contract_id, user_id):
         new_sub.save()
         c = new_sub.contract_set.all().first()
         new_sub.save()
+        create_action(author, 'submitted media', new_sub)
         completeContract(contract_id, user_id)
         return HttpResponseRedirect('/submission/' + new_sub.id) # After POST redirect
     else:
@@ -302,6 +308,7 @@ def submit(request, contract_id, user_id):
         new_sub.save()
         c = new_sub.contract_set.all().first()
         new_sub.save()
+        create_action(author, 'submitted a text', new_sub)
         completeContract(contract_id, user_id)
         return HttpResponseRedirect('/submission/' + new_sub.id) # After POST redirect
     else:
@@ -377,6 +384,7 @@ def challenge(request):
             #contract.start_date = contract.start_date.replace(hour=23, minute=59)
             contract.end_date = contract.end_date.replace(hour=23, minute=59)
             contract.save()
+            create_action(u, 'drafted new contract', contract)
             signees = contract.users.all() # what am I do?
             deadlines = contract.deadline_set.all() # What happens here?
             return HttpResponseRedirect('/contract/'+contract.id)
@@ -397,6 +405,7 @@ def sign_con(request, contract_id): # As of now, it will appear (the sign button
         user = User.objects.get(username=request.POST['signee'])
         contract.users.add(user)
         contract.save()
+        create_action(user, 'signed contract', contract)
         deadlines = contract.deadline_set.all()
         for deadline in deadlines:
             d = Deadline(deadline=deadline.deadline, contract_id=contract.id,
