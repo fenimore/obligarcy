@@ -41,8 +41,10 @@
               <a class='btn btn-info' href=/sign/{{ contract.id }}>Sign Contract</a>
             {% endif %}<br>
         Completed By: {% for com in contract.completed_by.all() %}
-                      <a href="/user/{{ com.id }}/"><img src='/media/{{ com.userprofile.picture['avatar'] }}'
-                        class="img-responsive img-circle" alt="Problem Serving Image">'</a>
+                        {% if com.userprofile.picture %}
+                        <a href="/user/{{ com.id }}/"><img src='/media/{{ com.userprofile.picture['avatar'] }}'
+                          class="img-responsive img-circle" alt="Problem Serving Image">'</a>
+                        {% endif %}
                       {% endfor %}
       </div>
     </div> <!-- Col -->
