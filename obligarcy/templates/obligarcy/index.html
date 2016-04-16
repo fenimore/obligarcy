@@ -2,20 +2,20 @@
 
 {% block content %}
 <div class='row'>
-  <div class='col-md-3'><br>
-    <h3>Muse</h3>
-    <h4>obligation-exchange</h4>
-    {% if user.is_authenticated %}
-    <br>
-  </div>
-  <div class='col-md-3'><br>
-    <img alt="Image not working" src='{{ static('favicon.png') }}' height="100px" alt="">
-  </div>
-</div>
-<div class='row'>
   <div class='col-md-6'><br>
-    <h4>First Time Here?</h4>
-    <a href={{ url('register') }} class='btn btn-success'>Register Here</a>
+    <div class='row'>
+      <div class='col-md-6'><br>
+        <h2>Muse</h2>
+        <h4>obligation-exchange</h4>
+        {% if user.is_authenticated %}
+        <br>
+      </div>
+      <div class='col-md-6'><br>
+        <img alt="Image not working" src='{{ static('favicon.png') }}' height="150px" alt="">
+      </div>
+    </div>
+    <h3>First Time Here?</h3>
+    <a href={{ url('register') }} class='btn btn-success'>Register Now</a><br><br>
     <p>
       Oblige your productivity. Agree to certain conditions of creative production,
        under a contract either alone or with others. To see what's already floating
@@ -42,7 +42,13 @@
         {% for activity in activity_feed[:10] %}
           <tr>
             <td>
+              {% if activity.actor.userprofile.picture %}
+              <a href="/user/{{ activity.actor.id }}/">
+                <img class="media-object img-circle" src="/media/{{ activity.actor.userprofile.picture['feed']}}" style="float:left;margin-right:5px;" alt="Problem serving picture"/>
+              </a>
+              {% endif %}
               <a href="/user/{{ activity.actor.id }}/">{{ activity.actor.username }}</a>
+
               {{ activity.verb }}
               {% if activity.target %}
                 {%  if activity.verb == 'followed'  %}
@@ -76,7 +82,7 @@
 <a id='about' href=#about></a>
 <div class='row'>
   <div class='col-md-10'>
-    <h2>About/todo</h2>
+    <h2>About</h2>
     <h3>tl;dr</h3>
     Either alone or with peers, agree to a quota of creative production, and agree to the consequences of failing.
     <h4>Contracts</h4>
@@ -98,7 +104,8 @@
     <h4>Submissions</h4>
     <ul>
       <li class='list-group-item'>Submissions can be either Text or Media (image), each deadline will take one of each,
-      (that is, one cannot submitt multiple pictures for one deadline, TODO: add a zip upload?)</li>
+        that is, one cannot submitt multiple pictures for one deadline.</li>
+      <li class='list-group-item list-group-item-warning'>TODO: add a zip upload?</li>
     </ul>
     <h4>Following</h4>
 
