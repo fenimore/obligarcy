@@ -1,0 +1,22 @@
+{% extends "obligarcy/base.html" %}
+
+{% block content %}
+<div class='row'>
+  <div class='col-md-4'>
+        <form id="user_form" method="post" action="/update/"
+                enctype="multipart/form-data">
+
+            {% csrf_token %}
+
+            <!-- Display each form. The as_p method wraps each element in a paragraph
+                 (<p>) element. This ensures each element appears on a new line,
+                 making everything look neater. -->
+            {{ update_form.as_p() }}
+
+            <!-- Provide a button to click to submit the form. --><hr>
+            <input class='btn btn-default' type="submit" name="submit" value="Update" />
+        </form>
+  </div>
+</div>
+
+{% endblock content %}

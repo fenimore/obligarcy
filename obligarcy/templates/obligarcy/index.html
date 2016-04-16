@@ -15,11 +15,12 @@
 <div class='row'>
   <div class='col-md-6'><br>
     <h4>First Time Here?</h4>
+    <a href={{ url('register') }} class='btn btn-success'>Questions?</a>
     <p>
       Oblige your productivity. Agree to certain conditions of creative production,
        under a contract either alone or with others. To see what's already floating
         about, visit the 'firehose'<br><br>
-       <a href="/challenge" class='btn btn-success'>Draft a Contract</a>  <a href="/firehose" class='btn btn-danger'>Firehose</a><br><br>
+       <a href={{ url('challenge')}} class='btn btn-primary'>Draft a Contract</a>  <a href="/firehose" class='btn btn-danger'>Firehose</a>
        <a href="#about" class='btn btn-info'>Questions?</a>
     </p>
     <hr>
@@ -46,18 +47,23 @@
               {% if activity.target %}
                 {%  if activity.verb == 'followed'  %}
                   <a href="/user/{{ activity.target.id }}/">{{ activity.target.username }}</a>
+                  <span class="glyphicon glyphicon-user" style="float:right" aria-hidden="true" ></span>
                 {% elif activity.verb == 'signed contract' %}
                   <a href="/contract/{{ activity.target.id }}/">{{ activity.target.title }}</a>
                 {% elif activity.verb == 'drafted new contract' %}
-                  <a href="/contract/{{ activity.target.id }}/">{{ activity.target.title }}</a>
+                   <a href="/contract/{{ activity.target.id }}/">{{ activity.target.title }}</a>
+                   <span class="glyphicon glyphicon-certificate" style="float:right;color:gold" aria-hidden="true" ></span>
                 {% elif activity.verb == 'submitted a text' %}
                   <a href="/submission/{{ activity.target.id }}/">{{ activity.target.body }}</a>
+                  <span class="glyphicon glyphicon-check"  style="float:right;color:green" aria-hidden="true" s></span>
                 {% elif activity.verb == 'submitted media' %}
                     <a href="/submission/{{ activity.target.id }}/">Image</a>
+                    <span class="glyphicon glyphicon-check"  style="float:right;color:green" aria-hidden="true" ></span>
                 {% else  %}
                   {{ activity.target }}
                 {% endif  %}
-              {% endif %}
+              {% endif %}<br>
+              <small>{{ time_since(activity.pub_date) }}</small>
             </td>
           </tr>
          {% endfor %}

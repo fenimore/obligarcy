@@ -48,6 +48,15 @@ def environment(**options):
         until = deadline.deadline - timezone.now()
         time_until = str(until.days)
         return time_until
+    def time_since(pub_date):
+        difference = timezone.now() - pub_date
+        if difference >= timedelta(days=1):
+            return '%(time)s days ago' % {'time': difference.days}
+        elif difference <= timedelta(minutes=1):
+            return 'just now'
+        elif difference <= timedelta(days=1):
+            return '%(time)s hours %(minute)s minutes ago' % {'time': difference.seconds//3600, 'minute': difference.seconds//60}#td.seconds//3600, (td.seconds//60)%60
+    env.globals.update(**{'time_since':time_since})
     env.globals.update(**{'time_until':time_until})
     env.filters.update(**{'crispy':crispy,})
     env.filters.update(**{'reverse_list':reverse_list})
@@ -238,6 +247,20 @@ def follow(request):
             except User.DoesNotExist:
                 return JsonResponse({'status':'ko'})
         return JsonResponse({'status':'ko'})
+
+@login_required(login_url='/login/')
+def update_profile(request):
+if request.method == 'POST':
+    update_form = UpdateForm(data=request.POST)
+    if user_form.is_valid():# and profile_form.is_valid()
+        user = update_form.save()
+        user.save()
+        return HttpResponseRedirect('/profile/')
+    else:
+        print((user_form.errors))#, profile_form.errors
+update_form = UpdateForm(request.POST, instance=request.user)
+return render(request, 'obligarcy/update.html',
+     {'update_form': update_form})
 
 ##########################
 # Submission Views

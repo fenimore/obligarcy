@@ -55,18 +55,23 @@
               {% if activity.target %}
                 {%  if activity.verb == 'followed'  %}
                   <a href="/user/{{ activity.target.id }}/">{{ activity.target.username }}</a>
+                  <span class="glyphicon glyphicon-user" style="float:right" aria-hidden="true" ></span>
                 {% elif activity.verb == 'signed contract' %}
                   <a href="/contract/{{ activity.target.id }}/">{{ activity.target.title }}</a>
                 {% elif activity.verb == 'drafted new contract' %}
-                   <a href="/contract/{{ activity.target.id }}/">{{ activity.target.title }}</a> <span class="glyphicon glyphicon-certificate" aria-hidden="true" style="color:gold"></span>
+                   <a href="/contract/{{ activity.target.id }}/">{{ activity.target.title }}</a>
+                   <span class="glyphicon glyphicon-certificate" style="float:right;color:gold" aria-hidden="true" ></span>
                 {% elif activity.verb == 'submitted a text' %}
-                  <a href="/submission/{{ activity.target.id }}/">{{ activity.target.body }}</a> <span class="glyphicon glyphicon-check" aria-hidden="true" style="color:green"></span>
+                  <a href="/submission/{{ activity.target.id }}/">{{ activity.target.body }}</a>
+                  <span class="glyphicon glyphicon-check"  style="float:right;color:green" aria-hidden="true" s></span>
                 {% elif activity.verb == 'submitted media' %}
-                    <a href="/submission/{{ activity.target.id }}/">Image</a> <span class="glyphicon glyphicon-check" aria-hidden="true" style="color:green"></span>
+                    <a href="/submission/{{ activity.target.id }}/">Image</a>
+                    <span class="glyphicon glyphicon-check"  style="float:right;color:green" aria-hidden="true" ></span>
                 {% else  %}
                   {{ activity.target }}
                 {% endif  %}
-              {% endif %}
+              {% endif %}<br>
+              <small>{{ time_since(activity.pub_date) }}</small>
             </td>
           </tr>
          {% endfor %}

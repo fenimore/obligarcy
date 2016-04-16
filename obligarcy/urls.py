@@ -13,6 +13,7 @@ urlpatterns = [
     # ex: /obligarcy/user/5/
     url(r'^user/([0-9]+)/$', views.show_prof, name='user'),
     url(r'^follow/$', views.follow, name='follow'),
+    url(r'^update/$', views.update_profile, name='update'),
     # ex: /obligarcy/user
     #url(r'^user/$', views.profile, name='profile'),
 
