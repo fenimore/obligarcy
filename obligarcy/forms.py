@@ -34,40 +34,6 @@ class UserProfileForm(forms.ModelForm):
         model = UserProfile
         fields = ['picture', 'location', 'bio']
 
-class UpdateProfile(forms.ModelForm):
-    #User
-    password = forms.CharField(widget=forms.PasswordInput(attrs=
-        {'class': 'form-control'}))
-    username = forms.CharField(widget=forms.TextInput(attrs=
-        {'class': 'form-control'}))
-    email = forms.CharField(widget=forms.TextInput(attrs=
-            {'class': 'form-control'}))
-    # Profile
-    picture = forms.FileInput()#attrs={'class': 'form-control'}
-    location = forms.CharField(widget=forms.TextInput(attrs=
-        {'class': 'form-control'}))
-    bio = forms.CharField(widget=forms.TextInput(attrs=
-            {'class': 'form-control'}))
-
-    class Meta:
-        model = User
-        fields = ('username', 'email', 'password', 'picture', 'location', 'bio')
-
-    def clean_email(self):
-        username = self.cleaned_data.get('username')
-        email = self.cleaned_data.get('email')
-        if email and User.objects.filter(email=email).exclude(username=username).count():
-            raise forms.ValidationError('This email address is already in use. Please supply a different email address.')
-        return email
-
-    def save(self, commit=True):
-        user = super(UserForm, self).save(commit=False)
-        userprofile = super(UserProfileForm, self).save(commit=False)
-        user.email = self.cleaned_data['email']
-        if commit:
-            user.save()
-            userprofile.save()
-        return user
 
 class SubForm(forms.Form):
     # rename text
