@@ -60,6 +60,7 @@ class Submission(models.Model):
     pub_date = models.DateTimeField('submitted')
     user = models.ForeignKey(User)
     is_media = models.BooleanField(default=False)
+    licence = models.CharField(max_length=30, null=True)
     # This Generic Relation allows backward Queries from Contract/Dl etc.
     activities = GenericRelation(Action, related_query_name='activities',
                                     object_id_field="target_id",
@@ -83,6 +84,7 @@ class Contract(models.Model):
     end_date = models.DateTimeField('end date')
     frequency = models.CharField(max_length=2, default='O')
     is_active = models.BooleanField(default=False)
+    open_sign = models.BooleanField(default=False)
     users = models.ManyToManyField(User) # signee
     submissions = models.ManyToManyField(Submission)
     completed_by = models.ManyToManyField(User, related_name='has_completed')
