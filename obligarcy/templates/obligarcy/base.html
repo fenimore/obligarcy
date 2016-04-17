@@ -169,8 +169,13 @@ function getCookie(name) {
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li><a href="/">Home</a></li>
-            <li><a href="/firehose">Firehose</a></li>
+            <li><a href="{{url('index')}}#about">About</a></li>
+            <li><a href="{{url('firehose')}}">Firehose</a></li>
+            {% if user.is_authenticated() %}
+            <li><a href="{{url('profile')}}">Dashboard</a></li>
+            {% else %}
+            <li><a href="{{url('register')}}">Sign Up</a></li>
+            {% endif %}
           </ul>
 
 

@@ -8,7 +8,7 @@ urlpatterns = [
     url(r'^firehose/$', views.firehose, name='firehose'),
 
 
-    url(r'^profile/$', views.profile),
+    url(r'^profile/$', views.profile, name='profile'),
     # ex: /obligarcy/user/5/
     url(r'^user/([0-9]+)/$', views.show_prof, name='user'),
     url(r'^follow/$', views.follow, name='follow'),
