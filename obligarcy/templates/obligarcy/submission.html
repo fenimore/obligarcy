@@ -2,10 +2,12 @@
 
 {% block content %}
 <div class='row'>
+  {% if submission.is_media %}
   <div class='col-md-9' style="margin-top:4%">
-    {% if submission.is_media %}
     <img src=/media/{{ submission.media}} class="img-responsive" alt="Responsive image"><br><br>
-    {% else %}
+  {% else %}
+  <div class='col-md-6' style="margin-top:4%">
+
     {{ submission.body }}<br><br>
     {% endif %}
     <hr>
@@ -17,10 +19,14 @@
     <div class="panel panel-default">
       <div class="panel-body">
         <a href='/contract/{{contract.id}}' >Contract:</a> {{ contract.conditions[50:] }}...<br><br>
-        Submitted for {{ deadline.deadline.date() }} deadline on {{ submission.pub_date.date() }}<br><br>
-        Word Count: {{ word_count }} <br>
-        Author: <a href="/user/{{ submission.user.id }}/">{{ submission.user.username }}</a> <br>
-        Is late: {{ deadline.is_late }}<br>
+       <small>Submitted for</small> {{ deadline.deadline.date().strftime('%D') }} <small>deadline on</small> {{ submission.pub_date.date().strftime('%D') }}<br><br>
+        <small>Author:</small> <a href="/user/{{ submission.user.id }}/">{{ submission.user.username }}</a> <br>
+        {% if deadline.is_late %}
+        <small>Is late: {{ deadline.is_late }}<br></small>
+        {% endif %}
+        {% if word_count %}
+                <small>Word Count: {{ word_count }}</small> <br>
+        {% endif %}
       </div>
     </div>
   </div>
