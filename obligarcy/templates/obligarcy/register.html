@@ -2,7 +2,14 @@
 
 {% block content %}
 <div class='row'>
-  <div class='col-md-4'>
+  <div class='col-md-6'>
+    <h2>Register</h2>
+  </div>
+
+</div>
+
+<div class='row'>
+  <div class='col-md-12'>
         <form id="user_form" method="post" action="/register/"
                 enctype="multipart/form-data">
 
@@ -11,12 +18,29 @@
             <!-- Display each form. The as_p method wraps each element in a paragraph
                  (<p>) element. This ensures each element appears on a new line,
                  making everything look neater. -->
+        <div class='row'>
+          <div class='col-md-6'>
             {{ user_form.as_p() }}
-            {{ profile_form }}
-
+          </div>
+          <div class='col-md-6'>
+            {{ profile_form.as_p() }}
+          </div>
+        </div>
             <!-- Provide a button to click to submit the form. --><hr>
             <input class='btn btn-default' type="submit" name="submit" value="Register" />
         </form>
+  </div>
+</div>
+<div class='row'>
+  <div class='col-md-6 col-md-offset-6'>
+    {% if errors %}
+    <div class="alert alert-danger" role="alert">
+      <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+      <span class="sr-only">Error:</span>
+      Incorrect Form Details:
+      {{ errors }}
+    </div>
+    {% endif %}
   </div>
 </div>
 

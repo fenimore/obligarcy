@@ -2,18 +2,18 @@
 
 {% block content %}
 <div class='row'>
-  <div class='col-md-6' style="margin-top:4%">
+  <div class='col-md-9' style="margin-top:4%">
     {% if submission.is_media %}
     <img src=/media/{{ submission.media}} class="img-responsive" alt="Responsive image"><br><br>
     {% else %}
     {{ submission.body }}<br><br>
     {% endif %}
     <hr>
-    <p>{{ submission.user.username }} | {{ submission.pub_date.strftime('%c')}}</p>
+    <p><a href="/user/{{ submission.user.id }}/">{{ submission.user.username }}</a> | {{ submission.pub_date.strftime('%c')}}</p>
 
 
   </div>
-  <div class='col-md-4  col-md-offset-2'>
+  <div class='col-md-3'  style="margin-top:4%">
     <div class="panel panel-default">
       <div class="panel-body">
         <a href='/contract/{{contract.id}}' >Contract:</a> {{ contract.conditions[50:] }}...<br><br>

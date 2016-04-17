@@ -172,77 +172,67 @@ function getCookie(name) {
             <li><a href="/">Home</a></li>
             <li><a href="/firehose">Firehose</a></li>
           </ul>
-          {% if user.is_authenticated() %}
+          
+
           <ul class="nav navbar-nav navbar-right">
+            {% if user.is_authenticated() %}
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
                 <span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                  <li><a href="/challenge"><span class="glyphicon glyphicon-export" aria-hidden="true"></span> Challenge</a></li>
-                  <li><a href="/active/{{user.id}}"><span class="glyphicon glyphicon-send" aria-hidden="true"></span> Submit</a></li>
-                </ul>
-              </li>
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
-              <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                  <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
-                  <span class="caret"></span></a>
-                  <ul class="dropdown-menu">
-                    <li> Next Deadline</li>
-                    <table class="table table-hover">
+                  <li> Next Deadline</li>
+                  <table class="table table-hover">
+                    <tr>
+                      <td>
+                        {% if user.contract_set.all() %}
+                        <a href="/submit/{{ user.deadline_set.filter(is_expired=False).order_by('deadline').first().contract.id }}/{{ user.id }}">
+                          {{ user.deadline_set.filter(is_expired=False, is_accomplished=False).order_by('deadline').first() }}</a> Deadline in
+                          {{ time_until(user.deadline_set.filter(is_expired=False, is_accomplished=False).order_by('deadline').first()) }} days
+                        {% endif %}
+                      </td>
+                    </tr>
+                  </table>
+                  <li>Follows</li>
+                  <table class="table table-hover">
+                    {% for u in user.userprofile.follows.all() %}
                       <tr>
                         <td>
-                          {% if user.contract_set.all() %}
-                          <a href="/submit/{{ user.deadline_set.filter(is_expired=False).order_by('deadline').first().contract.id }}/{{ user.id }}">
-                            {{ user.deadline_set.filter(is_expired=False, is_accomplished=False).order_by('deadline').first() }}</a> Deadline in
-                            {{ time_until(user.deadline_set.filter(is_expired=False, is_accomplished=False).order_by('deadline').first()) }} days
-                            {% endif %}
+                          <div class="media">
+                            <div class="media-left">
+                              <a href="/user/{{ u.user.id }}">
+                                {% if u.picture %}
+                                <img src=/media/{{ u.picture['feed']}}
+                                class="img-responsive img-circle" alt="Problem Serving Image">
+                                {% endif %}
+                              </a>
+                            </div>
+                            <div class="media-body">
+                              <h5 class="media-heading"><a href="/user/{{ u.user.id }}">{{ u.user.username}}</a></h5>
+                              {{ u.bio[:12] }}
+                            </div>
+                          </div>
                         </td>
                       </tr>
-                    </table>
-                    <li>Follows</li>
-                    <table class="table table-hover">
-                      {% for u in user.userprofile.follows.all() %}
-                        <tr>
-                          <td>
-                            <div class="media">
-                              <div class="media-left">
-                                <a href="/user/{{ u.user.id }}">
-                                  {% if u.picture %}
-                                  <img src=/media/{{ u.picture['feed']}}
-                                  class="img-responsive img-circle" alt="Problem Serving Image">
-                                  {% endif %}
-                                </a>
-                              </div>
-                              <div class="media-body">
-                                <h5 class="media-heading"><a href="/user/{{ u.user.id }}">{{ u.user.username}}</a></h5>
-                                {{ u.bio[:12] }}
-                              </div>
-                            </div>
-                          </td>
-                        </tr>
-                      {% endfor %}
-                    </table>
-                    <li><a href="/logout">Logout</a></li>
+                    {% endfor %}
+                  </table>
+                  <li><a href="/logout">Logout</a></li>
+                </ul>
+              </li>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                  <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                  <span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="/challenge"><span class="glyphicon glyphicon-export" aria-hidden="true"></span> Challenge</a></li>
+                    <li><a href="/active/{{user.id}}"><span class="glyphicon glyphicon-send" aria-hidden="true"></span> Submit</a></li>
                   </ul>
-                </li>
-              </ul>
-           {% endif %}
-
-          <ul class="nav navbar-nav navbar-right">
-
+              </li>
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                {% if user.is_authenticated() %}
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                 {{ user.username }}
-                {% else %}
-                Welcome!
-                {% endif %}
                 <span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                  {% if user.is_authenticated() %}
                   <li><a href="/profile/"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{ user.username }} Profile</a></li>
                   <li><a href="/active/{{ user.id }}"><span class="glyphicon glyphicon-inbox" aria-hidden="true"></span> Active Contracts</a></li>
                   <li class='disabled'><a href="#"><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span> Legacy Contracts</a></li>
@@ -251,15 +241,26 @@ function getCookie(name) {
                   <li role="separator" class="divider"></li>
                   <li class='disabled'><a href="#"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Settings</a></li>
                   <li><a href="/logout">Logout</a></li>
-                  {% else %}
-                  <li><a href="/register/">Register Here</a></li>
-                  <li><a href="/login/">Login</a></li>
-                  <li role="separator" class="divider"></li>
-                  {% endif %}
-                  <li class="dropdown-header disabled">Help</li>
+                  <li class="dropdown-header"><a href="{{url('index')}}#about">Help</a></li>
                 </ul>
-            </li>
+              </li>
+              {% else %}
+              <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                  Welcome!
+                  <span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <li><a href={{url('register')}}>Sign Up</a></li>
+                    <li><a href={{url('login')}}>Login</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li class="dropdown-header"><a href="{{url('index')}}#about">Help</a></li>
+                  </ul>
+                </li>
+                {% endif %}
+
+
           </ul>
+
         </div><!--/.nav-collapse -->
       </div>
     </nav>
@@ -279,7 +280,8 @@ function getCookie(name) {
     </div><!-- /.container -->
     <footer class="footer">
       <div class="container">
-        <p class="text-muted"> Muse | 2015-2016 | <a href='/'>About</a> <a href='/register'>Register</a> <a href=/login>Login</a> <a href=/logout>Logout</a></p>
+        <p class="text-muted"> Muse | 2015-2016 |
+           <a href='{{url('index')}}#about'>About</a> <a href='{{url('register')}}'>Register</a> <a href={{url('login')}}>Login</a> <a href={{url('logout')}}>Logout</a></p>
       </div>
     </footer>
   </body>

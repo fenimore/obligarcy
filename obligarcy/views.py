@@ -75,10 +75,10 @@ def index(request):
 ##########################
 def register(request):
     registered = False
+    errors = ""
     if request.method == 'POST':
         user_form = UserForm(data=request.POST)
         profile_form = UserProfileForm(data=request.POST)
-        print((request.POST['bio']))
         #print((profile_form.location))
         #print((profile_form))
         if profile_form.is_valid():
@@ -103,52 +103,47 @@ def register(request):
             request.session['id'] = user.id
             return HttpResponseRedirect('/profile/')
         else:
-            print((user_form.errors))#, profile_form.errors
+            errors = str(user_form.errors)#, profile_form.errors
     user_form = UserForm()
     profile_form = UserProfileForm()
     return render(request, 'obligarcy/register.html',
-         {'user_form': user_form, 'profile_form': profile_form})
+         {'user_form': user_form, 'profile_form': profile_form,
+         'errors':errors})
 
 
 def user_login(request):
+    status = "Type your login details in below..."
+    next_url = ""
+    if request.GET:
+        next_url = request.GET['next']
     if request.method == 'POST':
         # Gather the username and password provided by the user.
         # This information is obtained from the login form.
         username = request.POST['username']
         password = request.POST['password']
-
         # Use Django's machinery to attempt to see if the username/password
         # combination is valid - a User object is returned if it is.
         user = authenticate(username=username, password=password)
-
-        # If we have a User object, the details are correct.
-        # If None (Python's way of representing the absence of a value), no user
-        # with matching credentials was found.
         if user:
-            # Is the account active? It could have been disabled.
-            if user.is_active:
-                # If the account is valid and active, we can log the user in.
-                # We'll send the user back to the homepage.
+            if user.is_active:# Is the account active? It could have been disabled.
                 login(request, user)
                 request.session['username'] = user.username
                 request.session['id'] = user.id
-                return HttpResponseRedirect('/profile/')
+                if next_url == "":
+                    return HttpResponseRedirect('/profile/')
+                else:
+                    return HttpResponseRedirect(next_url)
             else:
-                # An inactive account was used - no logging in!
-                return HttpResponse("Account no longer active.")
+                status = "Your account is not active, please contact the site admin."
         else:
             # Bad login details were provided. So we can't log the user in.
-            print(("Invalid login details: {0}, {1}".format(username, password)))
-            return HttpResponse("Invalid login details supplied.")
+            # print(("Invalid login details: {0}, {1}".format(username, password)))
+            status = "Your username and/or password were incorrect."
+    # The request is unsuccessful as HTTP POST, so display the login form.
+    return render(request, 'obligarcy/login.html',
+                {'next':next_url, 'status':status})
 
-    # The request is not a HTTP POST, so display the login form.
-    # This scenario would most likely be a HTTP GET.
-    else:
-        # No context variables to pass to the template system, hence the
-        # blank dictionary object...
-        return render(request, 'obligarcy/login.html')
-
-
+@login_required
 def user_logout(request):
     logout(request)
     request.session['username'] = None
@@ -156,7 +151,7 @@ def user_logout(request):
     return HttpResponseRedirect('/')
 
 # TODO: Add Prochaine Deadlines
-@login_required(login_url='/login/')
+@login_required
 def profile(request):
     user_id = request.session['id']
     user = get_object_or_404(User, id=user_id)
@@ -188,7 +183,7 @@ def profile(request):
         'can_follow':False, 'already_follows': False,
         'active':active_contracts, 'stream':stream})
 
-@login_required(login_url='/login/')
+@login_required
 def show_prof(request, user_id):
     browser = User.objects.get(id=request.session['id'])
     user = get_object_or_404(User, id=user_id)
@@ -248,7 +243,7 @@ def follow(request):
                 return JsonResponse({'status':'ko'})
         return JsonResponse({'status':'ko'})
 
-@login_required(login_url='/login/')
+@login_required
 def update_profile(request):
     if request.method == 'POST':
         update_form = UpdateForm(data=request.POST)
@@ -265,7 +260,7 @@ def update_profile(request):
 ##########################
 # Submission Views
 ##########################
-@login_required(login_url='/login/')
+@login_required
 def show_sub(request, submission_id):
     template = 'obligarcy/submission.html'
     submission = get_object_or_404(Submission, id=submission_id)
@@ -280,7 +275,7 @@ def show_sub(request, submission_id):
          'author':submission.user, 'contract':contract, 'word_count':word_count,
           'deadline':deadline})
 
-@login_required(login_url='/login/')
+@login_required
 def submit_upload(request, contract_id, user_id):
     if request.method == 'POST':
         form = SubForm(request.POST, user_id)
@@ -312,7 +307,7 @@ def submit_upload(request, contract_id, user_id):
     else:
         return HttpResponseRedirect('/submit/' + contract_id + "/" + author.id) # After POST redirect
 
-@login_required(login_url='/login/')
+@login_required
 def submit(request, contract_id, user_id):
     # This needs to be restricted to those who have persmission...
     if request.method == 'POST':
@@ -357,7 +352,7 @@ def submit(request, contract_id, user_id):
 ##########################
 # Contract Views
 ##########################
-@login_required(login_url='/login/')
+@login_required
 def show_con(request, contract_id):
     contract = get_object_or_404(Contract, id=contract_id)
     activeContract(contract)
@@ -370,7 +365,7 @@ def show_con(request, contract_id):
             'allow_signing':allow_signing, 'signees': signees, 'deadlines': dls,
             'submissions': subs})
 
-@login_required(login_url='/login/')
+@login_required
 def challenge(request):
     if request.method == 'POST':
         print('is post')
@@ -425,7 +420,7 @@ def challenge(request):
     return render(request, 'obligarcy/challenge.html',
             {'contract_form': contract_form})
 
-@login_required(login_url='/login/')
+@login_required
 def sign_con(request, contract_id): # As of now, it will appear (the sign button)
     # Crucial! Nice save!
     if not checkEligibility(request.session['id'], contract_id, timezone.now()):
@@ -447,9 +442,10 @@ def sign_con(request, contract_id): # As of now, it will appear (the sign button
         contract = Contract.objects.get(id=contract_id)
         return render(request, 'obligarcy/sign.html', {'contract': contract})
 
-@login_required(login_url='/login/')
+@login_required
 def show_active(request, user_id):
-    contracts = get_list_or_404(Contract.objects.order_by('-start_date'), users=user_id)
+    active_contracts = []
+    contracts = Contract.objects.filter(users=user_id).order_by('-start_date')
     u = User.objects.get(id=user_id)
     if contracts:
         map(activeContract, contracts)

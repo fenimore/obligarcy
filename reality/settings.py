@@ -25,7 +25,7 @@ SECRET_KEY = '2xhm)*69u_6dgj((%5hnjm_@()+sq5jf2=h07o2hfb7vv67mvg'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['.plyp.org',]
 
 
 # Application definition
@@ -132,6 +132,8 @@ STATIC_ROOT = os.path.dirname(BASE_DIR) + '/public/static/'
 MEDIA_ROOT = os.path.dirname(BASE_DIR) +  '/public/media/'
 MEDIA_URL = '/media/'
 
+
+LOGIN_URL = '/login/'
 
 THUMBNAIL_ALIASES = {
     '': {
