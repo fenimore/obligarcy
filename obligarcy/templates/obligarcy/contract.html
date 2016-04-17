@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class='row'>
-  <div class='col-md-6'>
+  <div class='col-md-6' style='margin-top:2%'>
     <h4>{{ contract.title }}</h4>
     <p>{{ contract.conditions }}</p>
     <p><small>
@@ -14,7 +14,7 @@
     <br>Contract starts: {{ contract.start_date.strftime('%D - %H:%M') }}<br>
         Contract ends: {{ contract.end_date.strftime('%D - %H:%M') }}<br>
   </div>
-  <div class='col-md-4 col-md-offset-2'>
+  <div class='col-md-4 col-md-offset-2' style='margin-top:2%'>
     <div class="panel panel-default">
       <div class="panel-body">
         {% if contract.is_active %}

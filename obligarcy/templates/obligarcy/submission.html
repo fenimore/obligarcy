@@ -9,13 +9,15 @@
   <div class='col-md-6' style="margin-top:4%">
 
     {{ submission.body }}<br><br>
-    {% endif %}
+  {% endif %}
     <hr>
     <p><a href="/user/{{ submission.user.id }}/">{{ submission.user.username }}</a> | {{ submission.pub_date.strftime('%c')}}</p>
-
-
   </div>
+  {% if submission.is_media %}
   <div class='col-md-3'  style="margin-top:4%">
+  {% else %}
+  <div class='col-md-3 col-md-offset-3'  style="margin-top:4%">
+  {% endif %}
     <div class="panel panel-default">
       <div class="panel-body">
         <a href='/contract/{{contract.id}}' >Contract:</a> {{ contract.conditions[50:] }}...<br><br>

@@ -1,15 +1,17 @@
 {% extends "obligarcy/base.html" %}
 {% block content %}
-        <div class="alert alert-danger" role="alert">
-          {{ contract_form.non_field_errors }}
-        </div>
 
-        <form id="contract_form" method="POST" class='form-inline' action="/challenge/">
-        {% csrf_token %}
+<div class='row'>
+  <div class='col-md-12'>
+    <h2>Draft and Sign a new Contract</h2>
+    <br>
+  </div>
+</div>
     <div class='row'>
       <div class='col-md-6'>
 
-
+        <form id="contract_form" method="POST" class='form-inline' action="/challenge/">
+        {% csrf_token %}
 
     <div class="form-group">
         {{ contract_form.title.errors }}
@@ -58,6 +60,14 @@
         <br><br>
       </div> <!-- Col-->
     </div><!-- Row-->
+    <div class=row>
+      <hr>
+      <div class="col-md-10">
+        <div class="alert alert-warning" role="alert">
+          {{ contract_form.non_field_errors }}
+        </div>
+      </div>
+    </div>
         </form>
 
 

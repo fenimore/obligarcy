@@ -66,8 +66,9 @@ def environment(**options):
 
 def index(request):
     activity_feed = Action.objects.all()
+    activity_label = 'Recent Activity'
     return render(request, 'obligarcy/index.html',
-         {'activity_feed': activity_feed})
+         {'activity_feed': activity_feed, 'activity_label':activity_label})
 
 
 ##########################
@@ -176,12 +177,13 @@ def profile(request):
     follows = user.userprofile.follows.all()
     followed_by = user.userprofile.followed_by.all() # followed_by.user
     stream = get_stream(user)
+    activity_label = 'You are following..'
     return render(request, 'obligarcy/profile.html',
         {'contracts': contracts, 'posts': reversed(posts), 'profile': user,
         'completed':completed_contracts, 'deadlines':deadlines,
         'follows':follows, 'followed_by':followed_by,
         'can_follow':False, 'already_follows': False,
-        'active':active_contracts, 'stream':stream})
+        'active':active_contracts, 'stream':stream, 'activity_label':activity_label})
 
 @login_required
 def show_prof(request, user_id):
@@ -214,12 +216,13 @@ def show_prof(request, user_id):
     if browser.userprofile in followed_by:
         already_follows = True
     stream = Action.objects.filter(actor=user)
+    activity_label = user.username + '\'s Recent Activity'
     return render(request, 'obligarcy/profile.html',
         {'contracts': contracts, 'posts': reversed(posts), 'profile': user,
         'completed':completed_contracts, 'deadlines':deadlines,
         'follows':follows, 'followed_by':followed_by,
         'can_follow':can_follow, 'already_follows': already_follows,
-        'active':active_contracts, 'stream':stream})
+        'active':active_contracts, 'stream':stream, 'activity_label':activity_label})
 
 
 def follow(request):

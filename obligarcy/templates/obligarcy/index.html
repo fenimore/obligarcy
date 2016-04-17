@@ -34,11 +34,11 @@
        and thereafter, the signee cannot 'complete' a contract.
     </p>
   </div>
-  <div class='col-md-6'>
+  <div class='col-md-6' style='margin-top:2%'>
     {% if activity_feed %}
-    <table class="table table-hover">
+    <table class="table table-hover panel panel-default">
       <tr>
-      <td>Activity Feed</td></tr>
+      <td>{{ activity_label }}</td></tr>
         {% for activity in activity_feed[:10] %}
           <tr>
             <td>
