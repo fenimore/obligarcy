@@ -191,7 +191,7 @@ function getCookie(name) {
                     <tr>
                       <td>
                         {% if user.contract_set.all() %}
-                          {% if user.deadline_set.filter(is_expired=False).order_by('deadline').first().contract.id %}
+                          {% if user.deadline_set.filter(is_expired=False).all() %}
                             <a href="/submit/{{ user.deadline_set.filter(is_expired=False).order_by('deadline').first().contract.id }}/{{ user.id }}">
                               {{ user.deadline_set.filter(is_expired=False, is_accomplished=False).order_by('deadline').first() }}</a> Deadline in
                               {{ time_until(user.deadline_set.filter(is_expired=False, is_accomplished=False).order_by('deadline').first()) }} days
